@@ -1,6 +1,13 @@
 {
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file", // required to format on save
   "editor.codeActionsOnSave": {
-    "source.fixAll": "always"
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
   },
+  "[typescript][typescriptreact][javascript][javascriptreact]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "vs-code-prettier-eslint.prettierLast": false
 }

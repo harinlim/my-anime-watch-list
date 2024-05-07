@@ -19,11 +19,15 @@
     }
   },
   "include": [
-    "next-env.d.ts", 
-    "**/*.ts", 
-    "**/*.tsx", 
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
     ".next/types/**/*.ts",
-    "*.config.js"
+    "*.config.mjs",
+    ".eslintrc.cjs",
+    ".prettierrc.cjs",
+    ".stylelintrc.cjs",
+    "tailwind.config.js"
   ],
   "exclude": ["node_modules"]
 }
