@@ -9,7 +9,6 @@ module.exports = {
   endOfLine: 'lf',
   arrowParens: 'avoid',
   bracketSpacing: true,
-  jsxBracketSameLine: false,
   quoteProps: 'as-needed',
   jsxSingleQuote: false,
 

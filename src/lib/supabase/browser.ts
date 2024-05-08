@@ -1,6 +1,6 @@
 import { createBrowserClient as createSupabaseClient } from '@supabase/ssr'
 
-import type { Database } from '@/types/supabase'
+import type { Database } from '@/types/generated/supabase'
 
 export function createBrowserClient() {
   // Create a supabase client on the browser with project's credentials
