@@ -3,8 +3,7 @@
   "editor.formatOnSave": true,
   "editor.formatOnSaveMode": "file", // required to format on save
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.organizeImports": "explicit"
+    "source.fixAll": "explicit"
   },
   "[typescript][typescriptreact][javascript][javascriptreact]": {
     "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"

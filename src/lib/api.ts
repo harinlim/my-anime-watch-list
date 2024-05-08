@@ -1,16 +1,17 @@
 import { headers } from 'next/headers'
 
-export async function fetchWithType<T>(
+import type { ResponseWithData } from '@/types/api'
+
+export async function fetchWithType<T extends object>(
   url: string | URL | Request,
-  options: RequestInit = {}
-): Promise<T> {
-  const response = await fetch(url, options)
-  // console.log(response)
+  init: RequestInit = {}
+): Promise<ResponseWithData<T>> {
+  const response = await fetch(url, init)
   if (!response.ok) {
-    throw new Error(response.statusText)
+    return { data: null, status: response.status, ok: response.ok }
   }
 
-  return response.json() as T
+  return { data: (await response.json()) as T, status: response.status, ok: response.ok }
 }
 
 export function withBaseURL(route: string) {

@@ -28,7 +28,11 @@
     ".eslintrc.cjs",
     ".prettierrc.cjs",
     ".stylelintrc.cjs",
-    "tailwind.config.js"
+    "tailwind.config.js",
+    "jest.config.mjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": [
+    "node_modules/jest-extended/types/index.d.ts" // include jest-extended matcher types
+  ]
 }

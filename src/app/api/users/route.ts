@@ -12,11 +12,14 @@ export async function GET(): Promise<NextResponse<User>> {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.json<User>({
-      id: null,
-      email: null,
-      username: null,
-    })
+    return NextResponse.json<User>(
+      {
+        id: null,
+        email: null,
+        username: null,
+      },
+      { status: 404 }
+    )
   }
 
   const { data, error, status } = await supabase
@@ -27,9 +30,14 @@ export async function GET(): Promise<NextResponse<User>> {
 
   if (error && status !== 406) {
     console.warn(error)
-    if (error instanceof Error) {
-      throw error
-    }
+    return NextResponse.json<User>(
+      {
+        id: null,
+        email: null,
+        username: null,
+      },
+      { status }
+    )
   }
 
   return NextResponse.json<User>({

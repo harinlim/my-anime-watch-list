@@ -12,21 +12,18 @@ export type Database = {
       anime: {
         Row: {
           created_at: string
-          id: number
           kitsu_id: string
           synopsis: string | null
           title: string | null
         }
         Insert: {
           created_at?: string
-          id?: number
           kitsu_id: string
           synopsis?: string | null
           title?: string | null
         }
         Update: {
           created_at?: string
-          id?: number
           kitsu_id?: string
           synopsis?: string | null
           title?: string | null
@@ -35,7 +32,7 @@ export type Database = {
       }
       user_reviews: {
         Row: {
-          anime_id: number
+          anime_id: string
           created_at: string
           rating: number | null
           status: Database["public"]["Enums"]["watch_status"]
@@ -43,7 +40,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          anime_id: number
+          anime_id: string
           created_at?: string
           rating?: number | null
           status?: Database["public"]["Enums"]["watch_status"]
@@ -51,7 +48,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          anime_id?: number
+          anime_id?: string
           created_at?: string
           rating?: number | null
           status?: Database["public"]["Enums"]["watch_status"]
@@ -64,7 +61,7 @@ export type Database = {
             columns: ["anime_id"]
             isOneToOne: false
             referencedRelation: "anime"
-            referencedColumns: ["id"]
+            referencedColumns: ["kitsu_id"]
           },
           {
             foreignKeyName: "user_reviews_user_id_fkey"
@@ -153,17 +150,17 @@ export type Database = {
       }
       watchlists_anime: {
         Row: {
-          anime_id: number
+          anime_id: string
           created_at: string
           watchlist_id: number
         }
         Insert: {
-          anime_id: number
+          anime_id: string
           created_at?: string
           watchlist_id: number
         }
         Update: {
-          anime_id?: number
+          anime_id?: string
           created_at?: string
           watchlist_id?: number
         }
@@ -173,7 +170,7 @@ export type Database = {
             columns: ["anime_id"]
             isOneToOne: false
             referencedRelation: "anime"
-            referencedColumns: ["id"]
+            referencedColumns: ["kitsu_id"]
           },
           {
             foreignKeyName: "watchlists_anime_watchlist_id_fkey"

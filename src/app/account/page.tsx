@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function Account() {
-  const user = await fetchWithType<User>(withBaseURL('/api/users'), {
+  const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
     method: 'GET',
     credentials: 'include',
     headers: headers(),

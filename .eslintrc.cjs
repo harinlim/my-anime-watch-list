@@ -52,6 +52,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-argument': 'off',
     '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+    '@typescript-eslint/no-explicit-any': 'warn',
   },
 
   root: true,
