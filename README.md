@@ -19,7 +19,7 @@ pnpm install
 pnpm supabase login
 
 # Generate types
-pnpm supabase gen types typescript --project-id {YOUR_PROJECT_ID} --schema public > src/types/generated/supabase.ts
+pnpm supabase gen types typescript --project-id {YOUR_PROJECT_ID} --schema public > src/types/generated/supabase.ts && pnpm eslint --fix src/types/generated/supabase.ts
 ```
 
 4. Run the development server and go to [http://localhost:3000](http://localhost:3000) to see the result:
