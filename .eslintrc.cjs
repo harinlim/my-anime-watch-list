@@ -22,6 +22,17 @@ module.exports = {
 
     'import/no-empty-named-blocks': 'error',
     'import/prefer-default-export': 'off',
+    'import/order': [
+      'warn',
+      {
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: true,
+        },
+        'newlines-between': 'always',
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type'],
+      },
+    ],
 
     'jsx-a11y/label-has-associated-control': ['warn', { assert: 'either' }],
 
@@ -32,6 +43,7 @@ module.exports = {
     'react/destructuring-assignment': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'], allow: 'as-needed' }],
 
+    'unicorn/filename-case': 'off',
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/no-null': 'off',
 

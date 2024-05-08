@@ -1,7 +1,12 @@
+import { ColorSchemeScript, MantineProvider } from '@mantine/core'
 import { clsx } from 'clsx'
-import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { theme } from './theme'
+
+import '@mantine/core/styles.css'
 import './globals.css'
+
+import type { Metadata } from 'next'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,8 +22,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <ColorSchemeScript />
+        <link rel="shortcut icon" href="/favicon.svg" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
+        />
+      </head>
       <body className={clsx(inter.className, 'bg-background text-foreground')}>
-        <main className="min-h-screen">{children}</main>
+        <main className="min-h-screen">
+          <MantineProvider theme={theme}>{children}</MantineProvider>
+        </main>
       </body>
     </html>
   )
