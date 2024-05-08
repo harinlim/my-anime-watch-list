@@ -5,6 +5,7 @@
     "rvest.vs-code-prettier-eslint",
     "stylelint.vscode-stylelint",
     "aaron-bond.better-comments",
-    "clinyong.vscode-css-modules"
+    "clinyong.vscode-css-modules",
+    "csstools.postcss"
   ]
 }

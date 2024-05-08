@@ -1,7 +1,5 @@
-import { Anchor, Button, Text, Title } from '@mantine/core'
+import { Button, Text, Title } from '@mantine/core'
 import Link from 'next/link'
-
-import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle'
 
 import styles from './page.module.css'
 
@@ -10,18 +8,14 @@ export default function Home() {
     <main className="min-h-screen flex flex-col items-center">
       <Title className={styles.title} ta="center" mt={100}>
         Welcome to{' '}
-        <Text inherit variant="gradient" component="span" gradient={{ from: 'pink', to: 'yellow' }}>
-          Mantine
+        <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
+          MAWL
         </Text>
       </Title>
 
-      <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
-        This starter Next.js project includes a minimal setup for server side rendering, if you want
-        to learn more on Mantine + Next.js integration follow{' '}
-        <Anchor href="https://mantine.dev/guides/next/" size="lg">
-          this guide
-        </Anchor>
-        . To get started edit page.tsx file.
+      <Text className="p-8" c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
+        Never forget what you&apos;ve seen. Save what you want to watch next. Start tracking your
+        anime watchlists today. *Disclaimer: this app is not associated with MyAnimeList.
       </Text>
 
       <Button
@@ -37,8 +31,6 @@ export default function Home() {
           Login
         </Text>
       </Button>
-
-      <ColorSchemeToggle />
     </main>
   )
 }

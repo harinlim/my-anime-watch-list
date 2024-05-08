@@ -8,7 +8,7 @@ import type { User } from '@/api/users/types'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
-export default async function Account() {
+export default async function AnimePage() {
   const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
     method: 'GET',
     credentials: 'include',
