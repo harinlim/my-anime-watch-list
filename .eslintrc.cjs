@@ -55,6 +55,56 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
   },
 
+  overrides: [
+    {
+      /* --- ESM config files --- */
+      files: ['**/*.config.ts', '**/*.mjs'],
+      rules: {
+        // Require default exports for config files (requirement)
+        'import/prefer-default-export': 'error',
+        'import/no-default-export': 'off',
+      },
+    },
+    {
+      /* --- CJS config files --- */
+      files: ['**/*.config.js', '**/*.cjs'],
+      rules: {
+        // Require default exports for config files (requirement)
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+    {
+      /* --- Testing files (Jest) --- */
+      files: ['**.spec.ts', '**.spec.tsx'],
+      plugins: ['jest', 'jest-extended', 'jest-formatting'],
+      extends: [
+        'plugin:jest/recommended',
+        'plugin:jest/style',
+        'plugin:jest-extended/all',
+        'plugin:jest-formatting/recommended',
+      ],
+      rules: {
+        /* --- Additional auto-fixable rules --- */
+        // Prefer semantic Jest matchers (e.g. `expect(x === 5).toBe(true)` -> `expect(x).toBe(5)`)
+        'jest/prefer-equality-matcher': 'warn',
+        // Enforces "_.todo" instead of empty tests
+        'jest/prefer-todo': 'warn',
+        // Prefer Promise utilities (e.g., `mockReturnValue(Promise.resolve(...))` -> `mockResolvedValue(...)`
+        'jest/prefer-mock-promise-shorthand': 'warn',
+
+        /* --- Other rules --- */
+        // Other methods of asserting are fine (node:assert, RTL helpers, etc.). Can be configured to
+        // allow other assertion keywords, but when abstracting to helpers, can get distracting
+        'jest/expect-expect': 'off',
+
+        // Enforce unbound methods to be called in their specific scope, expect when it's safe with `expect` calls
+        // It's has issues with methods from `@testing-library`, so until it's resolved, we'll keep this off for now
+        '@typescript-eslint/unbound-method': 'off',
+        'jest/unbound-method': 'off',
+      },
+    },
+  ],
+
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
