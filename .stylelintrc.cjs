@@ -19,6 +19,7 @@ module.exports = {
     'scss/at-rule-no-unknown': null,
     'value-keyword-case': null,
     'media-feature-range-notation': null,
+    'keyframes-name-pattern': null,
     'selector-pseudo-class-no-unknown': [
       true,
       {

@@ -2,15 +2,14 @@
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   extends: [
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:import/recommended',
     'airbnb',
     'airbnb-typescript',
-    'plugin:@next/next/recommended',
-    'plugin:import/recommended',
-    'plugin:react/recommended',
     'plugin:react/jsx-runtime',
-    'plugin:react-hooks/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:import/recommended',
+
+    'plugin:@next/next/recommended',
     'plugin:@typescript-eslint/recommended-type-checked', // @typescript-eslint @v6
     'plugin:@typescript-eslint/stylistic-type-checked',
     'plugin:unicorn/recommended',
@@ -19,15 +18,28 @@ module.exports = {
   plugins: ['jsx-a11y', '@typescript-eslint', 'import'],
   rules: {
     'no-void': ['error', { allowAsStatement: true }],
+    'no-console': ['warn', { allow: ['warn', 'error', 'time', 'timeEnd', 'info', 'table'] }],
 
     'import/no-empty-named-blocks': 'error',
+    'import/prefer-default-export': 'off',
+
+    'jsx-a11y/label-has-associated-control': ['warn', { assert: 'either' }],
 
     'react/jsx-max-depth': ['warn', { max: 8 }],
     'react/jsx-curly-newline': ['error', 'consistent'],
+    'react/jsx-props-no-spreading': 'off',
+    'react/require-default-props': 'off',
+    'react/destructuring-assignment': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'], allow: 'as-needed' }],
+
+    'unicorn/prevent-abbreviations': 'off',
+    'unicorn/no-null': 'off',
 
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
     '@typescript-eslint/promise-function-async': 'error',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
   },
 
   root: true,
