@@ -31,8 +31,5 @@
     "tailwind.config.js",
     "jest.config.mjs"
   ],
-  "exclude": ["node_modules"],
-  "files": [
-    "node_modules/jest-extended/types/index.d.ts" // include jest-extended matcher types
-  ]
+  "exclude": ["node_modules"]
 }
