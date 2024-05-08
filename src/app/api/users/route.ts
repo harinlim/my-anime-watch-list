@@ -1,5 +1,7 @@
-import { createServerClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+
+import { createServerClient } from '@/lib/supabase/server'
+
 import type { User } from './types'
 
 export async function GET(): Promise<NextResponse<User>> {

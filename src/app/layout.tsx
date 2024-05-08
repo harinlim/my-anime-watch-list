@@ -1,6 +1,7 @@
 import { ColorSchemeScript, MantineProvider } from '@mantine/core'
 import { clsx } from 'clsx'
 import { Inter } from 'next/font/google'
+
 import { theme } from './theme'
 
 import '@mantine/core/styles.css'

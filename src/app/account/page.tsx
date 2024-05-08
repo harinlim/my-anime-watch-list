@@ -1,8 +1,9 @@
-import { fetchWithType, withBaseURL } from '@/lib/api'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import type { User } from '../api/users/types'
+import { fetchWithType, withBaseURL } from '@/lib/api'
+
+import type { User } from '@/api/users/types'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

@@ -1,9 +1,9 @@
 import { updateSession } from '@/lib/supabase/middleware'
-import { type NextRequest } from 'next/server'
+
+import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   // update user's auth session
-  console.log('UPDATING')
   return updateSession(request)
 }
 
