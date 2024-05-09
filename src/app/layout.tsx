@@ -44,12 +44,10 @@ export default async function RootLayout({
         />
       </head>
       <body className={clsx(inter.className, 'bg-background text-foreground')}>
-        <main className="min-h-screen min-w-80">
-          <MantineProvider defaultColorScheme="dark" theme={theme}>
-            <Header user={user} />
-            {children}
-          </MantineProvider>
-        </main>
+        <MantineProvider defaultColorScheme="dark" theme={theme}>
+          <Header user={user} />
+          <main className="min-h-screen min-w-80">{children}</main>
+        </MantineProvider>
       </body>
     </html>
   )

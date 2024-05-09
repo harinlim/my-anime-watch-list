@@ -102,7 +102,7 @@ export type GetAnimeByIdResponse = GetAnimeByIdDeserializedResponse['data'] & {
         "Super Power",
         "Shounen"
     ],
-    "review": null,
+    "review": { status: 'planned', rating: 2 },
     "watchlists": []
 }
 */

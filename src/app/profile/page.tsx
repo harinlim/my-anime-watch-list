@@ -24,7 +24,7 @@ export default async function SelfProfilePage() {
   }
 
   return (
-    <div className="min-h-full flex flex-col justify-center items-center space-y-6">
+    <div className="min-h-full flex flex-col justify-center items-center space-y-6 p-8">
       <Title order={1}>
         <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
           @{user.username}

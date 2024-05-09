@@ -94,6 +94,6 @@ export const GET_ANIME_BY_ID_RESPONSE_MOCK = {
     'Super Power',
     'Shounen',
   ],
-  review: null,
+  review: { status: 'planned', rating: 2 },
   watchlists: [],
 } satisfies GetAnimeByIdResponse
