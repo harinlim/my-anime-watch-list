@@ -20,6 +20,9 @@ dependencies:
   '@tabler/icons-react':
     specifier: ^3.3.0
     version: 3.3.0(react@18.3.1)
+  '@tanstack/react-query':
+    specifier: ^5.35.1
+    version: 5.35.1(react@18.3.1)
   clsx:
     specifier: ^2.1.1
     version: 2.1.1
@@ -1148,6 +1151,19 @@ packages:
 
   /@tabler/icons@3.3.0:
     resolution: {integrity: sha512-PLVe9d7b59sKytbx00KgeGhQG3N176Ezv8YMmsnSz4s0ifDzMWlp/h2wEfQZ0ZNe8e377GY2OW6kovUe3Rnd0g==}
+    dev: false
+
+  /@tanstack/query-core@5.35.1:
+    resolution: {integrity: sha512-0Dnpybqb8+ps6WgqBnqFEC+1F/xLvUosRAq+wiGisTgolOZzqZfkE2995dEXmhuzINiTM7/a6xSGznU0NIvBkw==}
+    dev: false
+
+  /@tanstack/react-query@5.35.1(react@18.3.1):
+    resolution: {integrity: sha512-i2T7m2ffQdNqlX3pO+uMsnQ0H4a59Ens2GxtlMsRiOvdSB4SfYmHb27MnvFV8rGmtWRaa4gPli0/rpDoSS5LbQ==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.35.1
+      react: 18.3.1
     dev: false
 
   /@tootallnate/once@2.0.0:

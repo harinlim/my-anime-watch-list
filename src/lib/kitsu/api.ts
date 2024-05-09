@@ -30,7 +30,14 @@ function getPaginationMetadata(
   const prev = links.prev ? Number(new URL(links.prev).searchParams.get('page[number]')) : undefined
   const next = links.next ? Number(new URL(links.next).searchParams.get('page[number]')) : undefined
 
-  return { total, limit, prev, next }
+  let self = 1
+  if (prev !== undefined) {
+    self = prev + 1
+  } else if (next !== undefined) {
+    self = next - 1
+  }
+
+  return { total, limit, self, prev, next }
 }
 
 async function getKitsuErrorMessage(response: Response): Promise<string | undefined> {

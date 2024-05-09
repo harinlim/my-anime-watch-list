@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 
 import { Header } from '@/components/common/Header'
+import { ReactQueryClientProvider } from '@/context/ReactQueryClientProvider'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
 import { theme } from './theme'
@@ -46,10 +47,12 @@ export default async function RootLayout({
       <body
         className={clsx(inter.className, 'min-h-screen min-w-80 bg-background text-foreground')}
       >
-        <MantineProvider defaultColorScheme="dark" theme={theme}>
-          <Header user={user} />
-          <main className="h-full">{children}</main>
-        </MantineProvider>
+        <ReactQueryClientProvider>
+          <MantineProvider defaultColorScheme="dark" theme={theme}>
+            <Header user={user} />
+            <main className="min-h-full">{children}</main>
+          </MantineProvider>
+        </ReactQueryClientProvider>
       </body>
     </html>
   )

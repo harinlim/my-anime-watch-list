@@ -5,6 +5,7 @@ export type ResponseWithData<T> =
 export type PaginationMetadata = {
   total: number
   limit: number
+  self: number
   prev?: number
   next?: number
 }
