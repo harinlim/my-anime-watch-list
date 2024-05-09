@@ -1,7 +1,7 @@
 import { deserialise } from 'kitsu-core'
 
 import { fetchWithType } from '@/lib/api'
-import { ANIME_ATTRIBUTES, CATEGORY_ATTRIBUTES } from '@/lib/kitsu/types'
+import { ANIME_ATTRIBUTES, CATEGORY_ATTRIBUTES, SEARCH_ANIME_SORT_MAPPING } from '@/lib/kitsu/types'
 
 import type {
   GetAnimeByIdDeserializedResponse,
@@ -9,6 +9,8 @@ import type {
   PaginationMetadata as KitsuPaginationMetadata,
   PaginationLinks as KitsuPaginationLinks,
   SearchAnimeDeserializedResponse,
+  SearchAnimeQueryParams,
+  KitsuErrorResponse,
 } from './types'
 import type { ResponseWithData, ResponseWithDataPaginated, PaginationMetadata } from '@/types/api'
 
@@ -31,28 +33,44 @@ function getPaginationMetadata(
   return { total, limit, prev, next }
 }
 
+async function getKitsuErrorMessage(response: Response): Promise<string | undefined> {
+  const { errors } = (await response.json()) as KitsuErrorResponse
+  if (!errors || errors.length === 0) {
+    return undefined
+  }
+  return `${errors[0].title}: ${errors[0].detail}`
+}
+
 export async function searchAnime(
-  params: unknown,
+  params: SearchAnimeQueryParams,
   init: Omit<RequestInit, 'method'> = {}
 ): Promise<ResponseWithDataPaginated<SearchAnimeDeserializedResponse['data']>> {
+  if (params.sort && !(params.sort in SEARCH_ANIME_SORT_MAPPING)) {
+    return { data: null, status: 400, ok: false, message: `Invalid sort type: ${params.sort}` }
+  }
+
   const searchParams = {
-    sort: '-userCount',
+    sort: params.sort ? SEARCH_ANIME_SORT_MAPPING[params.sort] : 'popularityRank',
     'fields[anime]': ANIME_ATTRIBUTES_SERIALIZED,
+    'page[number]': params.page?.toString() ?? '1',
+    'page[size]': params.limit?.toString() ?? '10',
 
     // TODO: Categories don't come in `relationships` when using `include` via search params. Explore this later.
     // 'fields[categories]': CATEGORY_ATTRIBUTES_SERIALIZED,
     // include: 'categories',
-  }
+  } as const
 
-  const url = `${KITSU_API_URL}/anime?${new URLSearchParams(searchParams).toString()}`
-
-  const response = await fetchWithType<GetAnimeByIdResponse>(url, {
-    ...init,
-    headers: {
-      ...init.headers,
-      'Content-Type': 'application/vnd.api+json',
+  const response = await fetchWithType<GetAnimeByIdResponse>(
+    `${KITSU_API_URL}/anime?${new URLSearchParams(searchParams).toString()}`,
+    {
+      ...init,
+      headers: {
+        ...init.headers,
+        'Content-Type': 'application/vnd.api+json',
+      },
     },
-  })
+    getKitsuErrorMessage
+  )
   if (!response.ok) {
     return response
   }
@@ -75,17 +93,19 @@ export async function getAnimeById(
     'fields[anime]': ANIME_ATTRIBUTES_SERIALIZED,
     'fields[categories]': CATEGORY_ATTRIBUTES_SERIALIZED,
     include: 'categories',
-  }
+  } as const
 
-  const url = `${KITSU_API_URL}/anime/${animeId}?${new URLSearchParams(searchParams).toString()}`
-
-  const response = await fetchWithType<GetAnimeByIdResponse>(url, {
-    ...init,
-    headers: {
-      ...init.headers,
-      'Content-Type': 'application/vnd.api+json',
+  const response = await fetchWithType<GetAnimeByIdResponse>(
+    `${KITSU_API_URL}/anime/${animeId}?${new URLSearchParams(searchParams).toString()}`,
+    {
+      ...init,
+      headers: {
+        ...init.headers,
+        'Content-Type': 'application/vnd.api+json',
+      },
     },
-  })
+    getKitsuErrorMessage
+  )
   if (!response.ok) {
     return response
   }

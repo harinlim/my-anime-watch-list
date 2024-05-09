@@ -126,6 +126,31 @@ export type SearchAnimeDeserializedResponse = {
   links: PaginationLinks
 }
 
+export type SearchAnimeSortType = 'popularity' | 'rating' | 'users' | 'latest' | 'oldest'
+
+export const SEARCH_ANIME_SORT_MAPPING = {
+  popularity: 'popularityRank',
+  rating: 'ratingRank',
+  users: '-userCount',
+  latest: '-startDate',
+  oldest: 'startDate',
+} as const satisfies Record<SearchAnimeSortType, `${'-' | ''}${keyof AnimeAttributes}`>
+
+export type SearchAnimeQueryParams = {
+  sort?: SearchAnimeSortType | null
+  page?: number | string | null
+  limit?: number | string | null
+}
+
+export type KitsuErrorResponse = {
+  errors: {
+    title: string
+    detail: string
+    code: string
+    status: string
+  }[]
+}
+
 /* 
 {
   data: {

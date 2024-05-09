@@ -6,7 +6,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import type { GetAnimeByIdResponse } from './types'
 
 export async function GET(_: NextRequest, { params }: { params: { animeId: string } }) {
-  const {animeId} = params
+  const { animeId } = params
 
   const supabase = createServerClient()
   // Check if a user's logged in
@@ -40,7 +40,7 @@ export async function GET(_: NextRequest, { params }: { params: { animeId: strin
   }
 
   if (!kitsuResponse.ok) {
-    return NextResponse.json('Failed to fetch anime from Kitsu', { status: kitsuResponse.status })
+    return NextResponse.json(kitsuResponse.message, { status: kitsuResponse.status })
   }
 
   const { data: kitsuData } = kitsuResponse
