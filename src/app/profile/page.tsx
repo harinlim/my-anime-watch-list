@@ -1,4 +1,4 @@
-import { Title } from '@mantine/core'
+import { Title, Text } from '@mantine/core'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -24,7 +24,12 @@ export default async function SelfProfilePage() {
 
   return (
     <div className="min-h-full flex flex-col justify-center items-center space-y-6">
-      <Title order={1}>@{user.username}&apos;s Watchlists</Title>
+      <Title order={1}>
+        <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
+          @{user.username}
+        </Text>
+        &apos;s Watchlists
+      </Title>
       <WatchlistCard />
       <ArticlesCardsGrid />
     </div>
