@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@mantine/core'
+import { Button, Loader } from '@mantine/core'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Fragment } from 'react'
@@ -43,13 +43,12 @@ export function AnimeList({ filter, sort }: Props) {
           </Fragment>
         ))}
       </div>
-
-      {isFetching && <div>Loading...</div>}
+      {isFetching && <Loader color="cyan" type="bars" />}
       {error && <div>Error: {error.message}</div>}
 
       <Button
         type="button"
-        className="mt-10"
+        className="mt-10 mb-20"
         disabled={isFetchingNextPage}
         onClick={async () => fetchNextPage()}
       >

@@ -1,0 +1,5 @@
+.label {
+  text-transform: uppercase;
+  font-size: var(--mantine-font-size-md);
+  font-weight: 700;
+}

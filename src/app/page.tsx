@@ -1,6 +1,8 @@
 import { Button, Text, Title } from '@mantine/core'
 import Link from 'next/link'
 
+import { SearchBar } from '@/components/common/Header/SearchBar'
+
 import styles from './page.module.css'
 
 export default function Home() {
@@ -23,7 +25,9 @@ export default function Home() {
         My Anime Watchlist
       </Text>
 
-      <Text className="p-8" c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
+      <SearchBar className="sm:w-[50%] w-[90%] my-10" />
+
+      <Text className="pb-8" c="dimmed" ta="center" size="lg" maw={580} mx="auto">
         Never forget what you&apos;ve seen. Save what you want to watch next. Start tracking your
         anime watchlists today. <em>*Disclaimer: this app is not associated with MyAnimeList.</em>
       </Text>
@@ -33,8 +37,10 @@ export default function Home() {
         href="/login"
         className="w-8/12 max-w-2xl"
         variant="gradient"
+        radius="lg"
         mt="lg"
         justify="center"
+        maw={200}
         size="xl"
       >
         <Text component="h2" size="xl">
