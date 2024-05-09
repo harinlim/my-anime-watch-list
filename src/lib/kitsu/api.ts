@@ -55,6 +55,8 @@ export async function searchAnime(
     'page[number]': params.page?.toString() ?? '1',
     'page[size]': params.limit?.toString() ?? '10',
 
+    'filter[text]': params.filter ?? '',
+
     // TODO: Categories don't come in `relationships` when using `include` via search params. Explore this later.
     // 'fields[categories]': CATEGORY_ATTRIBUTES_SERIALIZED,
     // include: 'categories',

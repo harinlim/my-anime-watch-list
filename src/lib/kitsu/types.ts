@@ -140,6 +140,7 @@ export type SearchAnimeQueryParams = {
   sort?: SearchAnimeSortType | null
   page?: number | string | null
   limit?: number | string | null
+  filter?: string | null
 }
 
 export type KitsuErrorResponse = {
