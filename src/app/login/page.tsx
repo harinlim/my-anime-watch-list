@@ -6,8 +6,13 @@ import { SubmitButton } from './submit-button'
 
 export default function Login({ searchParams }: { searchParams: { message: string } }) {
   return (
-    <main className="min-h-full flex flex-col justify-center items-center">
-      <Paper shadow="md" radius="md" p="xl" className="flex flex-col px-8 w-full sm:max-w-md gap-2">
+    <div className="min-h-[calc(100vh-150px)] flex flex-col justify-center items-center">
+      <Paper
+        radius="md"
+        p="xl"
+        withBorder
+        className="flex flex-col px-8 w-full sm:max-w-sm max-w-md gap-2 shadow-lg dark:shadow-blue-500/40"
+      >
         <Title order={1} className={`animate-in text-center ${styles.title}`} ta="center">
           Sign In
         </Title>
@@ -75,6 +80,6 @@ export default function Login({ searchParams }: { searchParams: { message: strin
           )}
         </form>
       </Paper>
-    </main>
+    </div>
   )
 }

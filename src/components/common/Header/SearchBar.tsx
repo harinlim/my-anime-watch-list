@@ -1,17 +1,18 @@
 import { Autocomplete, NativeSelect, rem } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 
-import styles from './Header.module.css'
+import styles from './SearchBar.module.css'
+import clsx from 'clsx'
 
 const data = [
   { value: 'anime', label: 'Anime' },
   { value: 'watchlists', label: 'Watchlists' },
 ]
 
-export function SearchBar() {
+export function SearchBar({ className }: { className?: string }) {
   return (
     <Autocomplete
-      className={styles.search}
+      className={className}
       placeholder="Search"
       leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
       rightSection={

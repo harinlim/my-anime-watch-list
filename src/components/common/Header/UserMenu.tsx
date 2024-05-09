@@ -46,7 +46,7 @@ export function UserMenu({ user }: Props) {
     >
       <MenuTarget>
         <UnstyledButton className={clsx(styles.user, { [styles.userActive]: userMenuOpened })}>
-          <Group gap={7}>
+          <Group gap={7} className="flex-nowrap">
             <Text fw={500} size="sm" lh={1} mr={3}>
               @{user?.username}
             </Text>
@@ -69,28 +69,6 @@ export function UserMenu({ user }: Props) {
         >
           My Watchlists
         </MenuItem>
-        {/* <Menu.Item
-                  leftSection={
-                    <IconStar
-                      style={{ width: rem(16), height: rem(16) }}
-                      color={theme.colors.yellow[6]}
-                      stroke={1.5}
-                    />
-                  }
-                >
-                  Saved posts
-                </Menu.Item> */}
-        {/* <Menu.Item
-                  leftSection={
-                    <IconMessage
-                      style={{ width: rem(16), height: rem(16) }}
-                      color={theme.colors.blue[6]}
-                      stroke={1.5}
-                    />
-                  }
-                >
-                  Your comments
-                </Menu.Item> */}
 
         <MenuLabel>Settings</MenuLabel>
         <MenuItem
@@ -113,17 +91,6 @@ export function UserMenu({ user }: Props) {
             Log out
           </MenuItem>
         </form>
-
-        {/* <Menu.Divider />
-
-              <Menu.Label>Danger zone</Menu.Label> */}
-        {/* To be enabled if deletion is implemented */}
-        {/* <Menu.Item
-                color="red"
-                leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
-              >
-                Delete account
-              </Menu.Item> */}
       </MenuDropdown>
     </Menu>
   )

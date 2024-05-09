@@ -23,9 +23,11 @@ export default async function SignupSuccessPage() {
   const welcomeText = user.username ? `Welcome, @${user.username} :)` : 'Welcome'
 
   return (
-    <div className="min-h-full flex flex-col justify-center items-center space-y-6">
-      <Title order={1}>{welcomeText}</Title>
-      <Text>
+    <div className="min-h-[calc(100vh-150px)] px-10 flex flex-col justify-center items-center space-y-6">
+      <Title order={1} className="sm:text-center">
+        {welcomeText}
+      </Title>
+      <Text className="sm:text-center">
         You&apos;ve successfully created an account! Now you&apos;re ready to make your first
         watchlist.
       </Text>

@@ -36,3 +36,15 @@
     );
   }
 }
+
+.usermenu div {
+  flex-wrap: nowrap;
+}
+
+.search {
+  display: none;
+
+  @media (min-width: 605px) {
+    display: block;
+  }
+}

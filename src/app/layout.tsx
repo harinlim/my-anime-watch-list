@@ -43,10 +43,12 @@ export default async function RootLayout({
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
         />
       </head>
-      <body className={clsx(inter.className, 'bg-background text-foreground')}>
+      <body
+        className={clsx(inter.className, 'min-h-screen min-w-80 bg-background text-foreground')}
+      >
         <MantineProvider defaultColorScheme="dark" theme={theme}>
           <Header user={user} />
-          <main className="min-h-screen min-w-80">{children}</main>
+          <main className="h-full">{children}</main>
         </MantineProvider>
       </body>
     </html>

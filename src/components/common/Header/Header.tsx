@@ -10,6 +10,7 @@ import { SearchBar } from './SearchBar'
 import { UserMenu } from './UserMenu'
 
 import type { User } from '@/api/users/types'
+import clsx from 'clsx'
 
 type Props = {
   user: User | null
@@ -24,12 +25,7 @@ export function Header({ user }: Props) {
   // const [opened, { toggle }] = useDisclosure(false
 
   const items = links.map(link => (
-    <Link
-      key={link.label}
-      href={link.link}
-      className={styles.link}
-      onClick={event => event.preventDefault()}
-    >
+    <Link key={link.label} href={link.link} className={styles.link}>
       {link.label}
     </Link>
   ))
@@ -51,13 +47,13 @@ export function Header({ user }: Props) {
           </Link>
         </Group>
 
-        <Group ml={50} className={styles.links}>
+        <Group ml={30} className={clsx(styles.links, 'flex-nowrap')}>
           <Group visibleFrom="md" gap="5">
             {items}
           </Group>
 
-          <Group gap={20} visibleFrom="s">
-            <SearchBar />
+          <Group gap={20} className="sm flex-nowrap">
+            <SearchBar className={styles.search} />
             <ColorSchemeToggle />
           </Group>
 

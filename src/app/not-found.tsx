@@ -4,7 +4,6 @@ import styles from './not-found.module.css'
 
 import type { ComponentPropsWithoutRef } from 'react'
 
-
 function Illustration(props: ComponentPropsWithoutRef<'svg'>) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 362 145" {...props}>
@@ -18,7 +17,7 @@ function Illustration(props: ComponentPropsWithoutRef<'svg'>) {
 
 export default function NotFoundPage() {
   return (
-    <Container className="py-20">
+    <Container className="py-20 min-h-[calc(100vh-150px)] flex items-center justify-center">
       <div className="relative">
         <Illustration className={styles.image} />
         <div className={styles.content}>

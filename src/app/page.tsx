@@ -5,17 +5,27 @@ import styles from './page.module.css'
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <Title className={styles.title} ta="center" mt={100}>
+    <div className="min-h-[calc(100vh-150px)] flex flex-col items-center justify-center">
+      <Title className={styles.title} ta="center">
         Welcome to{' '}
         <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
           MAWL
         </Text>
       </Title>
 
+      <Text
+        className="font-bold md:text-4xl"
+        inherit
+        variant="gradient"
+        component="span"
+        gradient={{ from: 'blue', to: 'red' }}
+      >
+        My Anime Watchlist
+      </Text>
+
       <Text className="p-8" c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
         Never forget what you&apos;ve seen. Save what you want to watch next. Start tracking your
-        anime watchlists today. *Disclaimer: this app is not associated with MyAnimeList.
+        anime watchlists today. <em>*Disclaimer: this app is not associated with MyAnimeList.</em>
       </Text>
 
       <Button
@@ -31,6 +41,6 @@ export default function Home() {
           Login
         </Text>
       </Button>
-    </main>
+    </div>
   )
 }
