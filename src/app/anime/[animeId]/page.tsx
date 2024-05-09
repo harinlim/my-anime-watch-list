@@ -16,7 +16,6 @@ import clsx from 'clsx'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { GET_ANIME_BY_ID_RESPONSE_MOCK } from '@/app/api/anime/[animeId]/mock'
 import { Review } from '@/components/common/Review'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
@@ -53,9 +52,9 @@ export default async function AnimePage({ params }: { params: { animeId: string 
     throw new Error('Failed to fetch anime')
   }
 
-  // const data = animeResponse.data
-  const data = GET_ANIME_BY_ID_RESPONSE_MOCK
-  const genres = data.categories.map(category => <Badge key={category}>{category}</Badge>)
+  const { data } = animeResponse
+  // const data = GET_ANIME_BY_ID_RESPONSE_MOCK
+  const genres = data.categories?.map(category => <Badge key={category}>{category}</Badge>)
   let ratingColor = 'text-red-600'
   const rating = Number(data.averageRating)
 
@@ -77,7 +76,7 @@ export default async function AnimePage({ params }: { params: { animeId: string 
         </Title>
         <div className="flex sm:flex-row sm:flex-nowrap flex-col flex-wrap sm:items-start items-center space-y-6 sm:space-y-0 p-8">
           <Card withBorder radius="md" p="xl" className={clsx(styles.card, 'min-w-[300px]')}>
-            <Image src={data.posterImage.small} alt={data.canonicalTitle} radius="md" />
+            <Image src={data.posterImage?.small} alt={data.canonicalTitle} radius="md" />
             <CardSection className={styles.section}>
               {/* <Title mt={10} order={2} className="py-3 md:text-3xl">
                 {data.canonicalTitle}
@@ -85,7 +84,10 @@ export default async function AnimePage({ params }: { params: { animeId: string 
             </CardSection>
             {user && (
               <CardSection className={styles.section}>
-                <Review status={data.review?.status} rating={data.review?.rating} />
+                <Review
+                  status={data.review?.status ?? undefined}
+                  rating={data.review?.rating ?? undefined}
+                />
               </CardSection>
             )}
             <CardSection className={styles.section}>
