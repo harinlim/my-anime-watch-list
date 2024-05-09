@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@mantine/core'
+import { Button, Loader } from '@mantine/core'
 import Link from 'next/link'
 import { Fragment } from 'react'
 
@@ -31,9 +31,8 @@ export function AnimeList({ filter, sort, limit }: Props) {
           // TODO: handle API errors
           <Fragment key={`${page.meta?.total}-${page.meta?.self}`}>
             {page.data?.map(anime => (
-              <Link href={`/anime/${anime.id}`}>
+              <Link key={anime.id} href={`/anime/${anime.id}`}>
                 <AnimeCard
-                  key={anime.id}
                   title={anime.canonicalTitle}
                   poster={anime.posterImage?.small}
                   rating={anime.averageRating}
@@ -43,12 +42,12 @@ export function AnimeList({ filter, sort, limit }: Props) {
           </Fragment>
         ))}
       </div>
-      {isFetching && <div>Loading...</div>}
+      {isFetching && <Loader color="cyan" type="bars" />}
       {error && <div>Error: {error.message}</div>}
 
       <Button
         type="button"
-        className="mt-10"
+        className="mt-10 mb-20"
         disabled={isFetchingNextPage}
         onClick={async () => fetchNextPage()}
       >
