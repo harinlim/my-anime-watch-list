@@ -1,14 +1,13 @@
 import { headers } from 'next/headers'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 
+import { GET_ANIME_BY_ID_RESPONSE_MOCK } from '@/app/api/anime/[animeId]/mock'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
-import type { User } from '@/api/users/types'
-import { GetAnimeByIdResponse } from '@/api/anime/[animeId]/types'
-import { GET_ANIME_BY_ID_RESPONSE_MOCK } from '@/app/api/anime/[animeId]/mock'
+import type { GetAnimeByIdResponse } from '@/api/anime/[animeId]/types'
 
 export default async function AnimePage({ params }: { params: { animeId: string } }) {
-  const animeId = params.animeId
+  const { animeId } = params
 
   const animeResponse = await fetchWithType<GetAnimeByIdResponse>(
     withBaseURL(`/api/anime/${animeId}`),

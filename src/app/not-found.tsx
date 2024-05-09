@@ -1,7 +1,9 @@
 import { Container, Title, Text, Button, Group, Anchor } from '@mantine/core'
 
 import styles from './not-found.module.css'
-import { ComponentPropsWithoutRef } from 'react'
+
+import type { ComponentPropsWithoutRef } from 'react'
+
 
 function Illustration(props: ComponentPropsWithoutRef<'svg'>) {
   return (

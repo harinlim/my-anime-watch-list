@@ -15,7 +15,7 @@ module.exports = {
     'plugin:unicorn/recommended',
     'prettier',
   ],
-  plugins: ['jsx-a11y', '@typescript-eslint', 'import'],
+  plugins: ['jsx-a11y', '@typescript-eslint', 'import', 'unused-imports'],
   rules: {
     'no-void': ['error', { allowAsStatement: true }],
     'no-console': ['warn', { allow: ['warn', 'error', 'time', 'timeEnd', 'info', 'table'] }],
@@ -46,6 +46,11 @@ module.exports = {
     'unicorn/filename-case': 'off',
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/no-null': 'off',
+
+    // Autofixes unused imports. Consider turning it off locally if it impedes your workflow.
+    'unused-imports/no-unused-imports': 'error',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-vars': 'error',
 
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
     '@typescript-eslint/promise-function-async': 'error',

@@ -6,7 +6,7 @@ import { createServerClient } from '@/lib/supabase/server'
 import type { GetAnimeByIdResponse } from './types'
 
 export async function GET(_: NextRequest, { params }: { params: { animeId: string } }) {
-  const animeId = params.animeId
+  const {animeId} = params
 
   const supabase = createServerClient()
   // Check if a user's logged in
