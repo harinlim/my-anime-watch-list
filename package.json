@@ -16,7 +16,7 @@
     "lint:stylelint": "stylelint '**/*.css' --cache",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {
     "@mantine/core": "~7.9.1",
