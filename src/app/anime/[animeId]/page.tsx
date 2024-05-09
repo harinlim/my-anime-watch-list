@@ -16,7 +16,7 @@ import clsx from 'clsx'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { Review } from '@/components/common/Review'
+import { Review } from '@/components/anime/Review'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
 import styles from './anime-page.module.css'
@@ -53,8 +53,11 @@ export default async function AnimePage({ params }: { params: { animeId: string 
   }
 
   const { data } = animeResponse
-  // const data = GET_ANIME_BY_ID_RESPONSE_MOCK
-  const genres = data.categories?.map(category => <Badge key={category}>{category}</Badge>)
+  if (!data) {
+    throw new Error('Failed to fetch anime')
+  }
+
+  const genres = data.categories ?? []
   let ratingColor = 'text-red-600'
   const rating = Number(data.averageRating)
 
@@ -82,11 +85,13 @@ export default async function AnimePage({ params }: { params: { animeId: string 
                 {data.canonicalTitle}
               </Title> */}
             </CardSection>
+
             {user && (
               <CardSection className={styles.section}>
                 <Review
-                  status={data.review?.status ?? undefined}
-                  rating={data.review?.rating ?? undefined}
+                  animeId={animeId}
+                  status={data.review?.status}
+                  rating={data.review?.rating}
                 />
               </CardSection>
             )}
@@ -123,9 +128,12 @@ export default async function AnimePage({ params }: { params: { animeId: string 
                 Genres
               </Text>
               <Group gap={7} mt={5}>
-                {genres}
+                {genres.map(category => (
+                  <Badge key={category}>{category}</Badge>
+                ))}
               </Group>
             </CardSection>
+
             <CardSection className={styles.section}>
               <Text mt="md" className={styles.label} c="dimmed">
                 Average Rating: &nbsp;
@@ -135,15 +143,12 @@ export default async function AnimePage({ params }: { params: { animeId: string 
               </Text>
             </CardSection>
           </Card>
+
           <div className="sm:pl-10 h-[100%] min-w-[275px] max-w-[500px]">
             <Title order={2}>Synopsis</Title>
             <Divider mt={5} />
             <Text mt={5}>{data.synopsis}</Text>
           </div>
-          {/* <h1>Anime</h1>
-        <div>
-          <pre className="items-left text-pretty">{JSON.stringify(data, null, 2)}</pre>
-        </div> */}
         </div>
       </div>
     </div>
