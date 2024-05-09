@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { createServerClient } from '@/lib/supabase/server'
 
-import type { Watchlist } from './types'
+import type { Watchlist } from '@/types/watchlists'
 import type { NextRequest } from 'next/server'
 
 type RouteParams = { params: { username: string } }

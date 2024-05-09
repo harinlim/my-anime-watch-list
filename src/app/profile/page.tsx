@@ -6,8 +6,8 @@ import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
-import type { Watchlist } from '@/api/users/[username]/watchlists/types'
 import type { User } from '@/api/users/types'
+import type { Watchlist } from '@/types/watchlists'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

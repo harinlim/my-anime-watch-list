@@ -30,7 +30,7 @@ This also includes a RESTful CRUD API for the following resources:
   - [ ] `GET`: Search and return a collection of public watchlists, given query parameters. For an authenticated user, this would include any private watchlists for that specific user as well.
   - [ ] `POST`: (_protected_) Create a new watchlist.
 - [ ] `/api/watchlists/:watchlistId`
-  - [ ] `GET`: Retrieve the watchlist resource given the associated watchlist id.
+  - [x] `GET`: Retrieve the watchlist resource given the associated watchlist id.
   - [ ] `PUT`: (_protected_) Update the watchlist metadata (name, description, public)
   - [ ] `POST`: (_protected_) Add an anime to the watchlist
   - [ ] `DELETE`: (_protected_) Delete the watchlist

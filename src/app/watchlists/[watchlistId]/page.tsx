@@ -2,21 +2,18 @@ import { Title, Text } from '@mantine/core'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
-import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
 import type { Watchlist } from '@/types/watchlists'
 
-/** Public profile page */
-export default async function ExternalProfilePage({ params }: { params: { username: string } }) {
-  const { username } = params
+export default async function WatchlistPage({ params }: { params: { watchlistId: string } }) {
+  const { watchlistId } = params
 
   const {
-    data: watchlists,
+    data: watchlist,
     status,
     ok,
-  } = await fetchWithType<Watchlist[]>(withBaseURL(`/api/users/${username}/watchlists`), {
+  } = await fetchWithType<Watchlist>(withBaseURL(`/api//watchlists/${watchlistId}`), {
     method: 'GET',
     credentials: 'include',
     headers: new Headers(headers()),
@@ -27,20 +24,19 @@ export default async function ExternalProfilePage({ params }: { params: { userna
   }
 
   if (!ok) {
-    throw new Error('Failed to fetch watchlists')
+    throw new Error('Failed to fetch watchlist')
   }
 
   return (
     <div className="min-h-full flex flex-col justify-center items-center space-y-6 p-8">
       <Title order={1}>
         <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
-          @{username}
+          {watchlist.title}
         </Text>
-        &apos;s Watchlists
       </Title>
-      <pre className="text-left text-wrap">{JSON.stringify(watchlists, null, 2)}</pre>
-      <WatchlistCard />
-      <ArticlesCardsGrid />
+      <pre className="text-left text-wrap">{JSON.stringify(watchlist, null, 2)}</pre>
+
+      {/* TODO: Render anime list */}
     </div>
   )
 }
