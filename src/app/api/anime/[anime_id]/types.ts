@@ -1,7 +1,7 @@
-import type { GetAnimeByIdDeserialized } from '@/lib/kitsu/types'
+import type { GetAnimeByIdDeserializedResponse } from '@/lib/kitsu/types'
 import type { Database } from '@/types/generated/supabase'
 
-export type GetAnimeByIdResponse = GetAnimeByIdDeserialized['data'] & {
+export type GetAnimeByIdResponse = GetAnimeByIdDeserializedResponse['data'] & {
   // Fields specific to user querying
   review: Pick<Database['public']['Tables']['user_reviews']['Row'], 'status' | 'rating'> | null
   watchlists: Database['public']['Tables']['watchlists']['Row'][] | null

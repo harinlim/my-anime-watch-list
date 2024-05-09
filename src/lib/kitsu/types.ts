@@ -13,13 +13,27 @@ type ImageMetadata<TSizes extends Size> = SizeRecord<TSizes, string | undefined>
   }
 }
 
+type ResourceLinks = {
+  self: string
+}
+
+export type PaginationMetadata = {
+  count: number
+}
+
+export type PaginationLinks = {
+  first: string
+  last: string
+  // If page number falls outside of the ends
+  prev?: string
+  next?: string
+}
+
 type AnimeAttributes = {
   slug: string
   synopsis: string
-  titles: {
-    en: string
-    [key: string]: string // For other locales
-  }
+  /** Comes in with keys `en`, `en_us`, `en_jp`, `en_cn`, etc., but per anime */
+  titles: Record<string, string>
   canonicalTitle: string
   abbreviatedTitles: string[]
   averageRating: string
@@ -54,6 +68,7 @@ export const ANIME_ATTRIBUTES = [
   'popularityRank',
   'ratingRank',
   'ageRating',
+  'subtype',
   'status',
   'posterImage',
   'coverImage',
@@ -63,33 +78,52 @@ export const ANIME_ATTRIBUTES = [
   'nsfw',
 ] as const satisfies (keyof AnimeAttributes)[]
 
+type AnimeData = {
+  id: string
+  type: 'anime'
+  links: ResourceLinks
+  attributes: AnimeAttributes
+}
+
 type CategoryAttributes = {
   title: string
 }
 
 export const CATEGORY_ATTRIBUTES = ['title'] as const satisfies (keyof CategoryAttributes)[]
 
+type CategoryData = {
+  id: string
+  type: 'categories'
+  links: ResourceLinks
+  attributes: CategoryAttributes
+}
 export type GetAnimeByIdResponse = {
-  data: {
-    id: string
-    type: 'anime'
-    attributes: AnimeAttributes
-  }
-  included?:
-    | {
-        id: string
-        type: 'categories'
-        attributes: CategoryAttributes
-      }[]
-    | null
+  data: AnimeData
+  included?: CategoryData[] | null
 }
 
-export type GetAnimeByIdDeserialized = {
-  data: {
-    id: string
-    type: 'anime'
+type AnimeDataDeserialized = {
+  id: string
+  type: 'anime'
+  links: ResourceLinks
+} & AnimeAttributes
+
+export type GetAnimeByIdDeserializedResponse = {
+  data: AnimeDataDeserialized & {
     categories: string[] | null
-  } & AnimeAttributes
+  }
+}
+
+export type SearchAnimeResponse = {
+  data: AnimeData[]
+  meta: PaginationMetadata
+  links: PaginationLinks
+}
+
+export type SearchAnimeDeserializedResponse = {
+  data: AnimeDataDeserialized[]
+  meta: PaginationMetadata
+  links: PaginationLinks
 }
 
 /* 
