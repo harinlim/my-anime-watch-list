@@ -87,7 +87,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.json('Unauthorized', { status: 401 })
+    return NextResponse.json('Failed authorization', { status: 401 })
   }
 
   const body = patchAnimeRequestSchema.safeParse(await request.json())

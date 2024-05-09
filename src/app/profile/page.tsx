@@ -20,6 +20,11 @@ export default async function SelfProfilePage() {
     headers: new Headers(headers()),
   })
 
+  // Use this to get user auth cookies needed for API testing
+  if (process.env.NODE_ENV === 'development') {
+    console.info(headers().get('cookie'))
+  }
+
   if (!user?.id) {
     return redirect('/login')
   }
