@@ -1,9 +1,6 @@
 import { Autocomplete, NativeSelect, rem } from '@mantine/core'
 import { IconSearch } from '@tabler/icons-react'
 
-import styles from './SearchBar.module.css'
-import clsx from 'clsx'
-
 const data = [
   { value: 'anime', label: 'Anime' },
   { value: 'watchlists', label: 'Watchlists' },

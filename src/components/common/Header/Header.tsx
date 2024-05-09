@@ -2,6 +2,7 @@
 
 import { Anchor, Group, Text, Title } from '@mantine/core'
 import { IconArmchair2 } from '@tabler/icons-react'
+import clsx from 'clsx'
 import Link from 'next/link'
 
 import { ColorSchemeToggle } from './ColorSchemeToggle'
@@ -10,7 +11,6 @@ import { SearchBar } from './SearchBar'
 import { UserMenu } from './UserMenu'
 
 import type { User } from '@/api/users/types'
-import clsx from 'clsx'
 
 type Props = {
   user: User | null
