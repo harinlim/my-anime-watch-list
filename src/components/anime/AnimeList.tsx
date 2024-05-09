@@ -2,6 +2,7 @@
 
 import { Button, Loader } from '@mantine/core'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Fragment } from 'react'
 
 import { useAnimeSearch } from '@/data/use-anime-search'
@@ -13,19 +14,19 @@ import type { SearchAnimeSortType } from '@/api/anime/types'
 type Props = {
   filter?: string
   sort?: SearchAnimeSortType
-  limit?: number
 }
 
-export function AnimeList({ filter, sort, limit }: Props) {
+export function AnimeList({ filter, sort }: Props) {
+  const searchParams = useSearchParams()
+
   const { data, isFetching, isFetchingNextPage, error, fetchNextPage } = useAnimeSearch({
-    filter,
-    sort,
-    limit,
+    filter: searchParams.get('search') ?? filter,
+    sort: (searchParams.get('sort') as SearchAnimeSortType) ?? sort,
   })
 
   return (
     <>
-      <div className="flex flex-wrap justify-center">
+      <div className="w-full flex flex-wrap justify-center">
         {data?.pages.map(page => (
           // TODO: separate each item into component
           // TODO: handle API errors

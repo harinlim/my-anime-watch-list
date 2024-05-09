@@ -53,7 +53,7 @@ export function Header({ user }: Props) {
           </Group>
 
           <Group gap={20} className="sm flex-nowrap">
-            <SearchBar className={styles.search} />
+            <SearchBar defaultType="/anime" includeSearchType className={styles.search} />
             <ColorSchemeToggle />
           </Group>
 

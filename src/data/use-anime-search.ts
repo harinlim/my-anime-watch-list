@@ -1,6 +1,8 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
+import { SEARCH_ANIME_SORT_TYPES } from '@/lib/kitsu/types'
+
 import type {
   SearchAnimeQueryParams,
   SearchAnimeResponse,
@@ -26,7 +28,7 @@ export function useAnimeSearch({
       }
 
       if (filter) searchParams.filter = filter
-      if (sort) searchParams.sort = sort
+      if (sort && SEARCH_ANIME_SORT_TYPES.includes(sort)) searchParams.sort = sort
 
       const response = await fetch(
         `/api/anime?${
@@ -43,7 +45,9 @@ export function useAnimeSearch({
   )
 
   return useInfiniteQuery({
-    queryKey: ['animelist'],
+    queryKey: [
+      `animelist${filter ? `-${filter}` : ''}${sort ? `-${sort}` : ''}${limit ? `-${limit}` : ''}`,
+    ],
     queryFn: fetchAnime,
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.meta?.next,
