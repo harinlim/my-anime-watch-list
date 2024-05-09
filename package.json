@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@mantine/core": "~7.9.1",
+    "@mantine/form": "^7.9.1",
     "@mantine/hooks": "~7.9.1",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.1",

@@ -126,7 +126,14 @@ export type SearchAnimeDeserializedResponse = {
   links: PaginationLinks
 }
 
-export type SearchAnimeSortType = 'popularity' | 'rating' | 'users' | 'latest' | 'oldest'
+export const SEARCH_ANIME_SORT_TYPES = [
+  'popularity',
+  'rating',
+  'users',
+  'latest',
+  'oldest',
+] as const
+export type SearchAnimeSortType = (typeof SEARCH_ANIME_SORT_TYPES)[number]
 
 export const SEARCH_ANIME_SORT_MAPPING = {
   popularity: 'popularityRank',
