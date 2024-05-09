@@ -17,8 +17,8 @@ This also includes a RESTful CRUD API for the following resources:
 
 - [x] `/api/users`
   - [x] `GET`: (_protected_) Get the user information of an authenticated user via authorization tokens
-- [ ] `/api/users/:userId`
-  - [ ] `GET`: Get the public user information of a given user via their id
+- [x] `/api/users/:username/watchlists`
+  - [x] `GET`: Get the public watchlists associated with the user by their username. For an authenticated user, this would include any private watchlists for that specific user as well.
 - [x] `/api/anime`
   - [x] `GET`: Search and return a collection of anime, given query parameters
 - [x] `/api/anime/:animeId`

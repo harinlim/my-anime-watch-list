@@ -6,6 +6,7 @@ import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
+import type { Watchlist } from '@/api/users/[username]/watchlists/types'
 import type { User } from '@/api/users/types'
 
 export const dynamic = 'force-dynamic'
@@ -23,6 +24,15 @@ export default async function SelfProfilePage() {
     return redirect('/login')
   }
 
+  const { data: watchlists } = await fetchWithType<Watchlist[]>(
+    withBaseURL(`/api/users/${user.username}/watchlists`),
+    {
+      method: 'GET',
+      credentials: 'include',
+      headers: new Headers(headers()),
+    }
+  )
+
   return (
     <div className="min-h-full flex flex-col justify-center items-center space-y-6 p-8">
       <Title order={1}>
@@ -31,6 +41,7 @@ export default async function SelfProfilePage() {
         </Text>
         &apos;s Watchlists
       </Title>
+      <pre className="text-left text-wrap">{JSON.stringify(watchlists, null, 2)}</pre>
       <WatchlistCard />
       <ArticlesCardsGrid />
     </div>

@@ -66,7 +66,7 @@ export async function signup(formData: FormData) {
     return redirect('/login?message=Failed to sign up')
   }
 
-  console.log(signUpResult)
+  console.info(signUpResult)
 
   if (signUpResult.error) {
     if (signUpResult.error.status === 422) {
