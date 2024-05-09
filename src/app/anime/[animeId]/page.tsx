@@ -14,7 +14,7 @@ export default async function AnimePage({ params }: { params: { animeId: string 
     {
       method: 'GET',
       credentials: 'include',
-      headers: headers(),
+      headers: new Headers(headers()),
     }
   )
 

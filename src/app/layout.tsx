@@ -30,7 +30,7 @@ export default async function RootLayout({
   const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
     method: 'GET',
     credentials: 'include',
-    headers: headers(),
+    headers: new Headers(headers()),
   })
 
   return (

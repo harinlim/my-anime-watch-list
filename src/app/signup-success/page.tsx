@@ -14,7 +14,7 @@ export default async function SignupSuccessPage() {
   const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
     method: 'GET',
     credentials: 'include',
-    headers: headers(),
+    headers: new Headers(headers()),
   })
 
   if (!user?.id) {

@@ -12,7 +12,7 @@ export default async function AnimePage() {
   const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
     method: 'GET',
     credentials: 'include',
-    headers: headers(),
+    headers: new Headers(headers()),
   })
 
   if (!user?.id) {
