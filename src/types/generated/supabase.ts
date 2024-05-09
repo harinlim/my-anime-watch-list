@@ -35,7 +35,7 @@ export type Database = {
           anime_id: string
           created_at: string
           rating: number | null
-          status: Database["public"]["Enums"]["watch_status"]
+          status: Database["public"]["Enums"]["watch_status"] | null
           updated_at: string
           user_id: string
         }
@@ -43,7 +43,7 @@ export type Database = {
           anime_id: string
           created_at?: string
           rating?: number | null
-          status?: Database["public"]["Enums"]["watch_status"]
+          status?: Database["public"]["Enums"]["watch_status"] | null
           updated_at?: string
           user_id: string
         }
@@ -51,7 +51,7 @@ export type Database = {
           anime_id?: string
           created_at?: string
           rating?: number | null
-          status?: Database["public"]["Enums"]["watch_status"]
+          status?: Database["public"]["Enums"]["watch_status"] | null
           updated_at?: string
           user_id?: string
         }

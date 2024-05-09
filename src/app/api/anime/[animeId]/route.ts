@@ -106,5 +106,5 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed to update user review', { status: 500 })
   }
 
-  return NextResponse.json(body.data)
+  return NextResponse.json({ id: animeId, ...body.data })
 }
