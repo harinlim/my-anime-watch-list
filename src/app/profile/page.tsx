@@ -1,6 +1,6 @@
 import { Title, Text } from '@mantine/core'
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
 import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
@@ -11,6 +11,7 @@ import type { User } from '@/api/users/types'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
+/** Private profile page, accessible only to the user with cookies */
 export default async function SelfProfilePage() {
   const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
     method: 'GET',
@@ -19,7 +20,7 @@ export default async function SelfProfilePage() {
   })
 
   if (!user?.id) {
-    return redirect('/not-found')
+    return redirect('/login')
   }
 
   return (
