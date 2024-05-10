@@ -38,6 +38,18 @@ This also includes a RESTful CRUD API for the following resources:
 - [x] `/api/watchlists/:watchlistId/anime/:animeId`
   - [x] `DELETE`: (_protected_) Remove the anime from the watchlist
 
+## Data Schema
+
+This leverages Postgres features extensively, including using JSON validation, row-level security policies, and others. The data schema is as follows:
+
+- `anime`: Saved anime resources from Kitsu (used to minimize dependency on Kitsu for watchlists)
+- `users`: User profile information that is publicly accessible. Note `id` links to the UUID `auth.users.id` column
+- `user_reviews`: User reviews on anime watch status and ratings
+- `watchlists`: User anime watchlists
+- `watchlists_anime`: Anime added to watchlists
+
+![Schema](public/db-schema.jpg)
+
 ## Contributing
 
 1. Make sure to install and enable the correct `pnpm` version. Also make sure to use nvm to use the correct node version.
