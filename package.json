@@ -9,6 +9,9 @@
   "packageManager": "pnpm@8.15.8",
   "scripts": {
     "dev": "next dev",
+    "db:login": "supabase login",
+    "db:pull": "supabase db pull --schema auth,storage,public",
+    "db:push": "supabase db push",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
