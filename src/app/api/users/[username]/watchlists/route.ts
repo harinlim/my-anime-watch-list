@@ -42,5 +42,6 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed to fetch watchlists', { status })
   }
 
+  // @ts-expect-error -- Mismatch on poster_image (JSON) vs ImageMetadata
   return NextResponse.json<Watchlist[]>(data)
 }

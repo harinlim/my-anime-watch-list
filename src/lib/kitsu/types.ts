@@ -4,7 +4,7 @@ type Size = 'tiny' | 'small' | 'medium' | 'large'
 
 type SizeRecord<TSize extends Size, T> = { [key in TSize]?: T }
 
-type ImageMetadata<TSizes extends Size> = SizeRecord<TSizes, string | undefined> & {
+export type ImageMetadata<TSizes extends Size = Size> = SizeRecord<TSizes, string | undefined> & {
   original: string
   meta: {
     // This doesn't cover conditional case where the corresponding dimension size

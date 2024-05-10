@@ -13,18 +13,21 @@ export type Database = {
         Row: {
           created_at: string
           kitsu_id: string
+          poster_image: Json | null
           synopsis: string | null
           title: string | null
         }
         Insert: {
           created_at?: string
           kitsu_id: string
+          poster_image?: Json | null
           synopsis?: string | null
           title?: string | null
         }
         Update: {
           created_at?: string
           kitsu_id?: string
+          poster_image?: Json | null
           synopsis?: string | null
           title?: string | null
         }
@@ -186,7 +189,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      json_matches_schema: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: boolean
+      }
+      jsonb_matches_schema: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: boolean
+      }
+      jsonschema_is_valid: {
+        Args: {
+          schema: Json
+        }
+        Returns: boolean
+      }
+      jsonschema_validation_errors: {
+        Args: {
+          schema: Json
+          instance: Json
+        }
+        Returns: string[]
+      }
     }
     Enums: {
       watch_status: "planned" | "watching" | "completed" | "dropped"

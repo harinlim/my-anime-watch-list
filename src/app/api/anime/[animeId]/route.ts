@@ -58,6 +58,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     kitsu_id: animeId,
     title: kitsuData.canonicalTitle,
     synopsis: kitsuData.synopsis,
+    poster_image: kitsuData.posterImage,
   })
 
   if (error) {

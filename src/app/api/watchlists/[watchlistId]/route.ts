@@ -44,6 +44,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }
 
+  // @ts-expect-error -- Mismatch on poster_image (JSON) vs ImageMetadata
   return NextResponse.json<Watchlist>(data)
 }
 
