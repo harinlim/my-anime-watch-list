@@ -7,12 +7,19 @@ import clsx from 'clsx'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import type { MantineSize } from '@mantine/core'
+
 type SearchType = '/anime' | '/watchlists'
 
 const SEARCH_TYPES = [
   { value: '/anime', label: 'Anime' },
   { value: '/watchlists', label: 'Watchlists' },
 ] as const satisfies { value: SearchType; label: string }[]
+
+const SEARCH_PLACEHOLDERS = {
+  '/anime': 'Search for anime',
+  '/watchlists': 'Search for watchlists',
+} as const satisfies Record<SearchType, string>
 
 type Props = {
   defaultSearch?: string
@@ -21,6 +28,7 @@ type Props = {
   includeSearchType?: boolean
   includeSubmit?: boolean
   includeSearchParams?: boolean
+  size?: MantineSize
   className?: string
 }
 
@@ -36,6 +44,7 @@ export function SearchBar({
   includeSearchType = false,
   includeSubmit = false,
   includeSearchParams = false,
+  size,
   className,
 }: Props) {
   const searchParams = useSearchParams()
@@ -74,7 +83,8 @@ export function SearchBar({
             borderBottomRightRadius: 0,
           },
         }}
-        placeholder="Search"
+        size={size}
+        placeholder={overrideType ? SEARCH_PLACEHOLDERS[overrideType] : 'Search'}
         leftSection={<IconSearch style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
         {...form.getInputProps('search')}
       />
@@ -82,6 +92,7 @@ export function SearchBar({
         <NativeSelect
           aria-label="Select search type"
           rightSectionWidth={28}
+          size={size}
           styles={{
             input: {
               display: 'inline-flex',
@@ -106,6 +117,7 @@ export function SearchBar({
           type="submit"
           disabled={isLoading}
           variant="gradient"
+          size={size}
           className="right-0 top-0 rounded-l-none"
         >
           Search

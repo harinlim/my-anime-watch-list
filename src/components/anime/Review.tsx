@@ -79,8 +79,9 @@ export function Review({ animeId, status = null, rating = null }: Props) {
       const newStatus = val as WatchStatus
       setStatusValue(newStatus)
       void updateStatus(animeId, newStatus)
+      combobox.closeDropdown()
     },
-    [animeId]
+    [animeId, combobox]
   )
 
   const handleChangeRating = useCallback(

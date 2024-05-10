@@ -19,10 +19,11 @@ type Props = {
 export function AnimeList({ filter, sort }: Props) {
   const searchParams = useSearchParams()
 
-  const { data, isFetching, isFetchingNextPage, error, fetchNextPage } = useAnimeSearch({
-    filter: searchParams.get('search') ?? filter,
-    sort: (searchParams.get('sort') as SearchAnimeSortType) ?? sort,
-  })
+  const { data, isFetching, isFetchingNextPage, error, hasNextPage, fetchNextPage } =
+    useAnimeSearch({
+      filter: searchParams.get('search') ?? filter,
+      sort: (searchParams.get('sort') as SearchAnimeSortType) ?? sort,
+    })
 
   return (
     <>
@@ -46,14 +47,16 @@ export function AnimeList({ filter, sort }: Props) {
       {isFetching && <Loader color="cyan" type="bars" />}
       {error && <div>Error: {error.message}</div>}
 
-      <Button
-        type="button"
-        className="mt-10 mb-20"
-        disabled={isFetchingNextPage}
-        onClick={async () => fetchNextPage()}
-      >
-        Load More
-      </Button>
+      {!isFetching && hasNextPage && (
+        <Button
+          type="button"
+          className="mt-10"
+          disabled={isFetchingNextPage}
+          onClick={async () => fetchNextPage()}
+        >
+          Load More
+        </Button>
+      )}
     </>
   )
 }

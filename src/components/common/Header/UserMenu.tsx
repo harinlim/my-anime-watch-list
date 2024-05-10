@@ -45,7 +45,10 @@ export function UserMenu({ user }: Props) {
       withinPortal
     >
       <MenuTarget>
-        <UnstyledButton className={clsx(styles.user, { [styles.userActive]: userMenuOpened })}>
+        <UnstyledButton
+          type="button"
+          className={clsx(styles.user, { [styles.userActive]: userMenuOpened })}
+        >
           <Group gap={7} className="flex-nowrap">
             <Text fw={500} size="sm" lh={1} mr={3}>
               @{user?.username}
