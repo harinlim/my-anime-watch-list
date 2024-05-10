@@ -16,6 +16,12 @@ export async function safeParseRequestBody<T>(request: NextRequest, schema: z.Zo
   try {
     return schema.safeParse(await request.json())
   } catch {
-    return { success: false }
+    const parseError: {
+      success: false
+      message: string
+      error?: never
+      data?: never
+    } = { success: false, message: 'Failed to parse the request body' }
+    return parseError
   }
 }

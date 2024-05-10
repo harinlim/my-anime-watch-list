@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { getAnimeById } from '@/lib/kitsu/api'
 import { createServerClient } from '@/lib/supabase/server'
+import { safeParseRequestBody } from '@/lib/zod/api'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
 import { patchAnimeRequestSchema } from './schemas'
@@ -90,9 +91,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }
 
-  const body = patchAnimeRequestSchema.safeParse(await request.json())
+  const body = await safeParseRequestBody(request, patchAnimeRequestSchema)
   if (!body.success) {
-    return NextResponse.json(transformZodValidationErrorToResponse(body.error), { status: 422 })
+    if (body.error) {
+      return NextResponse.json(transformZodValidationErrorToResponse(body.error), { status: 422 })
+    }
+    return NextResponse.json(body.message, { status: 400 })
   }
 
   const { error } = await supabase.from('user_reviews').upsert({
@@ -106,5 +110,5 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed to update user review', { status: 500 })
   }
 
-  return NextResponse.json({ id: animeId, ...body.data })
+  return new Response(null, { status: 204 })
 }
