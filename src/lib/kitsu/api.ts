@@ -56,18 +56,26 @@ export async function searchAnime(
     return { data: null, status: 400, ok: false, message: `Invalid sort type: ${params.sort}` }
   }
 
-  const searchParams = {
+  const searchParams: Record<string, string> = {
     sort: params.sort ? SEARCH_ANIME_SORT_MAPPING[params.sort] : 'popularityRank',
     'fields[anime]': ANIME_ATTRIBUTES_SERIALIZED,
     'page[number]': params.page?.toString() ?? '1',
     'page[size]': params.limit?.toString() ?? '10',
 
-    'filter[text]': params.filter ?? '',
-
     // TODO: Categories don't come in `relationships` when using `include` via search params. Explore this later.
     // 'fields[categories]': CATEGORY_ATTRIBUTES_SERIALIZED,
     // include: 'categories',
-  } as const
+  }
+
+  if (params.id && !(Array.isArray(params.id) && params.id.length === 0)) {
+    searchParams['filter[id]'] = Array.isArray(params.id)
+      ? params.id.join(',')
+      : params.id.toString()
+
+    // console.log(searchParams['filter[id]'])
+  } else if (params.filter) {
+    searchParams['filter[text]'] = params.filter
+  }
 
   const response = await fetchWithType<GetAnimeByIdResponse>(
     `${KITSU_API_URL}/anime?${new URLSearchParams(searchParams).toString()}`,

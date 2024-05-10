@@ -11,8 +11,15 @@ export async function GET(request: NextRequest) {
   const page = searchParams.get('page')
   const limit = searchParams.get('limit')
   const filter = searchParams.get('filter')
+  const id = searchParams.getAll('id')
 
-  const searchResults = await searchAnime({ sort, page, limit, filter } as SearchAnimeQueryParams)
+  const searchResults = await searchAnime({
+    sort,
+    page,
+    limit,
+    filter,
+    id,
+  } as SearchAnimeQueryParams)
 
   return NextResponse.json<SearchAnimeResponse>(searchResults, { status: searchResults.status })
 }

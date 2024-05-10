@@ -148,6 +148,7 @@ export type SearchAnimeQueryParams = {
   page?: number | string | null
   limit?: number | string | null
   filter?: string | null
+  id?: string | string[] | number | number[] | null
 }
 
 export type KitsuErrorResponse = {
