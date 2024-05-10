@@ -11,6 +11,9 @@ import type { GetAnimeByIdResponse } from './types'
 
 type RouteParams = { params: { animeId: string } }
 
+/**
+ * Get an anime by ID
+ */
 export async function GET(_: NextRequest, { params }: RouteParams) {
   const { animeId } = params
 
@@ -79,6 +82,12 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   })
 }
 
+/**
+ * Upsert a user review for an anime.
+ * Body:
+ * - status: string
+ * - rating: number
+ */
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const { animeId } = params
 
@@ -109,6 +118,39 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   if (error) {
     console.error(error)
     return NextResponse.json('Failed to update user review', { status: 500 })
+  }
+
+  return new Response(null, { status: 204 })
+}
+
+/**
+ * Delete a user review for an anime.
+ */
+export async function DELETE(_: NextRequest, { params }: RouteParams) {
+  const { animeId } = params
+
+  const supabase = createServerClient()
+  // Check if a user's logged in
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json('Failed authorization', { status: 401 })
+  }
+
+  const deleteQuery = await supabase
+    .from('user_reviews')
+    .delete({ count: 'exact' })
+    .eq('user_id', user.id)
+    .eq('anime_id', animeId)
+
+  if (deleteQuery.error) {
+    return NextResponse.json(deleteQuery.error, { status: deleteQuery.status })
+  }
+
+  if (!deleteQuery.count) {
+    return NextResponse.json('Anime review not found', { status: 404 })
   }
 
   return new Response(null, { status: 204 })
