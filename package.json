@@ -12,7 +12,7 @@
     "db:login": "supabase login",
     "db:pull": "supabase db pull --schema auth,storage,public",
     "db:push": "supabase db push",
-    "build": "pnpm gen:types && next build",
+    "build": "next build",
     "gen:types": "make gen-types",
     "start": "next start",
     "typecheck": "tsc --noEmit",
