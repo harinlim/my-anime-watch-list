@@ -32,8 +32,8 @@ This also includes a RESTful CRUD API for the following resources:
 - [ ] `/api/watchlists/:watchlistId`
   - [x] `GET`: Retrieve the watchlist resource given the associated watchlist id.
   - [ ] `PUT`: (_protected_) Update the watchlist metadata (name, description, public)
-  - [ ] `POST`: (_protected_) Add an anime to the watchlist
-  - [ ] `DELETE`: (_protected_) Delete the watchlist
+  - [x] `POST`: (_protected_) Add an anime to the watchlist
+  - [x] `DELETE`: (_protected_) Delete the watchlist
 - [x] `/api/watchlists/:watchlistId/anime/:animeId`
   - [x] `DELETE`: (_protected_) Remove the anime from the watchlist
 
