@@ -119,7 +119,7 @@ export type Database = {
           description: string | null
           id: number
           is_public: boolean
-          title: string | null
+          title: string
           updated_at: string
           user_id: string
         }
@@ -127,8 +127,8 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: number
-          is_public: boolean
-          title?: string | null
+          is_public?: boolean
+          title: string
           updated_at?: string
           user_id: string
         }
@@ -137,7 +137,7 @@ export type Database = {
           description?: string | null
           id?: number
           is_public?: boolean
-          title?: string | null
+          title?: string
           updated_at?: string
           user_id?: string
         }
