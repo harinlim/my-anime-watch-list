@@ -9,6 +9,7 @@ type Props = {
   rating?: string
 }
 
+// TODO: Expand styles and various states (hover, focus, active, etc.)
 export function AnimeCard({ title, poster, rating }: Props) {
   return (
     <Card

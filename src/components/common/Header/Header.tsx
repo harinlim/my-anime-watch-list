@@ -33,19 +33,12 @@ export function Header({ user }: Props) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Group className="flex-nowrap">
-          <Link className="flex flex-nowrap items-center gap-2" href="/">
-            <IconArmchair2 />
-            <Text
-              inherit
-              variant="gradient"
-              component="span"
-              gradient={{ from: 'blue', to: 'red' }}
-            >
-              <Title order={3}>MAWL</Title>
-            </Text>
-          </Link>
-        </Group>
+        <Link className="flex flex-nowrap items-center gap-2" href="/">
+          <IconArmchair2 />
+          <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
+            <Title order={3}>MAWL</Title>
+          </Text>
+        </Link>
 
         <Group ml={30} className={clsx(styles.links, 'flex-nowrap')}>
           <Group visibleFrom="md" gap="5">
