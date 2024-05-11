@@ -82,7 +82,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     supabase
       .from('anime')
       .select('kitsu_id', { head: true, count: 'exact' })
-      .eq('kitsu_id', animeId),
+      .eq('kitsu_id', animeId)
+      .single(),
     supabase
       .from('watchlists_anime')
       .select('*', { head: true, count: 'exact' })
