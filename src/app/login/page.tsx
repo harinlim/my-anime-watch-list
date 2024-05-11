@@ -11,14 +11,14 @@ export default function Login({ searchParams }: { searchParams: { message: strin
         radius="md"
         p="xl"
         withBorder
-        className="flex flex-col px-8 w-full sm:max-w-sm max-w-md gap-2 shadow-lg dark:shadow-blue-500/40"
+        className="animate-in flex flex-col px-8 w-full sm:max-w-sm max-w-md gap-2 shadow-lg dark:shadow-blue-500/40"
       >
-        <Title order={1} className={`animate-in text-center ${styles.title}`} ta="center">
+        <Title order={1} className={`text-center ${styles.title}`} ta="center">
           Sign In
         </Title>
         <form
           id="login-form"
-          className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
+          className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
         >
           <label htmlFor="email" className="block text-sm font-medium leading-6 ">
             Email:
