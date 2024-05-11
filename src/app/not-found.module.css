@@ -1,20 +1,3 @@
-.image {
-  position: absolute;
-  inset: 0;
-  opacity: 0.75;
-  color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
-}
-
-.content {
-  padding-top: rem(180px);
-  position: relative;
-  z-index: 1;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding-top: rem(120px);
-  }
-}
-
 .title {
   font-family: 'Greycliff CF', var(--mantine-font-family);
   text-align: center;
