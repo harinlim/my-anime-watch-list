@@ -1,5 +1,4 @@
 import { Container, Title, Text, Button, Group, Anchor } from '@mantine/core'
-import clsx from 'clsx'
 
 import { NotFoundImage } from '@/components/common/NotFoundImage'
 
@@ -9,7 +8,7 @@ export default function NotFoundPage() {
   return (
     <Container className="py-20 min-h-[calc(100vh-150px)] flex items-center justify-center">
       <div className="block">
-        <NotFoundImage className={clsx(styles.image)} />
+        <NotFoundImage />
         <div className="relative z-10">
           <Title className={styles.title}>We can&apos;t find that :(</Title>
           <Text c="dimmed" size="lg" ta="center" className={styles.description}>
