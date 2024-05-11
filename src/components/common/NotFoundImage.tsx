@@ -16,6 +16,7 @@ export function NotFoundImage() {
         width={600}
         height={145}
         aria-hidden
+        priority
         className="relative pb-5"
       />
     )
