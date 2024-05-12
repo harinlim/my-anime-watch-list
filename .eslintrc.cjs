@@ -87,6 +87,7 @@ module.exports = {
         'plugin:jest/style',
         'plugin:jest-extended/all',
         'plugin:jest-formatting/recommended',
+        'plugin:@tanstack/eslint-plugin-query/recommended',
       ],
       rules: {
         /* --- Additional auto-fixable rules --- */
