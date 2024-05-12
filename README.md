@@ -57,8 +57,8 @@ This leverages Postgres features extensively, including using JSON validation, r
 1. Make sure to install and enable the correct `pnpm` version. Also make sure to use nvm to use the correct node version.
 
 ```sh
-corepack enable
 nvm use
+corepack enable
 ```
 
 2. Install the packages with `pnpm`:
