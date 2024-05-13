@@ -72,12 +72,12 @@ export default async function AnimePage({ params }: { params: { animeId: string 
   }
 
   return (
-    <div className="mt-10 w-full flex items-center justify-center">
-      <div className="lg:w-[70%] flex-col items-center">
-        <Title order={1} className="px-[32px] lg:text-5xl text-4xl w-full text-center md:text-left">
+    <div className="mt-10 flex w-full items-center justify-center">
+      <div className="flex-col items-center lg:w-[70%]">
+        <Title order={1} className="w-full px-[32px] text-center text-4xl md:text-left lg:text-5xl">
           {data.canonicalTitle} ({data.titles.ja_jp && data.titles.ja_jp})
         </Title>
-        <div className="flex sm:flex-row sm:flex-nowrap flex-col flex-wrap sm:items-start items-center space-y-6 sm:space-y-0 p-8">
+        <div className="flex flex-col flex-wrap items-center space-y-6 p-8 sm:flex-row sm:flex-nowrap sm:items-start sm:space-y-0">
           <Card withBorder radius="md" p="xl" className={clsx(styles.card, 'min-w-[300px]')}>
             <Image src={data.posterImage?.small} alt={data.canonicalTitle} radius="md" />
             <CardSection className={styles.section}>
@@ -144,7 +144,7 @@ export default async function AnimePage({ params }: { params: { animeId: string 
             </CardSection>
           </Card>
 
-          <div className="sm:pl-10 h-[100%] min-w-[275px] max-w-[500px]">
+          <div className="h-[100%] min-w-[275px] max-w-[500px] sm:pl-10">
             <Title order={2}>Synopsis</Title>
             <Divider mt={5} />
             <Text mt={5}>{data.synopsis}</Text>

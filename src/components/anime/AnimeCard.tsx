@@ -13,7 +13,7 @@ type Props = {
 export function AnimeCard({ title, poster, rating }: Props) {
   return (
     <Card
-      className={clsx(styles.card, 'basis-1/2 min-w-10 lg:basis-auto shrink h-auto')}
+      className={clsx(styles.card, 'h-auto min-w-10 shrink basis-1/2 lg:basis-auto')}
       maw={250}
       mih={300}
     >
@@ -21,7 +21,7 @@ export function AnimeCard({ title, poster, rating }: Props) {
         <Image src={poster} alt="Panda" />
       </AspectRatio> */}
       <Image src={poster} radius="md" width="w-full" />
-      <Group className="pt-5 min-w-100 min-h-70 custom">
+      <Group className="min-w-100 min-h-70 custom pt-5">
         <div>
           <Text className={styles.category} size="xs">
             Rating: {rating}

@@ -23,7 +23,7 @@ export default async function SignupSuccessPage() {
   const welcomeText = user.username ? `Welcome, @${user.username} :)` : 'Welcome'
 
   return (
-    <div className="min-h-[calc(100vh-150px)] px-10 flex flex-col justify-center items-center space-y-6">
+    <div className="flex min-h-[calc(100vh-150px)] flex-col items-center justify-center space-y-6 px-10">
       <Title order={1} className="sm:text-center">
         {welcomeText}
       </Title>

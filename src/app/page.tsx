@@ -7,7 +7,7 @@ import styles from './page.module.css'
 
 export default function Home() {
   return (
-    <div className="min-h-[calc(100vh-150px)] flex flex-col items-center justify-center pb-20">
+    <div className="flex min-h-[calc(100vh-150px)] flex-col items-center justify-center pb-20">
       <Title className={clsx('text-5xl md:text-7xl', styles.title)} ta="center">
         Welcome to{' '}
         <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
@@ -16,7 +16,7 @@ export default function Home() {
       </Title>
 
       <Text
-        className="font-bold text-2xl md:text-3xl mt-1 md:mt-2"
+        className="mt-1 text-2xl font-bold md:mt-2 md:text-3xl"
         inherit
         variant="gradient"
         component="span"
@@ -30,7 +30,7 @@ export default function Home() {
         includeSearchParams
         includeSubmit
         size="md"
-        className="w-4/5 md:w-3/5 my-10"
+        className="my-10 w-4/5 md:w-3/5"
       />
 
       {/* <Text className="pb-8 px-6" c="dimmed" ta="center" size="lg" maw={580} mx="auto">

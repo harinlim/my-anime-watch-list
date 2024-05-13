@@ -28,13 +28,13 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
   }
 
   return (
-    <div className="min-h-full flex flex-col justify-center items-center space-y-6 p-8">
+    <div className="flex min-h-full flex-col items-center justify-center space-y-6 p-8">
       <Title order={1}>
         <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
           {watchlist.title}
         </Text>
       </Title>
-      <pre className="text-left text-wrap">{JSON.stringify(watchlist, null, 2)}</pre>
+      <pre className="text-wrap text-left">{JSON.stringify(watchlist, null, 2)}</pre>
 
       {/* TODO: Render anime list */}
     </div>

@@ -8,7 +8,7 @@ export function WatchlistCard() {
   return (
     <Box className={styles.card} maw={300} mih={300} background-image={url}>
       <BackgroundImage src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-6.png">
-        <Group className="p-5 min-w-100 min-h-70">
+        <Group className="min-w-100 min-h-70 p-5">
           <div>
             <Text className={styles.category} size="xs">
               nature

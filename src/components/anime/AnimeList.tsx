@@ -27,7 +27,7 @@ export function AnimeList({ filter, sort }: Props) {
 
   return (
     <>
-      <div className="w-full flex flex-wrap justify-center gap-4">
+      <div className="flex w-full flex-wrap justify-center gap-4">
         {data?.pages.map(page => (
           // TODO: separate each item into component
           // TODO: handle API errors

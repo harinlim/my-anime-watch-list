@@ -45,7 +45,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={clsx(inter.className, 'min-h-screen min-w-80 bg-background text-foreground')}
+        className={clsx(inter.className, 'bg-background text-foreground min-h-screen min-w-80')}
       >
         <ReactQueryClientProvider>
           <MantineProvider defaultColorScheme="dark" theme={theme}>

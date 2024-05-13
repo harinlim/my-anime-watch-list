@@ -31,14 +31,14 @@ export default async function ExternalProfilePage({ params }: { params: { userna
   }
 
   return (
-    <div className="min-h-full flex flex-col justify-center items-center space-y-6 p-8">
+    <div className="flex min-h-full flex-col items-center justify-center space-y-6 p-8">
       <Title order={1}>
         <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
           @{username}
         </Text>
         &apos;s Watchlists
       </Title>
-      <pre className="text-left text-wrap">{JSON.stringify(watchlists, null, 2)}</pre>
+      <pre className="text-wrap text-left">{JSON.stringify(watchlists, null, 2)}</pre>
       <WatchlistCard />
       <ArticlesCardsGrid />
     </div>

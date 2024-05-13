@@ -6,7 +6,7 @@ import styles from './not-found.module.css'
 
 export default function NotFoundPage() {
   return (
-    <Container className="py-20 min-h-[calc(100vh-150px)] flex items-center justify-center">
+    <Container className="flex min-h-[calc(100vh-150px)] items-center justify-center py-20">
       <div className="block">
         <NotFoundImage />
         <div className="relative z-10">
