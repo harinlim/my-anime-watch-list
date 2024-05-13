@@ -1,0 +1,14 @@
+{
+  "formatter": {
+    "code_actions": {
+      // Use ESLint's --fix
+      "source.fixAll.eslint": true
+    }
+  },
+  "format_on_save": {
+    "external": {
+      "command": "node_modules/.bin/prettier",
+      "arguments": ["--stdin-filepath", "{buffer_path}"]
+    }
+  }
+}
