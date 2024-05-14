@@ -15,21 +15,21 @@ export type Database = {
           kitsu_id: string
           poster_image: Json | null
           synopsis: string | null
-          title: string | null
+          title: string
         }
         Insert: {
           created_at?: string
           kitsu_id: string
           poster_image?: Json | null
           synopsis?: string | null
-          title?: string | null
+          title: string
         }
         Update: {
           created_at?: string
           kitsu_id?: string
           poster_image?: Json | null
           synopsis?: string | null
-          title?: string | null
+          title?: string
         }
         Relationships: []
       }
@@ -38,6 +38,7 @@ export type Database = {
           anime_id: string
           created_at: string
           rating: number | null
+          review_text: string | null
           status: Database["public"]["Enums"]["watch_status"] | null
           updated_at: string
           user_id: string
@@ -46,6 +47,7 @@ export type Database = {
           anime_id: string
           created_at?: string
           rating?: number | null
+          review_text?: string | null
           status?: Database["public"]["Enums"]["watch_status"] | null
           updated_at?: string
           user_id: string
@@ -54,6 +56,7 @@ export type Database = {
           anime_id?: string
           created_at?: string
           rating?: number | null
+          review_text?: string | null
           status?: Database["public"]["Enums"]["watch_status"] | null
           updated_at?: string
           user_id?: string
@@ -184,11 +187,54 @@ export type Database = {
           },
         ]
       }
+      watchlists_users: {
+        Row: {
+          created_at: string
+          role: Database["public"]["Enums"]["collaborator_access"]
+          user_id: string
+          watchlist_id: number
+        }
+        Insert: {
+          created_at?: string
+          role: Database["public"]["Enums"]["collaborator_access"]
+          user_id?: string
+          watchlist_id?: number
+        }
+        Update: {
+          created_at?: string
+          role?: Database["public"]["Enums"]["collaborator_access"]
+          user_id?: string
+          watchlist_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlists_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlists_users_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_watchlist: {
+        Args: {
+          _user_id: string
+          _watchlist_id: number
+        }
+        Returns: boolean
+      }
       json_matches_schema: {
         Args: {
           schema: Json
@@ -218,6 +264,7 @@ export type Database = {
       }
     }
     Enums: {
+      collaborator_access: "owner" | "editor" | "viewer"
       watch_status: "planned" | "watching" | "completed" | "dropped"
     }
     CompositeTypes: {
