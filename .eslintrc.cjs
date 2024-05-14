@@ -44,6 +44,7 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'], allow: 'as-needed' }],
 
     'unicorn/filename-case': 'off',
+    'unicorn/prefer-string-raw': 'off',
     'unicorn/prevent-abbreviations': 'off',
     'unicorn/no-null': 'off',
 
