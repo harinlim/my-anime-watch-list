@@ -1,9 +1,7 @@
 {
-  "formatter": {
-    "code_actions": {
-      // Use ESLint's --fix
-      "source.fixAll.eslint": true
-    }
+  "code_actions_on_format": {
+    // Use ESLint's --fix:
+    "source.fixAll.eslint": true
   },
   "format_on_save": {
     "external": {
