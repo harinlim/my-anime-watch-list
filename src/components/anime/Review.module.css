@@ -1,7 +1,7 @@
 .label {
-  text-transform: uppercase;
-  font-size: var(--mantine-font-size-md);
   font-weight: 700;
+  font-size: var(--mantine-font-size-md);
+  text-transform: uppercase;
 }
 
 .inputbase button {

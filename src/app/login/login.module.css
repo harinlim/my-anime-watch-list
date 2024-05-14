@@ -10,11 +10,11 @@
 
 .text,
 #login-form > label {
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-  font-size: rem(20px);
-  font-weight: 500;
-  line-height: rem(30px);
   margin-top: rem(20px);
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+  font-weight: 500;
+  font-size: rem(20px);
+  line-height: rem(30px);
 }
 
 .submit-button {

@@ -30,6 +30,7 @@ module.exports = {
   ],
 
   plugins: [
+    'prettier-plugin-css-order',
     'prettier-plugin-tailwindcss', // MUST come last
   ],
   tailwindConfig: './tailwind.config.ts',

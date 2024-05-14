@@ -1,6 +1,6 @@
 .notFound {
   position: absolute;
-  inset: 0;
   opacity: 0.75;
+  inset: 0;
   color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
 }
