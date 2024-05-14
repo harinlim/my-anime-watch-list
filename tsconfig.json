@@ -16,7 +16,7 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@/api/*": ["./src/app/api/*"]
+      "@/api/*": ["./src/app/(api)/api/*"]
     }
   },
   "include": [
@@ -31,5 +31,5 @@
     "tailwind.config.js",
     "jest.config.mjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".next"]
 }

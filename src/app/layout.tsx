@@ -12,7 +12,7 @@ import { theme } from './theme'
 import '@mantine/core/styles.css'
 import './globals.css'
 
-import type { User } from './api/users/types'
+import type { User } from '@/api/users/types'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
