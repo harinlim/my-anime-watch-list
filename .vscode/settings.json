@@ -5,8 +5,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
-  "[typescript][typescriptreact][javascript][javascriptreact]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
-  },
   "vs-code-prettier-eslint.prettierLast": false
 }

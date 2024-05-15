@@ -28,7 +28,7 @@
     ".eslintrc.cjs",
     ".prettierrc.cjs",
     ".stylelintrc.cjs",
-    "tailwind.config.js",
+    "tailwind.config.ts",
     "jest.config.mjs"
   ],
   "exclude": ["node_modules", ".next"]
