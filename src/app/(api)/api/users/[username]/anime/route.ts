@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 
 import { createServerClient } from '@/lib/supabase/server'
+import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
+import { getAnimeByUserQueryParamSchema } from './schemas'
 import { getAnimeByUserAssociation, transformAnimeByUserAssociation } from './utils'
 
 import type { GetAnimeByUserAssociationResponse } from './types'
@@ -16,7 +18,7 @@ type RouteParams = { params: { username: string } }
  *
  * Note: not going to worry about pagination or metadata here.
  */
-export async function GET(_: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   const { username } = params
 
   const supabase = createServerClient()
@@ -54,25 +56,50 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
 
   // TODO: Add query params (filter: status, rating, sort, pagination)
 
+  const { searchParams } = request.nextUrl
+
+  const queryParamsResult = getAnimeByUserQueryParamSchema.safeParse({
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    status: searchParams.get('status') || null,
+    rating: searchParams.get('rating'),
+  })
+
+  if (!queryParamsResult.success) {
+    return NextResponse.json(transformZodValidationErrorToResponse(queryParamsResult.error), {
+      status: 400,
+    })
+  }
+
+  const queryParams = queryParamsResult.data
+
+  const hasFilter = !!queryParams.status || !!queryParams.rating
+
   // 1. Get anime IDs from user_reviews and watchlists associated with the user
 
-  const reviewsQuery = supabase.from('user_reviews').select(`anime_id`).eq('user_id', userId)
-  const watchlistsUsersQuery = supabase
-    .from('watchlists_anime')
-    .select(
-      'anime_id, watchlists(id, is_public, watchlists_users!inner(role, user_id, watchlist_id))'
-    )
-    .eq('watchlists.watchlists_users.user_id', userId)
-    // For some reason, filtering on watchlists_users.user_id doesn't filter out watchlist_anime entries that don't have associated watchlists.
-    // Look into this later.
-    .not('watchlists', 'is', null)
+  let reviewsQuery = supabase.from('user_reviews').select(`anime_id`).eq('user_id', userId)
+
+  if (queryParams.status) reviewsQuery = reviewsQuery.eq('status', queryParams.status)
+  if (queryParams.rating) reviewsQuery = reviewsQuery.eq('rating', queryParams.rating)
+
+  // When there's a filter, don't query for watchlists
+  const watchlistsUsersQuery = hasFilter
+    ? null
+    : supabase
+        .from('watchlists_anime')
+        .select(
+          'anime_id, watchlists(id, is_public, watchlists_users!inner(role, user_id, watchlist_id))'
+        )
+        .eq('watchlists.watchlists_users.user_id', userId)
+        // For some reason, filtering on watchlists_users.user_id doesn't filter out watchlist_anime entries that don't have associated watchlists.
+        // Look into this later.
+        .not('watchlists', 'is', null)
 
   const [reviewedAnimeQueryResult, watchlistsUsersAnimeQueryResult] = await Promise.all([
     reviewsQuery,
     watchlistsUsersQuery,
   ])
 
-  if (watchlistsUsersAnimeQueryResult.error) {
+  if (watchlistsUsersAnimeQueryResult?.error) {
     console.error(watchlistsUsersAnimeQueryResult)
     return NextResponse.json('Failed to fetch anime IDs of user-associated watchlists', {
       status: watchlistsUsersAnimeQueryResult.status,
@@ -90,7 +117,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
 
   const associatedAnimeIds = [
     ...new Set([
-      ...watchlistsUsersAnimeQueryResult.data.map(watchlist => watchlist.anime_id),
+      ...(watchlistsUsersAnimeQueryResult?.data.map(watchlist => watchlist.anime_id) ?? []),
       ...reviewedAnimeQueryResult.data.map(review => review.anime_id),
     ]),
   ]
