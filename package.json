@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "db:login": "supabase login",
+    "db:dump": "make db-dump",
     "db:pull": "supabase db pull --schema auth,storage,public",
     "db:push": "supabase db push",
     "build": "next build",

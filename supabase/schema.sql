@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS "public"."users" (
     "full_name" "text",
     "avatar_url" "text",
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "email" "text",
+    "email" "text" NOT NULL,
     CONSTRAINT "users_username_check" CHECK (("length"(("username")::"text") >= 3)),
     CONSTRAINT "users_username_length" CHECK (("char_length"(("username")::"text") <= 50))
 );
@@ -356,9 +356,13 @@ CREATE POLICY "Enable read access for all users" ON "public"."watchlists_anime" 
            FROM "public"."watchlists_users"
           WHERE (("watchlists_users"."watchlist_id" = "watchlists"."id") AND ("watchlists_users"."user_id" = ( SELECT "auth"."uid"() AS "uid")))))))));
 
-CREATE POLICY "Enable read access for all users" ON "public"."watchlists_users" FOR SELECT USING ("public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id"));
+CREATE POLICY "Enable read access for all users" ON "public"."watchlists_users" FOR SELECT USING (("public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") OR ("watchlist_id" IN ( SELECT "watchlists"."id"
+   FROM "public"."watchlists"
+  WHERE ("watchlists"."is_public" = true)))));
 
 CREATE POLICY "Enable read access for public watchlists or permitted users" ON "public"."watchlists" FOR SELECT USING (("is_public" OR (( SELECT "auth"."uid"() AS "uid") = "user_id") OR "public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "id")));
+
+CREATE POLICY "Enable update for all users" ON "public"."anime" FOR UPDATE USING (true);
 
 CREATE POLICY "Enable update for permitted users" ON "public"."watchlists" FOR UPDATE USING (((( SELECT "auth"."uid"() AS "uid") = "user_id") OR (( SELECT "auth"."uid"() AS "uid") IN ( SELECT "watchlists_users"."user_id"
    FROM "public"."watchlists_users"
