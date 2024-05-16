@@ -73,8 +73,8 @@ export async function searchAnime(
       : params.id.toString()
 
     // console.log(searchParams['filter[id]'])
-  } else if (params.filter) {
-    searchParams['filter[text]'] = params.filter
+  } else if (params.search) {
+    searchParams['filter[text]'] = params.search
   }
 
   const response = await fetchWithType<GetAnimeByIdResponse>(

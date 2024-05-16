@@ -21,7 +21,7 @@ export function AnimeList({ filter, sort }: Props) {
 
   const { data, isFetching, isFetchingNextPage, error, hasNextPage, fetchNextPage } =
     useAnimeSearch({
-      filter: searchParams.get('search') ?? filter,
+      search: searchParams.get('search') ?? filter,
       sort: (searchParams.get('sort') as SearchAnimeSortType) ?? sort,
     })
 

@@ -147,7 +147,7 @@ export type SearchAnimeQueryParams = {
   sort?: SearchAnimeSortType | null
   page?: number | string | null
   limit?: number | string | null
-  filter?: string | null
+  search?: string | null
   id?: string | string[] | number | number[] | null
 }
 

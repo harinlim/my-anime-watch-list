@@ -12,11 +12,11 @@ import type {
 const PAGE_SIZE = 10
 
 export function useAnimeSearch({
-  filter,
+  search,
   sort,
   limit,
 }: {
-  filter?: string
+  search?: string
   sort?: SearchAnimeSortType
   limit?: number
 } = {}) {
@@ -27,7 +27,7 @@ export function useAnimeSearch({
         limit: limit ?? PAGE_SIZE,
       }
 
-      if (filter) searchParams.filter = filter
+      if (search) searchParams.search = search
       if (sort && SEARCH_ANIME_SORT_TYPES.includes(sort)) searchParams.sort = sort
 
       const response = await fetch(
@@ -41,12 +41,12 @@ export function useAnimeSearch({
       )
       return response.json() as Promise<SearchAnimeResponse>
     },
-    [filter, sort, limit]
+    [search, sort, limit]
   )
 
   return useInfiniteQuery({
     queryKey: [
-      `animelist${filter ? `-${filter}` : ''}${sort ? `-${sort}` : ''}${limit ? `-${limit}` : ''}`,
+      `animelist${search ? `-${search}` : ''}${sort ? `-${sort}` : ''}${limit ? `-${limit}` : ''}`,
     ],
     queryFn: fetchAnime,
     initialPageParam: 1,

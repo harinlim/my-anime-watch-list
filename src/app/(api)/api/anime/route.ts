@@ -10,14 +10,14 @@ export async function GET(request: NextRequest) {
   const sort = searchParams.get('sort')
   const page = searchParams.get('page')
   const limit = searchParams.get('limit')
-  const filter = searchParams.get('filter')
+  const search = searchParams.get('search')
   const id = searchParams.getAll('id')
 
   const searchResults = await searchAnime({
     sort,
     page,
     limit,
-    filter,
+    search,
     id,
   } as SearchAnimeQueryParams)
 
