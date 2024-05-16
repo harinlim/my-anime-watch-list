@@ -5,6 +5,10 @@ export function getWatchlistCollaborators(supabase: SupabaseClient<Database>, wa
   // Note authorization checks will be done via RLS, though it will be returning a 404
   // RLS on watchlists_users will ensure that only collaborators to private watchlists OR
   // public watchlists will be returned
+
+  // RLS allows reads on rows where user has access to watchlist, or if the watchlist is public.
+  // If the user is a non-contributor, disallow reads on viewer rows.
+  // When read as a viewer, should not be able to see other viewers but themself.
   return supabase
     .from('watchlists_users')
     .select('user_id, role, ...users(username)', { count: 'exact' })

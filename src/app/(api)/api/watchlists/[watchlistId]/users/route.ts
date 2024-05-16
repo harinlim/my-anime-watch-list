@@ -21,18 +21,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
 
   const supabase = createServerClient()
 
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json('Failed authorization', { status: 401 })
-  }
-
-  // Note authorization checks will be done via RLS, though it will be returning a 404
-  // RLS on watchlists_users will ensure that only collaborators to private watchlists OR
-  // public watchlists will be returned
+  // Note auth-based filters are applied via RLS
   const [collaboratorsQueryResult, watchlistQueryResult] = await Promise.all([
     getWatchlistCollaborators(supabase, watchlistId),
     getWatchlistById(supabase, watchlistId),
