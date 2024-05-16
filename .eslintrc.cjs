@@ -46,6 +46,7 @@ module.exports = {
     'unicorn/filename-case': 'off',
     'unicorn/prefer-string-raw': 'off',
     'unicorn/prevent-abbreviations': 'off',
+    'unicorn/no-array-callback-reference': 'off',
     'unicorn/no-null': 'off',
 
     // Autofixes unused imports. Consider turning it off locally if it impedes your workflow.
@@ -54,6 +55,15 @@ module.exports = {
     'unused-imports/no-unused-vars': 'error',
 
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+    // '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],
+    '@typescript-eslint/naming-convention': [
+      'error',
+      {
+        selector: 'variable',
+        modifiers: ['destructured'],
+        format: null,
+      },
+    ],
     '@typescript-eslint/promise-function-async': 'error',
     '@typescript-eslint/no-unsafe-argument': 'off',
     '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
