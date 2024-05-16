@@ -15,4 +15,6 @@ export const getAnimeByUserQueryParamSchema = z.object({
     .min(1, 'Rating must be greater than or equal to 1')
     .max(10, 'Rating must be less than or equal to 10')
     .nullish(),
+  sort: z.enum(['rating', 'status']),
+  direction: z.enum(['asc', 'desc']),
 })

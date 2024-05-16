@@ -59,9 +59,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const { searchParams } = request.nextUrl
 
   const queryParamsResult = getAnimeByUserQueryParamSchema.safeParse({
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
     status: searchParams.get('status') || null,
-    rating: searchParams.get('rating'),
+    rating: searchParams.get('rating') || null,
+    sort: searchParams.get('sort') || 'status',
+    direction: searchParams.get('direction') || 'asc',
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
   })
 
   if (!queryParamsResult.success) {
@@ -133,6 +136,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   return NextResponse.json<GetAnimeByUserAssociationResponse>(
-    transformAnimeByUserAssociation(userAnimeResult.data)
+    transformAnimeByUserAssociation(userAnimeResult.data, {
+      sort: queryParams.sort,
+      direction: queryParams.direction,
+    })
   )
 }
