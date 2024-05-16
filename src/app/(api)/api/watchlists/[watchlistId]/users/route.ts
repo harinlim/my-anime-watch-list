@@ -103,11 +103,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   if (!!userExistsResult.error || userExistsResult.count === 0) {
     if (userExistsResult.status === 406) {
       // This is a 422 because the user ID is invalid
-      return NextResponse.json('User not found', { status: 422 })
+      return NextResponse.json('Requested user not found', { status: 422 })
     }
 
     console.error(watchlistExistsResult)
-    return NextResponse.json('Failed to fetch user', { status: userExistsResult.status })
+    return NextResponse.json('Failed to fetch requested user', { status: userExistsResult.status })
   }
 
   if (hasWatchlistConflictResult.error) {
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   const hasWatchlistConflict = hasWatchlistConflictResult.data
   if (hasWatchlistConflict) {
-    return NextResponse.json('User is already added to watchlist', { status: 409 })
+    return NextResponse.json('Requested user is already added to watchlist', { status: 409 })
   }
 
   if (hasEditAccessResult.error) {
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   if (error) {
     console.error(error)
-    return NextResponse.json('Failed to add user to watchlist', { status: 500 })
+    return NextResponse.json('Failed to add requested user to watchlist', { status: 500 })
   }
 
   return NextResponse.json({ watchlistId, userId, role }, { status: 201 })
