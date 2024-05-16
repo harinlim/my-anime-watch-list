@@ -22,3 +22,15 @@ export function getWatchlistById(supabase: SupabaseClient<Database>, watchlistId
     .eq('id', watchlistId)
     .single()
 }
+
+export function getWatchlistRoleForUser(
+  supabase: SupabaseClient<Database>,
+  { watchlistId, userId }: { watchlistId: number; userId: string }
+) {
+  return supabase
+    .from('watchlists_users')
+    .select('role')
+    .eq('watchlist_id', watchlistId)
+    .eq('user_id', userId)
+    .single()
+}
