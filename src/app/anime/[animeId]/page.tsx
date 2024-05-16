@@ -22,7 +22,7 @@ import { fetchWithType, withBaseURL } from '@/lib/api'
 import styles from './anime-page.module.css'
 
 import type { GetAnimeByIdResponse } from '@/api/anime/[animeId]/types'
-import type { User } from '@/api/users/types'
+import type { User } from '@/types/users'
 
 export default async function AnimePage({ params }: { params: { animeId: string } }) {
   const { animeId } = params

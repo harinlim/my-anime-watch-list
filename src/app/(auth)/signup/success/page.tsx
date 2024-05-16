@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
-import type { User } from '@/api/users/types'
+import type { User } from '@/types/users'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

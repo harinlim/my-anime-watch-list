@@ -6,7 +6,7 @@ import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
-import type { User } from '@/api/users/types'
+import type { User } from '@/types/users'
 import type { Watchlist } from '@/types/watchlists'
 
 export const dynamic = 'force-dynamic'

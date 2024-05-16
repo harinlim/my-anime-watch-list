@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google'
 import { headers } from 'next/headers'
 
 import { Header } from '@/components/common/Header'
-import { ReactQueryClientProvider } from '@/context/ReactQueryClientProvider'
+import { ReactQueryClientProvider } from '@/context/ReactQueryClientContext'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
 import { theme } from './theme'
@@ -12,7 +12,7 @@ import { theme } from './theme'
 import '@mantine/core/styles.css'
 import './globals.css'
 
-import type { User } from '@/api/users/types'
+import type { User } from '@/types/users'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 

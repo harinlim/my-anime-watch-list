@@ -25,7 +25,7 @@ import { useState } from 'react'
 
 import styles from './UserMenu.module.css'
 
-import type { User } from '@/api/users/types'
+import type { User } from '@/types/users'
 
 type Props = {
   user: User | null
