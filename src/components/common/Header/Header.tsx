@@ -1,5 +1,3 @@
-'use client'
-
 import { Anchor, Group, Text, Title } from '@mantine/core'
 import { IconArmchair2 } from '@tabler/icons-react'
 import clsx from 'clsx'
@@ -22,8 +20,6 @@ const links = [
 ]
 
 export function Header({ user }: Props) {
-  // const [opened, { toggle }] = useDisclosure(false
-
   const items = links.map(link => (
     <Link key={link.label} href={link.link} className={styles.link}>
       {link.label}
