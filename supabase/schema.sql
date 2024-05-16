@@ -87,6 +87,20 @@ $$;
 
 ALTER FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
+    LANGUAGE "sql" SECURITY DEFINER
+    AS $$
+SELECT EXISTS (
+  SELECT 1
+  FROM watchlists_users
+  WHERE user_id = _user_id
+  AND watchlist_id = _watchlist_id
+  AND role = 'owner'::collaborator_access
+);
+$$;
+
+ALTER FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
     LANGUAGE "sql" SECURITY DEFINER
     AS $$SELECT EXISTS (
@@ -359,9 +373,7 @@ CREATE POLICY "Enable delete for users based on user_id" ON "public"."user_revie
 
 CREATE POLICY "Enable delete for users based on user_id" ON "public"."watchlists" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
-CREATE POLICY "Enable delete for watchlist owners and self" ON "public"."watchlists_users" FOR DELETE USING ((("watchlist_id" IN ( SELECT "watchlists_users_1"."watchlist_id"
-   FROM "public"."watchlists_users" "watchlists_users_1"
-  WHERE (("watchlists_users_1"."user_id" = ( SELECT "auth"."uid"() AS "uid")) AND ("watchlists_users_1"."role" = 'owner'::"public"."collaborator_access")))) OR ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
+CREATE POLICY "Enable delete for watchlist owners and self" ON "public"."watchlists_users" FOR DELETE USING (("public"."has_owner_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") OR ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
 
 CREATE POLICY "Enable insert access for all users" ON "public"."anime" FOR INSERT WITH CHECK (true);
 
@@ -434,6 +446,10 @@ GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
 GRANT ALL ON FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
