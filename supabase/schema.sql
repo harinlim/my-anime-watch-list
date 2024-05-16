@@ -73,7 +73,7 @@ end;$$;
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
-CREATE OR REPLACE FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
+CREATE OR REPLACE FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
     LANGUAGE "sql" SECURITY DEFINER
     AS $$
 SELECT EXISTS (
@@ -81,10 +81,36 @@ SELECT EXISTS (
   FROM watchlists_users
   WHERE user_id = _user_id
   AND watchlist_id = _watchlist_id
+  AND (role = 'owner'::collaborator_access OR role = 'editor'::collaborator_access)
 );
 $$;
 
+ALTER FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
+    LANGUAGE "sql" SECURITY DEFINER
+    AS $$SELECT EXISTS (
+  SELECT 1
+  FROM watchlists_users
+  WHERE user_id = _user_id
+  AND watchlist_id = _watchlist_id
+);$$;
+
 ALTER FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
+    LANGUAGE "sql" SECURITY DEFINER
+    AS $$
+SELECT EXISTS (
+  SELECT 1
+  FROM watchlists_users
+  WHERE user_id = _user_id
+  AND watchlist_id = _watchlist_id
+  AND role = 'viewer'::collaborator_access
+);
+$$;
+
+ALTER FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."validate_username_before_user_signup"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
@@ -290,6 +316,8 @@ CREATE INDEX "watchlists_anime_watchlist_id_idx" ON "public"."watchlists_anime" 
 
 CREATE INDEX "watchlists_user_id_idx" ON "public"."watchlists" USING "btree" ("user_id");
 
+CREATE UNIQUE INDEX "watchlists_users_unique_owners_idx" ON "public"."watchlists_users" USING "btree" ("watchlist_id") WHERE ("role" = 'owner'::"public"."collaborator_access");
+
 CREATE OR REPLACE TRIGGER "handle_add_default_owner" AFTER INSERT ON "public"."watchlists" FOR EACH ROW EXECUTE FUNCTION "public"."add_default_owner"();
 
 CREATE OR REPLACE TRIGGER "handle_updated_at" BEFORE UPDATE ON "public"."user_reviews" FOR EACH ROW EXECUTE FUNCTION "extensions"."moddatetime"('updated_at');
@@ -331,6 +359,10 @@ CREATE POLICY "Enable delete for users based on user_id" ON "public"."user_revie
 
 CREATE POLICY "Enable delete for users based on user_id" ON "public"."watchlists" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
+CREATE POLICY "Enable delete for watchlist owners and self" ON "public"."watchlists_users" FOR DELETE USING ((("watchlist_id" IN ( SELECT "watchlists_users_1"."watchlist_id"
+   FROM "public"."watchlists_users" "watchlists_users_1"
+  WHERE (("watchlists_users_1"."user_id" = ( SELECT "auth"."uid"() AS "uid")) AND ("watchlists_users_1"."role" = 'owner'::"public"."collaborator_access")))) OR ("user_id" = ( SELECT "auth"."uid"() AS "uid"))));
+
 CREATE POLICY "Enable insert access for all users" ON "public"."anime" FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Enable insert for permitted users only" ON "public"."watchlists_anime" FOR INSERT TO "authenticated" WITH CHECK (("watchlist_id" IN ( SELECT "watchlists"."id"
@@ -344,6 +376,8 @@ CREATE POLICY "Enable insert for users based on user_id" ON "public"."users" FOR
 
 CREATE POLICY "Enable insert for users based on user_id" ON "public"."watchlists" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
+CREATE POLICY "Enable insert for watchlist editors" ON "public"."watchlists_users" FOR INSERT WITH CHECK ("public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id"));
+
 CREATE POLICY "Enable read access for all users" ON "public"."anime" FOR SELECT USING (true);
 
 CREATE POLICY "Enable read access for all users" ON "public"."user_reviews" FOR SELECT USING (true);
@@ -356,11 +390,11 @@ CREATE POLICY "Enable read access for all users" ON "public"."watchlists_anime" 
            FROM "public"."watchlists_users"
           WHERE (("watchlists_users"."watchlist_id" = "watchlists"."id") AND ("watchlists_users"."user_id" = ( SELECT "auth"."uid"() AS "uid")))))))));
 
-CREATE POLICY "Enable read access for all users" ON "public"."watchlists_users" FOR SELECT USING (("public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") OR ("watchlist_id" IN ( SELECT "watchlists"."id"
-   FROM "public"."watchlists"
-  WHERE ("watchlists"."is_public" = true)))));
-
 CREATE POLICY "Enable read access for public watchlists or permitted users" ON "public"."watchlists" FOR SELECT USING (("is_public" OR (( SELECT "auth"."uid"() AS "uid") = "user_id") OR "public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "id")));
+
+CREATE POLICY "Enable read access for public watchlists or permitted users" ON "public"."watchlists_users" FOR SELECT USING ((("public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") AND ("public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") OR ("role" <> 'viewer'::"public"."collaborator_access") OR ("user_id" = ( SELECT "auth"."uid"() AS "uid")))) OR (("watchlist_id" IN ( SELECT "watchlists"."id"
+   FROM "public"."watchlists"
+  WHERE ("watchlists"."is_public" = true))) AND ("role" <> 'viewer'::"public"."collaborator_access"))));
 
 CREATE POLICY "Enable update for all users" ON "public"."anime" FOR UPDATE USING (true);
 
@@ -397,9 +431,17 @@ GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
 
+GRANT ALL ON FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."has_edit_access_to_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
+
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."json_matches_schema"("schema" "json", "instance" "json") TO "postgres";
 GRANT ALL ON FUNCTION "public"."json_matches_schema"("schema" "json", "instance" "json") TO "anon";

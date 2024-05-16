@@ -228,7 +228,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_edit_access_to_watchlist: {
+        Args: {
+          _user_id: string
+          _watchlist_id: number
+        }
+        Returns: boolean
+      }
       has_watchlist: {
+        Args: {
+          _user_id: string
+          _watchlist_id: number
+        }
+        Returns: boolean
+      }
+      is_watchlist_viewer: {
         Args: {
           _user_id: string
           _watchlist_id: number
