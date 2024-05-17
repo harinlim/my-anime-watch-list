@@ -1,41 +1,41 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
-import { SEARCH_ANIME_SORT_TYPES } from '@/lib/kitsu/types'
+import { SEARCH_WATCHLISTS_SORT_TYPES } from '@/api/watchlists/types'
 
 import type {
-  SearchAnimeQueryParams,
-  SearchAnimeResponse,
-  SearchAnimeSortType,
-} from '@/api/anime/types'
+  SearchWatchlistsQueryParams,
+  SearchWatchlistsResponse,
+  SearchWatchlistsSortType,
+} from '@/api/watchlists/types'
 
 const PAGE_SIZE = 10
 
-export function useAnimeSearch({
+export function useWatchlistsSearch({
   search,
   sort,
   limit,
 }: {
   search?: string
-  sort?: SearchAnimeSortType
+  sort?: SearchWatchlistsSortType
   limit?: number
 } = {}) {
-  const fetchAnime = useCallback(
+  const fetchWatchlists = useCallback(
     async ({ pageParam = 1, signal }: { pageParam?: number; signal: AbortSignal }) => {
-      const searchParams: SearchAnimeQueryParams = {
-        page: pageParam.toString(),
+      const searchParams: SearchWatchlistsQueryParams = {
+        page: pageParam,
         limit: limit ?? PAGE_SIZE,
       }
 
       if (search) searchParams.search = search
-      if (sort && SEARCH_ANIME_SORT_TYPES.includes(sort)) searchParams.sort = sort
+      if (sort && SEARCH_WATCHLISTS_SORT_TYPES.includes(sort)) searchParams.sort = sort
 
       const response = await fetch(
         // @ts-expect-error -- we know what we're doing
-        `/api/anime?${new URLSearchParams(searchParams).toString()}`,
+        `/api/watchlists?${new URLSearchParams(searchParams).toString()}`,
         { signal }
       )
-      return response.json() as Promise<SearchAnimeResponse>
+      return response.json() as Promise<SearchWatchlistsResponse>
     },
     [search, sort, limit]
   )
@@ -44,7 +44,7 @@ export function useAnimeSearch({
     queryKey: [
       `animelist${search ? `-${search}` : ''}${sort ? `-${sort}` : ''}${limit ? `-${limit}` : ''}`,
     ],
-    queryFn: fetchAnime,
+    queryFn: fetchWatchlists,
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.meta?.next,
   })
