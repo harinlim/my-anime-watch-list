@@ -8,3 +8,7 @@ export function getUserExistsById(supabase: SupabaseClient<Database>, userId: st
     .eq('id', userId)
     .single()
 }
+
+export function getUserByUsername(supabase: SupabaseClient<Database>, username: string) {
+  return supabase.from('users').select('*', { count: 'exact' }).eq('username', username).single()
+}

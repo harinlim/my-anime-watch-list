@@ -11,16 +11,8 @@ export function getWatchlistCollaborators(supabase: SupabaseClient<Database>, wa
   // When read as a viewer, should not be able to see other viewers but themself.
   return supabase
     .from('watchlists_users')
-    .select('user_id, role, ...users(username)', { count: 'exact' })
+    .select('user_id, role, ...users(username, avatar_url)', { count: 'exact' })
     .eq('watchlist_id', watchlistId)
-}
-
-export function getWatchlistById(supabase: SupabaseClient<Database>, watchlistId: number) {
-  return supabase
-    .from('watchlists')
-    .select('id', { count: 'exact', head: true })
-    .eq('id', watchlistId)
-    .single()
 }
 
 export function getWatchlistRoleForUser(
