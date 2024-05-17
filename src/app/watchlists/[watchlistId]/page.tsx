@@ -13,7 +13,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
     data: watchlist,
     status,
     ok,
-  } = await fetchWithType<Watchlist>(withBaseURL(`/api//watchlists/${watchlistId}`), {
+  } = await fetchWithType<Watchlist>(withBaseURL(`/api/watchlists/${watchlistId}`), {
     method: 'GET',
     credentials: 'include',
     headers: new Headers(headers()),

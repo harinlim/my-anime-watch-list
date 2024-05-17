@@ -25,7 +25,7 @@ export function queryWatchlistOverviews(supabase: SupabaseClient<Database>) {
       created_at,
       updated_at,
       anime(title, kitsu_id, poster_image),
-      watchlists_users(user_id, role, ...users(username, avatar_url)))
+      watchlists_users(user_id, role, ...users(username, avatar_url))
     `,
       { count: 'exact' }
     )

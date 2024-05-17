@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
+import { getAnimeExistsById, getAnimeByUserAssociation } from '@/db/anime'
 import { getAnimeById } from '@/lib/kitsu/api'
 import { createServerClient } from '@/lib/supabase/server'
 import { safeParseRequestBody } from '@/lib/zod/api'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
+import { transformAnimeByUserAssociation } from '@/utils/user-anime'
 
 import { patchAnimeRequestSchema } from './schemas'
 
@@ -12,7 +14,7 @@ import type { GetAnimeByIdResponse } from './types'
 type RouteParams = { params: { animeId: string } }
 
 /**
- * Get an anime by ID
+ * Get an anime and associated user review and watchlists by ID
  */
 export async function GET(_: NextRequest, { params }: RouteParams) {
   const { animeId } = params
@@ -23,62 +25,55 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const [animeRecord, reviewRecord, watchlistRecord, kitsuResponse] = await Promise.all([
-    supabase.from('anime').select('*').eq('kitsu_id', animeId).maybeSingle(),
-    user
-      ? supabase
-          .from('user_reviews')
-          .select('*')
-          .eq('anime_id', animeId)
-          .eq('user_id', user.id)
-          .maybeSingle()
-      : null,
-    user
-      ? supabase
-          .from('watchlists_anime')
-          .select(`watchlists!inner(*)`)
-          .eq('anime_id', animeId)
-          .eq('watchlists.user_id', user.id)
-      : null,
+  // Validate records exist while getting kitsu
+  const [animeExistsResult, userAnimeResult, kitsuResponse] = await Promise.all([
+    getAnimeExistsById(supabase, animeId),
+    user ? getAnimeByUserAssociation(supabase, { userId: user.id, animeId }) : null,
     getAnimeById(animeId),
   ])
 
-  if (!!animeRecord.error || !!reviewRecord?.error || !!watchlistRecord?.error) {
-    console.error(animeRecord.error, reviewRecord?.error, watchlistRecord?.error)
-    return NextResponse.json('Failed to fetch anime from DB', { status: animeRecord.status })
+  if (animeExistsResult.error) {
+    console.error(animeExistsResult.error)
+    return NextResponse.json('Failed to fetch anime from DB', { status: animeExistsResult.status })
+  }
+
+  if (userAnimeResult?.error) {
+    console.error(userAnimeResult.error)
+    return NextResponse.json('Failed to fetch associated user-anime data from DB', {
+      status: userAnimeResult.status,
+    })
   }
 
   if (!kitsuResponse.ok) {
     return NextResponse.json(kitsuResponse.message, { status: kitsuResponse.status })
   }
 
-  const { data: kitsuData } = kitsuResponse
+  const kitsuData = kitsuResponse.data
 
   // For now, keep this commented until we start using pictures
-  // if (!animeRecord.data) {
-  // Add new anime record to our DB for watchlist search
-  const { error } = await supabase.from('anime').upsert({
-    kitsu_id: animeId,
-    title: kitsuData.canonicalTitle,
-    synopsis: kitsuData.synopsis,
-    poster_image: kitsuData.posterImage,
-  })
+  if (animeExistsResult.count === 0) {
+    // Add new anime record to our DB for watchlist search
+    const { error } = await supabase.from('anime').upsert({
+      kitsu_id: animeId,
+      title: kitsuData.canonicalTitle,
+      synopsis: kitsuData.synopsis,
+      poster_image: kitsuData.posterImage,
+    })
 
-  if (error) {
-    console.error(error)
     // We can silently ignore errors here assuming the rest succeeded
+    if (error) {
+      console.error(error)
+    }
   }
-  // }
+
+  const { review, watchlists } = userAnimeResult?.data
+    ? transformAnimeByUserAssociation(userAnimeResult.data)[0] // This should always exist with a length of 1
+    : { review: null, watchlists: null }
 
   return NextResponse.json<GetAnimeByIdResponse>({
     ...kitsuData,
-    review: reviewRecord?.data
-      ? {
-          status: reviewRecord.data.status,
-          rating: reviewRecord.data.rating,
-        }
-      : null,
-    watchlists: watchlistRecord?.data?.flatMap(list => list.watchlists) ?? null,
+    review,
+    watchlists,
   })
 }
 
@@ -109,6 +104,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json(body.message, { status: 400 })
   }
 
+  // Verify associated anime record exists in our DB before proceeding (otherwise, page must be viewed first)
+  const animeExistsResult = await getAnimeExistsById(supabase, animeId)
+  if (!!animeExistsResult.error || animeExistsResult.count === 0) {
+    if (animeExistsResult.status === 406) {
+      return NextResponse.json('Anime not found', { status: 404 })
+    }
+
+    return NextResponse.json('Failed to fetch anime from DB', { status: animeExistsResult.status })
+  }
+
   const { error } = await supabase.from('user_reviews').upsert({
     user_id: user.id,
     anime_id: animeId,
@@ -137,6 +142,16 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
 
   if (!user) {
     return NextResponse.json('Failed authorization', { status: 401 })
+  }
+
+  // Verify associated anime record exists in our DB before proceeding (otherwise, page must be viewed first)
+  const animeExistsResult = await getAnimeExistsById(supabase, animeId)
+  if (!!animeExistsResult.error || animeExistsResult.count === 0) {
+    if (animeExistsResult.status === 406) {
+      return NextResponse.json('Anime not found', { status: 404 })
+    }
+
+    return NextResponse.json('Failed to fetch anime from DB', { status: animeExistsResult.status })
   }
 
   const deleteQuery = await supabase

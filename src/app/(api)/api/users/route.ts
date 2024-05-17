@@ -12,7 +12,7 @@ export async function GET() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return NextResponse.json('User not found', { status: 404 })
+    return NextResponse.json('Failed authorization', { status: 401 })
   }
 
   const userQueryResult = await supabase

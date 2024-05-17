@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server'
 
+import { getAnimeByUserAssociation } from '@/db/anime'
+import { getUserByUsername } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
+import { transformAnimeByUserAssociation } from '@/utils/user-anime'
 
 import { getAnimeByUserQueryParamsSchema } from './schemas'
-import { getAnimeByUserAssociation, transformAnimeByUserAssociation } from './utils'
+import { SORT_ANIME_COMPARATORS } from './utils'
 
 import type { GetAnimeByUserAssociationResponse } from './types'
 import type { NextRequest } from 'next/server'
@@ -34,12 +37,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   // Get user associated with username
-  const userQueryResult = await supabase
-    .from('users')
-    .select('id')
-    .eq('username', username)
-    .single()
-
+  const userQueryResult = await getUserByUsername(supabase, username)
   if (userQueryResult.error) {
     if (userQueryResult.status === 406) {
       return NextResponse.json('User not found', { status: 404 })
@@ -91,7 +89,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     : supabase
         .from('watchlists_anime')
         .select(
-          'anime_id, watchlists(id, is_public, watchlists_users!inner(role, user_id, watchlist_id))'
+          `
+          anime_id,
+          watchlists(
+            id,
+            is_public,
+            watchlists_users!inner(role, user_id, watchlist_id))
+          `
         )
         .eq('watchlists.watchlists_users.user_id', userId)
         // For some reason, filtering on watchlists_users.user_id doesn't filter out watchlist_anime entries that don't have associated watchlists.
@@ -137,9 +141,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   return NextResponse.json<GetAnimeByUserAssociationResponse>(
-    transformAnimeByUserAssociation(userAnimeResult.data, {
-      sort: queryParams.sort,
-      direction: queryParams.direction,
-    })
+    transformAnimeByUserAssociation(userAnimeResult.data)
+      // TEMPORARY SOLUTION UNTIL WE ESTABLISH A VIEW FOR THE USER ANIMES
+      .toSorted(SORT_ANIME_COMPARATORS[queryParams.sort][queryParams.direction])
   )
 }

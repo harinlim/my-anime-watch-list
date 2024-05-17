@@ -36,7 +36,7 @@ export function WatchlistsList({ filter, sort }: Props) {
                   <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                     {watchlist.title}
                   </Text>
-                  <pre>{JSON.stringify(watchlist, null, 2)}</pre>
+                  <pre className="text-wrap text-left">{JSON.stringify(watchlist, null, 2)}</pre>
                 </Card>
               </Link>
             ))}
