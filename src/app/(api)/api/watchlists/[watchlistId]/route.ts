@@ -27,6 +27,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     .from('watchlists')
     .select('id, user_id, title, is_public, description, created_at, updated_at, anime(*)')
     .eq('id', watchlistId)
+    .returns<Watchlist>()
     .single()
 
   if (!!error || !data) {
@@ -37,7 +38,6 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed to fetch watchlist', { status })
   }
 
-  // @ts-expect-error -- Mismatch on poster_image (JSON) vs ImageMetadata
   return NextResponse.json<Watchlist>(data)
 }
 

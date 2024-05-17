@@ -39,12 +39,11 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     watchlistsQuery = watchlistsQuery.eq('is_public', true)
   }
 
-  const { data, error, status } = await watchlistsQuery
+  const { data, error, status } = await watchlistsQuery.returns<Watchlist[]>()
 
   if (error) {
     return NextResponse.json('Failed to fetch watchlists', { status })
   }
 
-  // @ts-expect-error -- Mismatch on poster_image (JSON) vs ImageMetadata
   return NextResponse.json<Watchlist[]>(data)
 }
