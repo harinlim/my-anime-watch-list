@@ -255,7 +255,8 @@ CREATE TABLE IF NOT EXISTS "public"."watchlists" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "is_public" boolean DEFAULT false NOT NULL,
     "description" "text",
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "search_vector" "tsvector" GENERATED ALWAYS AS ((("setweight"("to_tsvector"('"simple"'::"regconfig", COALESCE("title", ''::"text")), 'A'::"char") || ''::"tsvector") || "setweight"("to_tsvector"('"simple"'::"regconfig", COALESCE("description", ''::"text")), 'B'::"char"))) STORED
 );
 
 ALTER TABLE "public"."watchlists" OWNER TO "postgres";
@@ -321,6 +322,8 @@ ALTER TABLE ONLY "public"."watchlists"
 
 ALTER TABLE ONLY "public"."watchlists_users"
     ADD CONSTRAINT "watchlists_users_pkey" PRIMARY KEY ("watchlist_id", "user_id");
+
+CREATE INDEX "idx_watchlist_search_vector" ON "public"."watchlists" USING "gin" ("search_vector");
 
 CREATE INDEX "user_reviews_user_id_idx" ON "public"."user_reviews" USING "btree" ("user_id");
 
@@ -388,7 +391,7 @@ CREATE POLICY "Enable insert for users based on user_id" ON "public"."users" FOR
 
 CREATE POLICY "Enable insert for users based on user_id" ON "public"."watchlists" FOR INSERT WITH CHECK ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
-CREATE POLICY "Enable insert for watchlist editors" ON "public"."watchlists_users" FOR INSERT WITH CHECK ("public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id"));
+CREATE POLICY "Enable insert for watchlist editors and owners" ON "public"."watchlists_users" FOR INSERT WITH CHECK ("public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id"));
 
 CREATE POLICY "Enable read access for all users" ON "public"."anime" FOR SELECT USING (true);
 
@@ -407,6 +410,8 @@ CREATE POLICY "Enable read access for public watchlists or permitted users" ON "
 CREATE POLICY "Enable read access for public watchlists or permitted users" ON "public"."watchlists_users" FOR SELECT USING ((("public"."has_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") AND ("public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id") OR ("role" <> 'viewer'::"public"."collaborator_access") OR ("user_id" = ( SELECT "auth"."uid"() AS "uid")))) OR (("watchlist_id" IN ( SELECT "watchlists"."id"
    FROM "public"."watchlists"
   WHERE ("watchlists"."is_public" = true))) AND ("role" <> 'viewer'::"public"."collaborator_access"))));
+
+CREATE POLICY "Enable update access for watchlist editors and owners" ON "public"."watchlists_users" FOR UPDATE USING ((("role" <> 'owner'::"public"."collaborator_access") AND "public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "watchlist_id")));
 
 CREATE POLICY "Enable update for all users" ON "public"."anime" FOR UPDATE USING (true);
 

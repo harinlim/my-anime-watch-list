@@ -25,7 +25,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   // Note authorization checks will be done via RLS, though it will be returning a 404
   const { data, error, status } = await supabase
     .from('watchlists')
-    .select('*, anime(*)')
+    .select('id, user_id, title, is_public, description, created_at, updated_at, anime(*)')
     .eq('id', watchlistId)
     .single()
 
@@ -70,8 +70,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }
 
   // Get validation queries
-  const [watchlistQuery, animeQuery] = await Promise.all([
-    supabase.from('watchlists').select('*').eq('id', watchlistId).single(),
+  const [watchlistExistsResult, animeExistsResult] = await Promise.all([
+    supabase.from('watchlists').select('id').eq('id', watchlistId).single(),
     supabase
       .from('anime')
       .select('kitsu_id', { head: true, count: 'exact' })
@@ -80,21 +80,21 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   ])
 
   // Verify the watchlist belonging to the user exists
-  if (!!watchlistQuery.error || !watchlistQuery.data) {
-    if (watchlistQuery.status === 406) {
+  if (!!watchlistExistsResult.error || !watchlistExistsResult.data) {
+    if (watchlistExistsResult.status === 406) {
       return NextResponse.json('Watchlist not found', { status: 404 })
     }
 
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistQuery.status })
+    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
   }
 
   // Verify anime exists in DB
-  if (!!animeQuery.error || !animeQuery.count) {
-    if (animeQuery.status === 406) {
+  if (!!animeExistsResult.error || !animeExistsResult.count) {
+    if (animeExistsResult.status === 406) {
       return NextResponse.json('Anime not found', { status: 404 })
     }
 
-    return NextResponse.json('Failed to fetch anime', { status: animeQuery.status })
+    return NextResponse.json('Failed to fetch anime', { status: animeExistsResult.status })
   }
 
   // Add anime to watchlist

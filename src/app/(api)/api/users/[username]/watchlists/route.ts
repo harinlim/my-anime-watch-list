@@ -31,7 +31,10 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
 
   const isLoggedInUser = user?.id === userId
 
-  let watchlistsQuery = supabase.from('watchlists').select(`*, anime(*)`).eq('user_id', userId)
+  let watchlistsQuery = supabase
+    .from('watchlists')
+    .select('id, user_id, title, is_public, description, created_at, updated_at, anime(*)')
+    .eq('user_id', userId)
   if (!isLoggedInUser) {
     watchlistsQuery = watchlistsQuery.eq('is_public', true)
   }

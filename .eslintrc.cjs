@@ -120,6 +120,13 @@ module.exports = {
         'jest/unbound-method': 'off',
       },
     },
+    {
+      /* --- Generated type files --- */
+      files: ['src/types/generated/*.ts'],
+      rules: {
+        '@typescript-eslint/no-redundant-type-constituents': 'off',
+      },
+    },
   ],
 
   root: true,

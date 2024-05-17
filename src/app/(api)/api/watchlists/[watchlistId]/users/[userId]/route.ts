@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 
+import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 import { safeParseRequestBody } from '@/lib/zod/api'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
-import { getWatchlistById, getWatchlistRoleForUser } from '../queries'
+import { getWatchlistRoleForUser } from '../queries'
 
 import { patchCollaboratorRoleRequestBodySchema, watchlistCollaboratorParamSchema } from './schemas'
 
@@ -50,7 +51,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const { role } = body.data
 
   const [watchlistExistsResult, requestedUserRoleResult, hasEditAccessResult] = await Promise.all([
-    getWatchlistById(supabase, watchlistId),
+    getWatchlistExistsById(supabase, watchlistId),
     getWatchlistRoleForUser(supabase, { watchlistId, userId: userToUpdateId }),
     supabase.rpc('has_edit_access_to_watchlist', {
       _user_id: user.id,
@@ -139,7 +140,7 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
 
   // Get validation queries
   const [watchlistExistsResult, roleExistsResult] = await Promise.all([
-    getWatchlistById(supabase, watchlistId),
+    getWatchlistExistsById(supabase, watchlistId),
     getWatchlistRoleForUser(supabase, { watchlistId, userId: user.id }),
   ])
 

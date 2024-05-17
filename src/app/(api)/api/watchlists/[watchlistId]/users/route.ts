@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 
 import { getUserExistsById } from '@/db/users'
+import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 import { safeParseRequestBody } from '@/lib/zod/api'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
-import { getWatchlistById, getWatchlistCollaborators } from './queries'
+import { getWatchlistCollaborators } from './queries'
 import { watchlistCollaboratorRequestBodySchema } from './schemas'
 
 import type { GetWatchlistCollaboratorsResponse } from './types'
@@ -26,18 +27,18 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   const supabase = createServerClient()
 
   // Note auth-based filters are applied via RLS
-  const [collaboratorsQueryResult, watchlistQueryResult] = await Promise.all([
+  const [collaboratorsQueryResult, watchlistExistsResult] = await Promise.all([
     getWatchlistCollaborators(supabase, watchlistId),
-    getWatchlistById(supabase, watchlistId),
+    getWatchlistExistsById(supabase, watchlistId),
   ])
 
-  if (!!watchlistQueryResult.error || watchlistQueryResult.count === 0) {
-    if (watchlistQueryResult.status === 406) {
+  if (!!watchlistExistsResult.error || watchlistExistsResult.count === 0) {
+    if (watchlistExistsResult.status === 406) {
       return NextResponse.json('Watchlist not found', { status: 404 })
     }
 
-    console.error(watchlistQueryResult)
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistQueryResult.status })
+    console.error(watchlistExistsResult)
+    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
   }
 
   if (!!collaboratorsQueryResult.error || !collaboratorsQueryResult.data) {
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     isRequestedUserWatchlistCollaboratorResult,
     hasEditAccessResult,
   ] = await Promise.all([
-    getWatchlistById(supabase, watchlistId),
+    getWatchlistExistsById(supabase, watchlistId),
     getUserExistsById(supabase, userToAddId),
     supabase.rpc('has_watchlist', {
       _user_id: userToAddId,
