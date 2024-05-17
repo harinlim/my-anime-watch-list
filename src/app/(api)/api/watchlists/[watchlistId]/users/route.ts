@@ -68,30 +68,34 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }
 
   const body = await safeParseRequestBody(request, watchlistCollaboratorRequestBodySchema)
-  if (!body.success && !body.success) {
+  if (!body.success) {
     if (body.error) {
       return NextResponse.json(transformZodValidationErrorToResponse(body.error), { status: 422 })
     }
     return NextResponse.json(body.message, { status: 400 })
   }
 
-  const { userId, role } = body.data
+  const { userId: userToAddId, role } = body.data
 
-  const [watchlistExistsResult, userExistsResult, hasWatchlistConflictResult, hasEditAccessResult] =
-    await Promise.all([
-      getWatchlistById(supabase, watchlistId),
-      getUserExistsById(supabase, userId),
-      supabase.rpc('has_watchlist', {
-        _user_id: userId,
-        _watchlist_id: watchlistId,
-      }),
-      supabase.rpc('has_edit_access_to_watchlist', {
-        _user_id: user.id,
-        _watchlist_id: watchlistId,
-      }),
-    ])
+  const [
+    watchlistExistsResult,
+    userExistsResult,
+    isRequestedUserWatchlistCollaboratorResult,
+    hasEditAccessResult,
+  ] = await Promise.all([
+    getWatchlistById(supabase, watchlistId),
+    getUserExistsById(supabase, userToAddId),
+    supabase.rpc('has_watchlist', {
+      _user_id: userToAddId,
+      _watchlist_id: watchlistId,
+    }),
+    supabase.rpc('has_edit_access_to_watchlist', {
+      _user_id: user.id,
+      _watchlist_id: watchlistId,
+    }),
+  ])
 
-  if (!!watchlistExistsResult.error || watchlistExistsResult.count === 0) {
+  if (!!watchlistExistsResult.error || !watchlistExistsResult.data) {
     if (watchlistExistsResult.status === 406) {
       return NextResponse.json('Watchlist not found', { status: 404 })
     }
@@ -106,25 +110,29 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json('Requested user not found', { status: 422 })
     }
 
-    console.error(watchlistExistsResult)
+    console.error(userExistsResult)
     return NextResponse.json('Failed to fetch requested user', { status: userExistsResult.status })
   }
 
-  if (hasWatchlistConflictResult.error) {
-    console.error(hasWatchlistConflictResult.error)
-    return NextResponse.json('Failed to check if requested user is already in watchlist', {
+  if (isRequestedUserWatchlistCollaboratorResult.error) {
+    console.error(isRequestedUserWatchlistCollaboratorResult.error)
+    return NextResponse.json('Failed to check if requested user is a collaborator for watchlist', {
       status: 500,
     })
   }
 
-  const hasWatchlistConflict = hasWatchlistConflictResult.data
-  if (hasWatchlistConflict) {
-    return NextResponse.json('Requested user is already added to watchlist', { status: 409 })
+  const isRequestedUserWatchlistCollaborator = isRequestedUserWatchlistCollaboratorResult.data
+  if (isRequestedUserWatchlistCollaborator) {
+    return NextResponse.json('Requested user is already a collaborator for watchlist', {
+      status: 409,
+    })
   }
 
   if (hasEditAccessResult.error) {
     console.error(hasEditAccessResult.error)
-    return NextResponse.json('Failed to check if user has edit access', { status: 500 })
+    return NextResponse.json('Failed to check if user has edit access to watchlist', {
+      status: 500,
+    })
   }
 
   const hasEditAccess = hasEditAccessResult.data
@@ -134,14 +142,16 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   const { error } = await supabase.from('watchlists_users').insert({
     watchlist_id: watchlistId,
-    user_id: userId,
+    user_id: userToAddId,
     role,
   })
 
   if (error) {
     console.error(error)
-    return NextResponse.json('Failed to add requested user to watchlist', { status: 500 })
+    return NextResponse.json('Failed to add requested user as collaborator to watchlist', {
+      status: 500,
+    })
   }
 
-  return NextResponse.json({ watchlistId, userId, role }, { status: 201 })
+  return NextResponse.json({ watchlistId, userId: userToAddId, role }, { status: 201 })
 }

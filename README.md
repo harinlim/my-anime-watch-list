@@ -41,7 +41,7 @@ This also includes a RESTful CRUD API for the following resources:
   - [x] `GET`: Get collaborators for the watchlist
   - [x] `POST`: (_protected_) Add a collaborator to the watchlist (editor, viewer)
 - [ ] `/api/watchlists/:watchlistId/users/:userId`
-  - [ ] `PATCH`: (_protected_) Update collaborator role in the watchlist
+  - [x] `PATCH`: (_protected_) Update collaborator role in the watchlist
   - [x] `DELETE`: (_protected_) Remove a collaborator from the watchlist
 - [x] `/api/watchlists/:watchlistId/anime/:animeId`
   - [x] `DELETE`: (_protected_) Remove the anime from the watchlist
