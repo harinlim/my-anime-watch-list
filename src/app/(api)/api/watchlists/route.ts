@@ -37,9 +37,9 @@ export async function GET(request: NextRequest) {
   // private watchlists the user DOES have access to.
   let query = queryWatchlistOverviews(supabase)
 
-  // TODO: set up RPC function to enable deeper search on watchlists
+  // TODO: set up RPC function to enable deeper search on watchlists via search_vector
   if (queryParams.search)
-    query = query.textSearch('search_vector', queryParams.search, {
+    query = query.textSearch('title', queryParams.search, {
       type: 'websearch',
       config: 'english',
     })
