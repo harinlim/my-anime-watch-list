@@ -31,7 +31,7 @@ This also includes a RESTful CRUD API for the following resources:
   - [x] `PATCH`: (_protected_) Update anime status associated with the user (ratings, watch status)
   - [x] `DELETE`: (_protected_) Remove anime status associated with the user (ratings, watch status)
 - [ ] `/api/watchlists`
-  - [ ] `GET`: Search and return a collection of public watchlists, given query parameters. For an authenticated user, this would include any private watchlists for that specific user as well.
+  - [x] `GET`: Search and return a collection of public watchlists, given query parameters. For an authenticated user, this would include any private watchlists for that specific user as well.
   - [ ] `POST`: (_protected_) Create a new watchlist.
 - [ ] `/api/watchlists/:watchlistId`
   - [x] `GET`: Retrieve the watchlist resource given the associated watchlist id.
@@ -49,13 +49,14 @@ This also includes a RESTful CRUD API for the following resources:
 
 ## Data Schema
 
-This leverages Postgres features extensively, including using JSON validation, row-level security policies, and others. The data schema is as follows:
+This leverages Postgres features extensively, including using JSON validation, row-level security policies, full text search, and others. The data schema is as follows:
 
 - `anime`: Saved anime resources from Kitsu (used to minimize dependency on Kitsu for watchlists)
 - `users`: User profile information that is publicly accessible. Note `id` links to the UUID `auth.users.id` column
 - `user_reviews`: User reviews on anime watch status and ratings
 - `watchlists`: User anime watchlists
 - `watchlists_anime`: Anime added to watchlists
+- `watchlists_users`: Users (collaborators) added to watchlists as `owner`, `editor`, or `viewer`
 
 ![Schema](public/db-schema.jpg)
 
