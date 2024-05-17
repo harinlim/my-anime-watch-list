@@ -11,5 +11,5 @@ export type PaginationMetadata = {
 }
 
 export type ResponseWithDataPaginated<T> =
-  | { ok: true; status: number; data: T; message?: never; meta: PaginationMetadata }
-  | { ok: false; status: number; data: null; message?: string; meta?: never }
+  | { ok: true; status: number; data: T; message?: never; meta: PaginationMetadata; error?: never }
+  | { ok: false; status: number; data: null; message?: string; meta?: never; error?: unknown }
