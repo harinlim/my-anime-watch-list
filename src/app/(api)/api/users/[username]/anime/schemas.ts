@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { WATCH_STATUS } from '@/types/enums'
 
-export const getAnimeByUserQueryParamSchema = z.object({
+export const getAnimeByUserQueryParamsSchema = z.object({
   status: z
     .enum(WATCH_STATUS, {
       message:

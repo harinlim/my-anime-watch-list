@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
-import { getAnimeByUserQueryParamSchema } from './schemas'
+import { getAnimeByUserQueryParamsSchema } from './schemas'
 import { getAnimeByUserAssociation, transformAnimeByUserAssociation } from './utils'
 
 import type { GetAnimeByUserAssociationResponse } from './types'
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const { searchParams } = request.nextUrl
 
-  const queryParamsResult = getAnimeByUserQueryParamSchema.safeParse({
+  const queryParamsResult = getAnimeByUserQueryParamsSchema.safeParse({
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
     status: searchParams.get('status') || null,
     rating: searchParams.get('rating') || null,
