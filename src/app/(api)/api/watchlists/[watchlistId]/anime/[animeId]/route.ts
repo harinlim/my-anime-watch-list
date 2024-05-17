@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server'
 
+import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 
 import type { NextRequest } from 'next/server'
 
 type RouteParams = { params: { watchlistId: string; animeId: string } }
-
-const PERMITTED_ROLES = new Set(['owner', 'editor'])
-
 /**
  * Remove an anime from a watchlist.
  * Body:
@@ -32,26 +30,33 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
   }
 
   // Note authorization checks will be done via RLS, though it will be returning a 404
-  const watchlistQuery = await supabase
-    .from('watchlists')
-    .select('id, watchlists_users(role)')
-    .eq('id', watchlistId)
-    .eq('watchlists_users.user_id', user.id)
-    .single()
+  const [watchlistExistsResult, hasEditAccessResult] = await Promise.all([
+    getWatchlistExistsById(supabase, watchlistId),
+    supabase.rpc('has_edit_access_to_watchlist', {
+      _user_id: user.id,
+      _watchlist_id: watchlistId,
+    }),
+  ])
 
-  // Verify the watchlist belonging to the user exists
-  if (!!watchlistQuery.error || !watchlistQuery.data) {
-    if (watchlistQuery.status === 406) {
+  if (!!watchlistExistsResult.error || watchlistExistsResult.count === 0) {
+    if (watchlistExistsResult.status === 406) {
       return NextResponse.json('Watchlist not found', { status: 404 })
     }
 
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistQuery.status })
+    console.error(watchlistExistsResult)
+    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
   }
 
-  // Verify user has permission to remove anime from watchlist
-  const users = watchlistQuery.data.watchlists_users
-  if (users.length === 0 || !PERMITTED_ROLES.has(users[0].role)) {
-    return NextResponse.json('User is not permitted to modify watchlist', { status: 403 })
+  if (hasEditAccessResult.error) {
+    console.error(hasEditAccessResult.error)
+    return NextResponse.json('Failed to check if user has edit access to watchlist', {
+      status: 500,
+    })
+  }
+
+  const hasEditAccess = hasEditAccessResult.data
+  if (!hasEditAccess) {
+    return NextResponse.json('User does not have edit access to watchlist', { status: 403 })
   }
 
   // Remove anime from watchlist
