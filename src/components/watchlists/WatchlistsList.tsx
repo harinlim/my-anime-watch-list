@@ -31,7 +31,7 @@ export function WatchlistsList({ filter, sort }: Props) {
           // TODO: handle API errors
           <Fragment key={`${page.meta?.total}-${page.meta?.self}`}>
             {page.data?.map(watchlist => (
-              <Link key={watchlist.id} href={`/watchlist/${watchlist.id}`}>
+              <Link key={watchlist.id} href={`/watchlists/${watchlist.id}`}>
                 <Card className="border-red-400">
                   <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
                     {watchlist.title}
