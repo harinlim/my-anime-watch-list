@@ -21,8 +21,9 @@ This also includes a RESTful CRUD API for the following resources:
   - [x] `GET`: Get public user information associated with the user. For now, this is just the user id and username.
 - [x] `/api/users/:username/watchlists`
   - [x] `GET`: Get the public watchlists associated with the user by their username. For an authenticated user, this would include any private watchlists for that specific user as well.
-- [ ] `/api/users/:username/anime`
-  - [ ] `GET`: Get all anime related to user (rated, marked status, added to watchlist)
+- [x] `/api/users/:username/anime`
+  - [x] `GET`: (_protected_) Get all anime related to user (rated, marked status, added to watchlist)
+    - [ ] TODO: Add pagination and filtering, but not necessary for now
 - [x] `/api/anime`
   - [x] `GET`: Search and return a collection of anime, given query parameters
 - [x] `/api/anime/:animeId`

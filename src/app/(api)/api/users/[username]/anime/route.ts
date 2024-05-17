@@ -15,6 +15,7 @@ type RouteParams = { params: { username: string } }
  * Get anime associated with a user
  *
  * TODO: Make a view for the query to enable more efficient filter/sort operations
+ * TODO: Add pagination and filtering, but not necessary for now
  *
  * Note: not going to worry about pagination or metadata here.
  */
