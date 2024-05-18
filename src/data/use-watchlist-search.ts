@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
 
 import { SEARCH_WATCHLISTS_SORT_TYPES } from '@/api/watchlists/types'
 
@@ -9,42 +8,41 @@ import type {
   SearchWatchlistsSortType,
 } from '@/api/watchlists/types'
 
-const PAGE_SIZE = 10
-
-export function useWatchlistsSearch({
-  search,
-  sort,
-  limit,
-}: {
+type UseWatchlistsSearchParams = {
   search?: string
   sort?: SearchWatchlistsSortType
   limit?: number
-} = {}) {
-  const fetchWatchlists = useCallback(
-    async ({ pageParam = 1, signal }: { pageParam?: number; signal: AbortSignal }) => {
-      const searchParams: SearchWatchlistsQueryParams = {
-        page: pageParam,
-        limit: limit ?? PAGE_SIZE,
-      }
+}
 
-      if (search) searchParams.search = search
-      if (sort && SEARCH_WATCHLISTS_SORT_TYPES.includes(sort)) searchParams.sort = sort
+const DEFAULT_PAGE_SIZE = 10
 
-      const response = await fetch(
-        // @ts-expect-error -- we know what we're doing
-        `/api/watchlists?${new URLSearchParams(searchParams).toString()}`,
-        { signal }
-      )
-      return response.json() as Promise<SearchWatchlistsResponse>
-    },
-    [search, sort, limit]
+const fetchWatchlists = async ({
+  search,
+  sort,
+  limit,
+  pageParam = 1,
+  signal,
+}: { pageParam?: number; signal: AbortSignal } & UseWatchlistsSearchParams) => {
+  const searchParams: SearchWatchlistsQueryParams = {
+    page: pageParam,
+    limit: limit ?? DEFAULT_PAGE_SIZE,
+  }
+
+  if (search) searchParams.search = search
+  if (sort && SEARCH_WATCHLISTS_SORT_TYPES.includes(sort)) searchParams.sort = sort
+
+  const response = await fetch(
+    // @ts-expect-error -- we know what we're doing
+    `/api/watchlists?${new URLSearchParams(searchParams).toString()}`,
+    { signal }
   )
+  return response.json() as Promise<SearchWatchlistsResponse>
+}
 
+export function useWatchlistsInfiniteSearch(params: UseWatchlistsSearchParams = {}) {
   return useInfiniteQuery({
-    queryKey: [
-      `animelist${search ? `-${search}` : ''}${sort ? `-${sort}` : ''}${limit ? `-${limit}` : ''}`,
-    ],
-    queryFn: fetchWatchlists,
+    queryKey: [`watchlists`, { ...params }],
+    queryFn: async args => fetchWatchlists({ ...params, ...args }),
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.meta?.next,
   })

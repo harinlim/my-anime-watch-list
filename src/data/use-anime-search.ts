@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useCallback } from 'react'
 
 import { SEARCH_ANIME_SORT_TYPES } from '@/lib/kitsu/types'
 
@@ -9,42 +8,41 @@ import type {
   SearchAnimeSortType,
 } from '@/api/anime/types'
 
-const PAGE_SIZE = 10
-
-export function useAnimeSearch({
-  search,
-  sort,
-  limit,
-}: {
+type UseAnimeSearchParams = {
   search?: string
   sort?: SearchAnimeSortType
   limit?: number
-} = {}) {
-  const fetchAnime = useCallback(
-    async ({ pageParam = 1, signal }: { pageParam?: number; signal: AbortSignal }) => {
-      const searchParams: SearchAnimeQueryParams = {
-        page: pageParam.toString(),
-        limit: limit ?? PAGE_SIZE,
-      }
+}
 
-      if (search) searchParams.search = search
-      if (sort && SEARCH_ANIME_SORT_TYPES.includes(sort)) searchParams.sort = sort
+const DEFAULT_PAGE_SIZE = 10
 
-      const response = await fetch(
-        // @ts-expect-error -- we know what we're doing
-        `/api/anime?${new URLSearchParams(searchParams).toString()}`,
-        { signal }
-      )
-      return response.json() as Promise<SearchAnimeResponse>
-    },
-    [search, sort, limit]
+const fetchAnime = async ({
+  search,
+  sort,
+  limit,
+  pageParam = 1,
+  signal,
+}: { pageParam?: number; signal: AbortSignal } & UseAnimeSearchParams) => {
+  const searchParams: SearchAnimeQueryParams = {
+    page: pageParam.toString(),
+    limit: limit ?? DEFAULT_PAGE_SIZE,
+  }
+
+  if (search) searchParams.search = search
+  if (sort && SEARCH_ANIME_SORT_TYPES.includes(sort)) searchParams.sort = sort
+
+  const response = await fetch(
+    // @ts-expect-error -- we know what we're doing
+    `/api/anime?${new URLSearchParams(searchParams).toString()}`,
+    { signal }
   )
+  return response.json() as Promise<SearchAnimeResponse>
+}
 
+export function useAnimeInfiniteSearch(params: UseAnimeSearchParams = {}) {
   return useInfiniteQuery({
-    queryKey: [
-      `animelist${search ? `-${search}` : ''}${sort ? `-${sort}` : ''}${limit ? `-${limit}` : ''}`,
-    ],
-    queryFn: fetchAnime,
+    queryKey: [`anime`, { ...params }],
+    queryFn: async args => fetchAnime({ ...params, ...args }),
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.meta?.next,
   })

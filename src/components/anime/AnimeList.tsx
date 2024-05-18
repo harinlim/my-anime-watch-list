@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { Fragment } from 'react'
 
-import { useAnimeSearch } from '@/data/use-anime-search'
+import { useAnimeInfiniteSearch } from '@/data/use-anime-search'
 
 import { AnimeCard } from './AnimeCard'
 
@@ -20,7 +20,7 @@ export function AnimeList({ filter, sort }: Props) {
   const searchParams = useSearchParams()
 
   const { data, isFetching, isFetchingNextPage, error, hasNextPage, fetchNextPage } =
-    useAnimeSearch({
+    useAnimeInfiniteSearch({
       search: searchParams.get('search') ?? filter,
       sort: (searchParams.get('sort') as SearchAnimeSortType) ?? sort,
     })

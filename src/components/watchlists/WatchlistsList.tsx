@@ -4,7 +4,7 @@ import { Button, Loader } from '@mantine/core'
 import { useSearchParams } from 'next/navigation'
 import { Fragment } from 'react'
 
-import { useWatchlistsSearch } from '@/data/use-watchlist-search'
+import { useWatchlistsInfiniteSearch } from '@/data/use-watchlist-search'
 
 import { WatchlistRow } from './WatchlistRow'
 
@@ -19,7 +19,7 @@ export function WatchlistsList({ filter, sort }: Props) {
   const searchParams = useSearchParams()
 
   const { data, isFetching, isFetchingNextPage, error, hasNextPage, fetchNextPage } =
-    useWatchlistsSearch({
+    useWatchlistsInfiniteSearch({
       search: searchParams.get('search') ?? filter,
       sort: (searchParams.get('sort') as SearchWatchlistsSortType) ?? sort,
     })
