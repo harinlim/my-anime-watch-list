@@ -5,7 +5,4 @@
     var(--mantine-color-white),
     var(--mantine-color-dark-6)
   );
-  border-radius: 9999px;
-  width: 2.5rem; /* 40px */
-  height: 2.5rem; /* 40px */
 }
