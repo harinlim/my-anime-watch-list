@@ -59,6 +59,29 @@ end;$$;
 
 ALTER FUNCTION "public"."add_default_owner"() OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION "public"."emit_update_watchlist"() RETURNS "trigger"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+declare
+  _id int;
+begin
+  case TG_OP
+    when 'INSERT', 'UPDATE' then
+        _id := NEW.watchlist_id;
+    when 'DELETE' then
+        _id := OLD.watchlist_id;
+  end case;
+
+  update watchlists 
+  set updated_at = now()
+  where id = _id;
+
+  return null;
+end;
+$$;
+
+ALTER FUNCTION "public"."emit_update_watchlist"() OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$begin
@@ -335,6 +358,8 @@ CREATE INDEX "watchlists_user_id_idx" ON "public"."watchlists" USING "btree" ("u
 
 CREATE UNIQUE INDEX "watchlists_users_unique_owners_idx" ON "public"."watchlists_users" USING "btree" ("watchlist_id") WHERE ("role" = 'owner'::"public"."collaborator_access");
 
+CREATE OR REPLACE TRIGGER "after_watchlist_anime_update" AFTER INSERT OR DELETE OR UPDATE ON "public"."watchlists_anime" FOR EACH ROW EXECUTE FUNCTION "public"."emit_update_watchlist"();
+
 CREATE OR REPLACE TRIGGER "handle_add_default_owner" AFTER INSERT ON "public"."watchlists" FOR EACH ROW EXECUTE FUNCTION "public"."add_default_owner"();
 
 CREATE OR REPLACE TRIGGER "handle_updated_at" BEFORE UPDATE ON "public"."user_reviews" FOR EACH ROW EXECUTE FUNCTION "extensions"."moddatetime"('updated_at');
@@ -443,6 +468,10 @@ GRANT USAGE ON SCHEMA "public" TO "service_role";
 GRANT ALL ON FUNCTION "public"."add_default_owner"() TO "anon";
 GRANT ALL ON FUNCTION "public"."add_default_owner"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."add_default_owner"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."emit_update_watchlist"() TO "anon";
+GRANT ALL ON FUNCTION "public"."emit_update_watchlist"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."emit_update_watchlist"() TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "anon";
 GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "authenticated";
