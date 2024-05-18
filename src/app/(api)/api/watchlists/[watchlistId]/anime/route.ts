@@ -42,9 +42,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Watchlist not found', { status: 404 })
   }
 
-  const result = transformAnimeByWatchlist(watchlistResult.data)
-
-  return NextResponse.json<AnimeByWatchlist[]>(result)
+  return NextResponse.json<AnimeByWatchlist[]>(watchlistResult.data.map(transformAnimeByWatchlist))
 }
 
 /**

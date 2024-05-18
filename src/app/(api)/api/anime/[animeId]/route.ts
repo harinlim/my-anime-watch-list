@@ -28,7 +28,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   // Validate records exist while getting kitsu
   const [animeExistsResult, userAnimeResult, kitsuResponse] = await Promise.all([
     getAnimeExistsById(supabase, animeId),
-    user ? getAnimeByUserAssociation(supabase, { userId: user.id, animeId }) : null,
+    user ? getAnimeByUserAssociation(supabase, { userId: user.id, animeId }).maybeSingle() : null,
     getAnimeById(animeId),
   ])
 
@@ -45,6 +45,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   }
 
   if (!kitsuResponse.ok) {
+    console.error(kitsuResponse)
     return NextResponse.json(kitsuResponse.message, { status: kitsuResponse.status })
   }
 
@@ -67,8 +68,8 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   }
 
   const { review, watchlists } = userAnimeResult?.data
-    ? transformAnimeByUserAssociation(userAnimeResult.data)[0] // This should always exist with a length of 1
-    : { review: null, watchlists: null }
+    ? transformAnimeByUserAssociation(userAnimeResult.data)
+    : ({ review: null, watchlists: null } as const)
 
   return NextResponse.json<GetAnimeByIdResponse>({
     ...kitsuData,

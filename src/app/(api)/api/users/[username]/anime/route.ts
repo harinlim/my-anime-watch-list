@@ -142,7 +142,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   return NextResponse.json<AnimeByUser[]>(
-    transformAnimeByUserAssociation(userAnimeResult.data)
+    userAnimeResult.data
+      .map(transformAnimeByUserAssociation)
       // TEMPORARY SOLUTION UNTIL WE ESTABLISH A VIEW FOR THE USER ANIMES
       .toSorted(SORT_ANIME_COMPARATORS[queryParams.sort][queryParams.direction])
   )
