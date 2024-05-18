@@ -33,7 +33,7 @@ type _TestGetWatchlistByIdReturn = Expect<
   Equal<NonNullable<Awaited<ReturnType<typeof getWatchlistById>>['data']>, Watchlist>
 >
 
-export function getWatchlistsForUser(
+export function queryWatchlistsForUser(
   supabase: SupabaseClient<Database>,
   { userId, onlyEditable = false }: { userId: string; onlyEditable?: boolean }
 ) {
@@ -56,7 +56,7 @@ export function getWatchlistsForUser(
 }
 
 type _TestGetEditableWatchlistsReturn = Expect<
-  Equal<NonNullable<Awaited<ReturnType<typeof getWatchlistsForUser>>['data']>, Watchlist[]>
+  Equal<NonNullable<Awaited<ReturnType<typeof queryWatchlistsForUser>>['data']>, Watchlist[]>
 >
 
 /**

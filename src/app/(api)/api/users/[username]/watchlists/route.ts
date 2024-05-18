@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { getUserByUsername } from '@/db/users'
-import { getWatchlistsForUser, queryWatchlistOverviews } from '@/db/watchlists'
+import { queryWatchlistsForUser, queryWatchlistOverviews } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 
 import type { Watchlist, WatchlistOverview } from '@/types/watchlists'
@@ -45,10 +45,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const shouldReturnOverviews = request.nextUrl.searchParams.get('overview') === 'true'
   if (!shouldReturnOverviews) {
     // Note RLS will handle any private watchlists
-    const watchlistsResult = await getWatchlistsForUser(supabase, {
+    const watchlistsResult = await queryWatchlistsForUser(supabase, {
       userId: userResult.data.id,
       onlyEditable: shouldReturnOnlyEditable,
-    })
+    }).order('updated_at', { ascending: false })
 
     if (watchlistsResult.error) {
       console.error(watchlistsResult)
@@ -81,6 +81,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const overviewsResult = await queryWatchlistOverviews(supabase)
     .neq('watchlists_users.role', 'viewer') // Exclude other viewers in result
     .in('id', watchlistIds)
+    .order('updated_at', { ascending: false })
     .returns<WatchlistOverview[]>()
 
   if (overviewsResult.error) {
