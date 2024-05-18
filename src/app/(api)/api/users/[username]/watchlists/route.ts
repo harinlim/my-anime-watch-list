@@ -48,7 +48,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const watchlistsResult = await queryWatchlistsForUser(supabase, {
       userId: userResult.data.id,
       onlyEditable: shouldReturnOnlyEditable,
-    }).order('updated_at', { ascending: false })
+    }).order('watchlists(updated_at)', { ascending: false })
 
     if (watchlistsResult.error) {
       console.error(watchlistsResult)
