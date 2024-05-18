@@ -16,11 +16,14 @@ export default async function ExternalProfilePage({ params }: { params: { userna
     data: watchlists,
     status,
     ok,
-  } = await fetchWithType<WatchlistOverview[]>(withBaseURL(`/api/users/${username}/watchlists`), {
-    method: 'GET',
-    credentials: 'include',
-    headers: new Headers(headers()),
-  })
+  } = await fetchWithType<WatchlistOverview[]>(
+    withBaseURL(`/api/users/${username}/watchlists?overview=true&editable=true`),
+    {
+      method: 'GET',
+      credentials: 'include',
+      headers: new Headers(headers()),
+    }
+  )
 
   if (status === 404) {
     return notFound()

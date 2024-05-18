@@ -20,7 +20,11 @@ This also includes a RESTful CRUD API for the following resources:
 - [x] `/api/users/:username`
   - [x] `GET`: Get public user information associated with the user. For now, this is just the user id and username.
 - [x] `/api/users/:username/watchlists`
-  - [x] `GET`: Get the public watchlists associated with the user by their username. For an authenticated user, this would include any private watchlists for that specific user as well.
+  - [x] `GET`: Get the public watchlists associated with the user by their username. For an authenticated user, this would include any private watchlists for that specific user as well
+    - (Note) This accepts two query parameters:
+      - `editable: boolean` - Return watchlists that the user can edit.
+        If the requester is not the requested, this will always be true (outsiders cannot see watchlists for a viewer)
+      - `overview: boolean` - Return watchlist overviews instead of base watchlists (i.e., includes some anime and collaborator information)
 - [x] `/api/users/:username/anime`
   - [x] `GET`: (_protected_) Get all anime related to user (rated, marked status, added to watchlist)
     - [ ] TODO: Add pagination and filtering, but not necessary for now

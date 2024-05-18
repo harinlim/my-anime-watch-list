@@ -30,7 +30,7 @@ export default async function SelfProfilePage() {
   }
 
   const { data: watchlists } = await fetchWithType<WatchlistOverview[]>(
-    withBaseURL(`/api/users/${user.username}/watchlists`),
+    withBaseURL(`/api/users/${user.username}/watchlists?overview=true`),
     {
       method: 'GET',
       credentials: 'include',

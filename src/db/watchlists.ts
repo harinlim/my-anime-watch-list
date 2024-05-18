@@ -33,6 +33,32 @@ type _TestGetWatchlistByIdReturn = Expect<
   Equal<NonNullable<Awaited<ReturnType<typeof getWatchlistById>>['data']>, Watchlist>
 >
 
+export function getWatchlistsForUser(
+  supabase: SupabaseClient<Database>,
+  { userId, onlyEditable = false }: { userId: string; onlyEditable?: boolean }
+) {
+  const query = supabase
+    .from('watchlists_users')
+    .select(
+      `...watchlists(
+        id, 
+        user_id, 
+        title, 
+        is_public,
+        description,
+        created_at,
+        updated_at
+      )`
+    )
+    .eq('user_id', userId)
+
+  return onlyEditable ? query.neq('role', 'viewer') : query
+}
+
+type _TestGetEditableWatchlistsReturn = Expect<
+  Equal<NonNullable<Awaited<ReturnType<typeof getWatchlistsForUser>>['data']>, Watchlist[]>
+>
+
 /**
  * Returns array of WatchlistOverview on success (cannot type directly here)
  */

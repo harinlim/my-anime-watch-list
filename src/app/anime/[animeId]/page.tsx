@@ -20,6 +20,7 @@ import { Review } from '@/components/anime/Review'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
 import styles from './anime-page.module.css'
+import { WatchlistSelect } from './WatchlistSelect'
 
 import type { GetAnimeByIdResponse } from '@/api/anime/[animeId]/types'
 import type { User } from '@/types/users'
@@ -160,6 +161,11 @@ export default async function AnimePage({ params }: { params: { animeId: string 
             <Title order={2}>Synopsis</Title>
             <Divider mt={5} />
             <Text mt={5}>{data.synopsis}</Text>
+
+            <div className="mt-64">
+              {/* TODO: Consider making this conditional on user? */}
+              <WatchlistSelect username={user?.username} />
+            </div>
           </div>
         </div>
       </div>
