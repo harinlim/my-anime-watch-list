@@ -1,5 +1,5 @@
 import { z } from 'zod'
 
-export const watchlistAnimeRequestBodySchema = z.object({
+export const addWatchlistAnimeRequestBodySchema = z.object({
   animeId: z.number({ coerce: true }).int(),
 })

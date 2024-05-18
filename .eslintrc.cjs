@@ -52,7 +52,15 @@ module.exports = {
     // Autofixes unused imports. Consider turning it off locally if it impedes your workflow.
     'unused-imports/no-unused-imports': 'error',
     '@typescript-eslint/no-unused-vars': 'off',
-    'unused-imports/no-unused-vars': 'error',
+    'unused-imports/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
+    ],
 
     '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
     // '@typescript-eslint/no-unnecessary-condition': ['error', { allowConstantLoopConditions: true }],

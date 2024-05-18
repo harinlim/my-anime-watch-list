@@ -7,7 +7,7 @@ import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
 import type { User } from '@/types/users'
-import type { Watchlist } from '@/types/watchlists'
+import type { WatchlistOverview } from '@/types/watchlists'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -29,7 +29,7 @@ export default async function SelfProfilePage() {
     return redirect('/login')
   }
 
-  const { data: watchlists } = await fetchWithType<Watchlist[]>(
+  const { data: watchlists } = await fetchWithType<WatchlistOverview[]>(
     withBaseURL(`/api/users/${user.username}/watchlists`),
     {
       method: 'GET',

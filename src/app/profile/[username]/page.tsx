@@ -6,7 +6,7 @@ import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
-import type { Watchlist } from '@/types/watchlists'
+import type { WatchlistOverview } from '@/types/watchlists'
 
 /** Public profile page */
 export default async function ExternalProfilePage({ params }: { params: { username: string } }) {
@@ -16,7 +16,7 @@ export default async function ExternalProfilePage({ params }: { params: { userna
     data: watchlists,
     status,
     ok,
-  } = await fetchWithType<Watchlist[]>(withBaseURL(`/api/users/${username}/watchlists`), {
+  } = await fetchWithType<WatchlistOverview[]>(withBaseURL(`/api/users/${username}/watchlists`), {
     method: 'GET',
     credentials: 'include',
     headers: new Headers(headers()),

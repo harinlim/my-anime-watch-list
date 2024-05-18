@@ -1,4 +1,4 @@
-import type { GetAnimeByUserAssociationResponse } from './types'
+import type { AnimeByUser } from '@/types/anime'
 
 export const GET_ANIME_BY_USER_RESPONSE_MOCK = [
   {
@@ -239,7 +239,7 @@ export const GET_ANIME_BY_USER_RESPONSE_MOCK = [
       },
     ],
   },
-] satisfies GetAnimeByUserAssociationResponse
+] satisfies AnimeByUser[]
 
 export const QUERY_ANIME_BY_USER_RESPONSE_MOCK = [
   {

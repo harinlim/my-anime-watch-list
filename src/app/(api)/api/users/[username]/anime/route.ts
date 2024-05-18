@@ -9,7 +9,7 @@ import { transformAnimeByUserAssociation } from '@/utils/user-anime'
 import { getAnimeByUserQueryParamsSchema } from './schemas'
 import { SORT_ANIME_COMPARATORS } from './utils'
 
-import type { GetAnimeByUserAssociationResponse } from './types'
+import type { AnimeByUser } from '@/types/anime'
 import type { NextRequest } from 'next/server'
 
 type RouteParams = { params: { username: string } }
@@ -141,7 +141,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed to fetch anime', { status: userAnimeResult.status })
   }
 
-  return NextResponse.json<GetAnimeByUserAssociationResponse>(
+  return NextResponse.json<AnimeByUser[]>(
     transformAnimeByUserAssociation(userAnimeResult.data)
       // TEMPORARY SOLUTION UNTIL WE ESTABLISH A VIEW FOR THE USER ANIMES
       .toSorted(SORT_ANIME_COMPARATORS[queryParams.sort][queryParams.direction])

@@ -1,4 +1,6 @@
 import type { Database } from '@/types/generated/supabase'
+import type { Equal, Expect } from '@/types/utils'
+import type { WatchlistUser } from '@/types/watchlists'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 export function getWatchlistCollaborators(supabase: SupabaseClient<Database>, watchlistId: number) {
@@ -14,6 +16,10 @@ export function getWatchlistCollaborators(supabase: SupabaseClient<Database>, wa
     .select('user_id, role, ...users(username, avatar_url)', { count: 'exact' })
     .eq('watchlist_id', watchlistId)
 }
+
+type _TestGetWatchlistCollaboratsReturn = Expect<
+  Equal<NonNullable<Awaited<ReturnType<typeof getWatchlistCollaborators>>['data']>, WatchlistUser[]>
+>
 
 export function getWatchlistRoleForUser(
   supabase: SupabaseClient<Database>,

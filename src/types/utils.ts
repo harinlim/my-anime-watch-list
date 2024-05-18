@@ -1,5 +1,7 @@
 export type Nullable<T> = { [P in keyof T]: T[P] | null }
 
+/* Expand helpers for intellisense */
+
 export type Expand<T> = {
   [K in keyof T]: T[K]
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -20,3 +22,8 @@ export type ExpandDeep<T> = T extends object
     ? { [K in keyof O]: ExpandDeep<O[K]> }
     : never
   : T
+
+/* Test helpers for type testing */
+export type Expect<T extends true> = T
+export type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false

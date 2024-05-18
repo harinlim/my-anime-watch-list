@@ -1,4 +1,6 @@
 import type { Database } from '@/types/generated/supabase'
+import type { Equal, Expect } from '@/types/utils'
+import type { Watchlist } from '@/types/watchlists'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 export function getWatchlistExistsById(supabase: SupabaseClient<Database>, watchlistId: number) {
@@ -8,7 +10,7 @@ export function getWatchlistExistsById(supabase: SupabaseClient<Database>, watch
     .eq('id', watchlistId)
 }
 
-export function getFullWatchlistById(supabase: SupabaseClient<Database>, watchlistId: number) {
+export function getWatchlistById(supabase: SupabaseClient<Database>, watchlistId: number) {
   return supabase
     .from('watchlists')
     .select(
@@ -19,15 +21,17 @@ export function getFullWatchlistById(supabase: SupabaseClient<Database>, watchli
       is_public,
       description,
       created_at,
-      updated_at,
-      anime(title, synopsis, kitsu_id, poster_image),
-      watchlists_users(user_id, role, ...users(username, avatar_url))
+      updated_at
     `,
       { count: 'exact' }
     )
     .eq('id', watchlistId)
     .maybeSingle()
 }
+
+type _TestGetWatchlistByIdReturn = Expect<
+  Equal<NonNullable<Awaited<ReturnType<typeof getWatchlistById>>['data']>, Watchlist>
+>
 
 /**
  * Returns array of WatchlistOverview on success (cannot type directly here)
