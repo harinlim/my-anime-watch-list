@@ -14,7 +14,7 @@ export function AnimeCard({ title, poster, rating }: Props) {
   return (
     <Card
       className={clsx(styles.card, 'h-auto min-w-10 shrink basis-1/2 lg:basis-auto')}
-      maw={250}
+      maw={220}
       mih={300}
     >
       {/* <AspectRatio ratio={720 / 1080} maw={300} mx="auto">

@@ -27,23 +27,25 @@ export function AnimeList({ filter, sort }: Props) {
 
   return (
     <>
-      <div className="flex w-full flex-wrap justify-center gap-4">
-        {data?.pages.map(page => (
-          // TODO: separate each item into component
-          // TODO: handle API errors
-          <Fragment key={`${page.meta?.total}-${page.meta?.self}`}>
-            {page.data?.map(anime => (
-              <Link key={anime.id} href={`/anime/${anime.id}`}>
-                <AnimeCard
-                  title={anime.canonicalTitle}
-                  poster={anime.posterImage?.small}
-                  rating={anime.averageRating}
-                />
-              </Link>
-            ))}
-          </Fragment>
-        ))}
-      </div>
+      {data && (
+        <div className="flex w-full flex-wrap justify-center lg:w-11/12">
+          {data?.pages.map(page => (
+            // TODO: separate each item into component
+            // TODO: handle API errors
+            <Fragment key={`${page.meta?.total}-${page.meta?.self}`}>
+              {page.data?.map(anime => (
+                <Link key={anime.id} href={`/anime/${anime.id}`}>
+                  <AnimeCard
+                    title={anime.canonicalTitle}
+                    poster={anime.posterImage?.small}
+                    rating={anime.averageRating}
+                  />
+                </Link>
+              ))}
+            </Fragment>
+          ))}
+        </div>
+      )}
       {isFetching && <Loader color="cyan" type="bars" />}
       {error && <div>Error: {error.message}</div>}
 

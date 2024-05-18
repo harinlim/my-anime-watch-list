@@ -75,7 +75,7 @@ export default async function AnimePage({ params }: { params: { animeId: string 
     <div className="mt-10 flex w-full items-center justify-center">
       <div className="flex-col items-center lg:w-[70%]">
         <Title order={1} className="w-full px-[32px] text-center text-4xl md:text-left lg:text-5xl">
-          {data.canonicalTitle} ({data.titles.ja_jp && data.titles.ja_jp})
+          {data.canonicalTitle} {data.titles.ja_jp && `(${data.titles.ja_jp})`}
         </Title>
         <div className="flex flex-col flex-wrap items-center space-y-6 p-8 sm:flex-row sm:flex-nowrap sm:items-start sm:space-y-0">
           <Card withBorder radius="md" p="xl" className={clsx(styles.card, 'min-w-[300px]')}>
@@ -101,10 +101,10 @@ export default async function AnimePage({ params }: { params: { animeId: string 
               </Text>
               <Table>
                 <TableTbody>
-                  {data.titles.en && (
+                  {(data.titles.en || data.titles.en_us) && (
                     <TableTr>
                       <TableTd>English</TableTd>
-                      <TableTd>{data.titles.en}</TableTd>
+                      <TableTd>{data.titles.en || data.titles.en_us}</TableTd>
                     </TableTr>
                   )}
                   {data.titles.ja_jp && (
@@ -113,10 +113,22 @@ export default async function AnimePage({ params }: { params: { animeId: string 
                       <TableTd>{data.titles.ja_jp}</TableTd>
                     </TableTr>
                   )}
+                  {data.titles.zh_cn && (
+                    <TableTr>
+                      <TableTd>Chinese</TableTd>
+                      <TableTd>{data.titles.zh_cn}</TableTd>
+                    </TableTr>
+                  )}
                   {data.titles.en_jp && (
                     <TableTr>
-                      <TableTd>Romanization)</TableTd>
+                      <TableTd>Romanization (JP)</TableTd>
                       <TableTd>{data.titles.en_jp}</TableTd>
+                    </TableTr>
+                  )}
+                  {data.titles.en_cn && (
+                    <TableTr>
+                      <TableTd>Romanization (CN)</TableTd>
+                      <TableTd>{data.titles.en_cn}</TableTd>
                     </TableTr>
                   )}
                 </TableTbody>

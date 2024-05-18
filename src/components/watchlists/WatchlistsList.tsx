@@ -1,11 +1,12 @@
 'use client'
 
-import { Button, Card, Loader, Text } from '@mantine/core'
-import Link from 'next/link'
+import { Button, Loader } from '@mantine/core'
 import { useSearchParams } from 'next/navigation'
 import { Fragment } from 'react'
 
 import { useWatchlistsSearch } from '@/data/use-watchlist-search'
+
+import { WatchlistRow } from './WatchlistRow'
 
 import type { SearchWatchlistsSortType } from '@/app/(api)/api/watchlists/types'
 
@@ -25,21 +26,12 @@ export function WatchlistsList({ filter, sort }: Props) {
 
   return (
     <>
-      <div className="flex w-full flex-wrap justify-center gap-4">
-        {data?.pages.map(page => (
+      <div className="flex w-5/6 flex-col flex-wrap justify-center gap-5 md:w-2/3">
+        {data?.pages?.map(page => (
           // TODO: separate each item into component
           // TODO: handle API errors
           <Fragment key={`${page.meta?.total}-${page.meta?.self}`}>
-            {page.data?.map(watchlist => (
-              <Link key={watchlist.id} href={`/watchlists/${watchlist.id}`}>
-                <Card className="border-red-400">
-                  <Text c="dimmed" size="xs" tt="uppercase" fw={700} mt="md">
-                    {watchlist.title}
-                  </Text>
-                  <pre className="text-wrap text-left">{JSON.stringify(watchlist, null, 2)}</pre>
-                </Card>
-              </Link>
-            ))}
+            {page.data?.map(watchlist => <WatchlistRow key={watchlist.id} watchlist={watchlist} />)}
           </Fragment>
         ))}
       </div>

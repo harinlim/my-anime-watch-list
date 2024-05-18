@@ -16,6 +16,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  // eslint-disable-next-line global-require, unicorn/prefer-module, import/no-extraneous-dependencies
+  plugins: [require('@tailwindcss/line-clamp')],
 }
 export default config
