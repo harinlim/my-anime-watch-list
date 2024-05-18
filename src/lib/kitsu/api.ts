@@ -89,6 +89,7 @@ export async function searchAnime(
     getKitsuErrorMessage
   )
   if (!response.ok) {
+    console.error(response)
     return response
   }
 
@@ -115,6 +116,7 @@ export async function getAnimeById(
   const response = await fetchWithType<GetAnimeByIdResponse>(
     `${KITSU_API_URL}/anime/${animeId}?${new URLSearchParams(searchParams).toString()}`,
     {
+      cache: 'force-cache',
       ...init,
       headers: {
         ...init.headers,
@@ -124,6 +126,7 @@ export async function getAnimeById(
     getKitsuErrorMessage
   )
   if (!response.ok) {
+    console.error(response)
     return response
   }
 

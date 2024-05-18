@@ -7,7 +7,10 @@ import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
 import { getWatchlistRoleForUser } from '../queries'
 
-import { patchCollaboratorRoleRequestBodySchema, watchlistCollaboratorParamSchema } from './schemas'
+import {
+  patchCollaboratorRoleRequestBodySchema,
+  watchlistCollaboratorQueryParamsSchema,
+} from './schemas'
 
 import type { NextRequest } from 'next/server'
 
@@ -19,8 +22,7 @@ type RouteParams = { params: { userId: string; watchlistId: string } }
  * Note: Only editors or owners of the watchlist can update collaborator roles, and owner roles cannot be updated.
  */
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
-  const paramsResult = watchlistCollaboratorParamSchema.safeParse(params)
-
+  const paramsResult = watchlistCollaboratorQueryParamsSchema.safeParse(params)
   if (!paramsResult.success) {
     return NextResponse.json(transformZodValidationErrorToResponse(paramsResult.error), {
       status: 400,
@@ -59,20 +61,19 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }),
   ])
 
-  if (!!watchlistExistsResult.error || watchlistExistsResult.count === 0) {
-    if (watchlistExistsResult.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
-
+  // Verify the watchlist exists
+  if (watchlistExistsResult.error) {
     console.error(watchlistExistsResult)
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
+    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
+  }
+
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
   }
 
   if (hasEditAccessResult.error) {
     console.error(hasEditAccessResult.error)
-    return NextResponse.json('Failed to check if user has edit access to watchlist', {
-      status: 500,
-    })
+    return NextResponse.json('Failed to verify user access to watchlist', { status: 500 })
   }
 
   const hasEditAccess = hasEditAccessResult.data
@@ -81,14 +82,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   }
 
   if (requestedUserRoleResult.error) {
-    if (requestedUserRoleResult.status === 406) {
-      return NextResponse.json('Requested user is not a collaborator', { status: 404 })
-    }
-
     console.error(requestedUserRoleResult.error)
     return NextResponse.json('Failed to check if requested user is a collaborator for watchlist', {
       status: 500,
     })
+  }
+
+  if (requestedUserRoleResult.count === 0 || !requestedUserRoleResult.data) {
+    return NextResponse.json('Requested user is not a collaborator', { status: 404 })
   }
 
   const requestedUserRole = requestedUserRoleResult.data.role
@@ -103,9 +104,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   if (error) {
     console.error(error)
-    return NextResponse.json('Failed to update watchlist collaborator role for requested user', {
-      status: 500,
-    })
+    return NextResponse.json('Failed to update watchlist role for requested user', { status: 500 })
   }
 
   return new Response(null, { status: 204 })
@@ -117,7 +116,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
  * Note: Only the owner of the watchlist or the collaborator themselves can delete the collaborator.
  */
 export async function DELETE(_: NextRequest, { params }: RouteParams) {
-  const paramsResult = watchlistCollaboratorParamSchema.safeParse(params)
+  const paramsResult = watchlistCollaboratorQueryParamsSchema.safeParse(params)
 
   if (!paramsResult.success) {
     return NextResponse.json(transformZodValidationErrorToResponse(paramsResult.error), {
@@ -139,35 +138,40 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
   }
 
   // Get validation queries
-  const [watchlistExistsResult, roleExistsResult] = await Promise.all([
+  const [watchlistExistsResult, hasOwnerAccessResult] = await Promise.all([
     getWatchlistExistsById(supabase, watchlistId),
-    getWatchlistRoleForUser(supabase, { watchlistId, userId: user.id }),
+    supabase.rpc('has_owner_access_to_watchlist', {
+      _user_id: user.id,
+      _watchlist_id: watchlistId,
+    }),
   ])
 
   // Verify the watchlist exists
-  if (!!watchlistExistsResult.error || !watchlistExistsResult.data) {
-    if (watchlistExistsResult.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
-
+  if (watchlistExistsResult.error) {
     console.error(watchlistExistsResult)
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
+    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
   }
 
-  // Verify logged in user is a collaborator
-  if (!!roleExistsResult.error || !roleExistsResult.data) {
-    if (roleExistsResult.status === 406) {
-      return NextResponse.json('User is not a collaborator', { status: 403 })
-    }
-
-    return NextResponse.json('Failed to fetch collaborator role', {
-      status: roleExistsResult.status,
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
+  }
+  if (hasOwnerAccessResult.error) {
+    console.error(hasOwnerAccessResult.error)
+    return NextResponse.json('Failed to check if user has access to watchlist', {
+      status: 500,
     })
   }
 
-  // Verify the user has permission to delete the collaborator
-  if (user.id !== userToDeleteId && roleExistsResult.data.role !== 'owner') {
-    return NextResponse.json('User is not permitted to delete collaborator', { status: 403 })
+  const hasOwnerAccess = hasOwnerAccessResult.data
+
+  // Owners cannot remove themselves from the watchlist
+  if (userToDeleteId === user.id && hasOwnerAccess) {
+    return NextResponse.json('Owners cannot remove themselves from the watchlist', { status: 400 })
+  }
+
+  // Verify the user has permission to remove the collaborator or themself
+  if (userToDeleteId === user.id && !hasOwnerAccess) {
+    return NextResponse.json('User is not permitted to remove requested', { status: 403 })
   }
 
   // Delete the collaborator
@@ -178,6 +182,7 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     .eq('user_id', userToDeleteId)
 
   if (deleteCollaboratorQueryResult.error) {
+    console.error(deleteCollaboratorQueryResult.error)
     return NextResponse.json(deleteCollaboratorQueryResult.error, {
       status: deleteCollaboratorQueryResult.status,
     })

@@ -106,12 +106,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   // Verify associated anime record exists in our DB before proceeding (otherwise, page must be viewed first)
   const animeExistsResult = await getAnimeExistsById(supabase, animeId)
-  if (!!animeExistsResult.error || animeExistsResult.count === 0) {
-    if (animeExistsResult.status === 406) {
-      return NextResponse.json('Anime not found', { status: 404 })
-    }
-
+  if (animeExistsResult.error) {
+    console.error(animeExistsResult.error)
     return NextResponse.json('Failed to fetch anime from DB', { status: animeExistsResult.status })
+  }
+
+  if (animeExistsResult.count === 0) {
+    return NextResponse.json('Anime not found', { status: 404 })
   }
 
   const { error } = await supabase.from('user_reviews').upsert({
@@ -146,12 +147,13 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
 
   // Verify associated anime record exists in our DB before proceeding (otherwise, page must be viewed first)
   const animeExistsResult = await getAnimeExistsById(supabase, animeId)
-  if (!!animeExistsResult.error || animeExistsResult.count === 0) {
-    if (animeExistsResult.status === 406) {
-      return NextResponse.json('Anime not found', { status: 404 })
-    }
-
+  if (animeExistsResult.error) {
+    console.error(animeExistsResult.error)
     return NextResponse.json('Failed to fetch anime from DB', { status: animeExistsResult.status })
+  }
+
+  if (animeExistsResult.count === 0) {
+    return NextResponse.json('Anime not found', { status: 404 })
   }
 
   const deleteQuery = await supabase
@@ -161,6 +163,7 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     .eq('anime_id', animeId)
 
   if (deleteQuery.error) {
+    console.error(deleteQuery.error)
     return NextResponse.json(deleteQuery.error, { status: deleteQuery.status })
   }
 

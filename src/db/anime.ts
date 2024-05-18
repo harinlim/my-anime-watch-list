@@ -6,7 +6,6 @@ export function getAnimeExistsById(supabase: SupabaseClient<Database>, animeId: 
     .from('anime')
     .select(undefined, { count: 'exact', head: true })
     .eq('kitsu_id', animeId)
-    .single()
 }
 
 export function getAnimeByUserAssociation(

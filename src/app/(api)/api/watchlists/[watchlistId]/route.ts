@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+import { getAnimeExistsById } from '@/db/anime'
+import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 import { parseRequestBody } from '@/lib/zod/api'
 
@@ -71,30 +73,28 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   // Get validation queries
   const [watchlistExistsResult, animeExistsResult] = await Promise.all([
-    supabase.from('watchlists').select('id').eq('id', watchlistId).single(),
-    supabase
-      .from('anime')
-      .select('kitsu_id', { head: true, count: 'exact' })
-      .eq('kitsu_id', animeId)
-      .single(),
+    getWatchlistExistsById(supabase, watchlistId),
+    getAnimeExistsById(supabase, animeId),
   ])
 
-  // Verify the watchlist belonging to the user exists
-  if (!!watchlistExistsResult.error || !watchlistExistsResult.data) {
-    if (watchlistExistsResult.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
+  // Verify the watchlist exists
+  if (watchlistExistsResult.error) {
+    console.error(watchlistExistsResult)
+    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
+  }
 
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
   }
 
   // Verify anime exists in DB
-  if (!!animeExistsResult.error || !animeExistsResult.count) {
-    if (animeExistsResult.status === 406) {
-      return NextResponse.json('Anime not found', { status: 404 })
-    }
+  if (animeExistsResult.error) {
+    console.error(animeExistsResult.error)
+    return NextResponse.json('Failed to fetch anime from DB', { status: 500 })
+  }
 
-    return NextResponse.json('Failed to fetch anime', { status: animeExistsResult.status })
+  if (animeExistsResult.count === 0) {
+    return NextResponse.json('Anime not found', { status: 404 })
   }
 
   // Add anime to watchlist
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 /**
  * Delete the watchlist with the given ID
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_: NextRequest, { params }: RouteParams) {
   const watchlistId = Number(params.watchlistId)
   if (Number.isNaN(watchlistId) || watchlistId <= 0) {
     return NextResponse.json('Invalid watchlist ID', { status: 400 })
@@ -142,24 +142,31 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   }
 
   // Get validation queries
-  const watchlistQuery = await supabase
-    .from('watchlists')
-    .select('*')
-    .eq('id', watchlistId)
-    .single()
+  const [watchlistExistsResult, hasOwnerAccessResult] = await Promise.all([
+    getWatchlistExistsById(supabase, watchlistId),
+    supabase.rpc('has_owner_access_to_watchlist', {
+      _user_id: user.id,
+      _watchlist_id: watchlistId,
+    }),
+  ])
 
   // Verify the watchlist belonging to the user exists
-  if (!!watchlistQuery.error || !watchlistQuery.data) {
-    if (watchlistQuery.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
-
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistQuery.status })
+  if (watchlistExistsResult.error) {
+    console.error(watchlistExistsResult.error)
+    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
   }
 
-  const watchlist = watchlistQuery.data
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
+  }
 
-  if (watchlist.user_id !== user.id) {
+  if (hasOwnerAccessResult.error) {
+    console.error(hasOwnerAccessResult.error)
+    return NextResponse.json('Failed to verify user access to watchlist', { status: 500 })
+  }
+
+  const hasOwnerAccess = hasOwnerAccessResult.data
+  if (!hasOwnerAccess) {
     return NextResponse.json('Watchlist does not belong to the user', { status: 403 })
   }
 
@@ -170,6 +177,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     .eq('id', watchlistId)
 
   if (error) {
+    console.error(error)
     return NextResponse.json(error, { status })
   }
 

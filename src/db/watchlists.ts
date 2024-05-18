@@ -4,9 +4,29 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 export function getWatchlistExistsById(supabase: SupabaseClient<Database>, watchlistId: number) {
   return supabase
     .from('watchlists')
-    .select('id', { count: 'exact', head: true })
+    .select(undefined, { count: 'exact', head: true })
     .eq('id', watchlistId)
-    .single()
+}
+
+export function getFullWatchlistById(supabase: SupabaseClient<Database>, watchlistId: number) {
+  return supabase
+    .from('watchlists')
+    .select(
+      `
+      id,
+      user_id,
+      title,
+      is_public,
+      description,
+      created_at,
+      updated_at,
+      anime(title, synopsis, kitsu_id, poster_image),
+      watchlists_users(user_id, role, ...users(username, avatar_url))
+    `,
+      { count: 'exact' }
+    )
+    .eq('id', watchlistId)
+    .maybeSingle()
 }
 
 /**

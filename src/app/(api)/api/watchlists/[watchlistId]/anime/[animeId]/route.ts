@@ -38,20 +38,19 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     }),
   ])
 
-  if (!!watchlistExistsResult.error || watchlistExistsResult.count === 0) {
-    if (watchlistExistsResult.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
-
+  // Verify the watchlist exists
+  if (watchlistExistsResult.error) {
     console.error(watchlistExistsResult)
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
+    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
+  }
+
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
   }
 
   if (hasEditAccessResult.error) {
     console.error(hasEditAccessResult.error)
-    return NextResponse.json('Failed to check if user has edit access to watchlist', {
-      status: 500,
-    })
+    return NextResponse.json('Failed to verify user access to watchlist', { status: 500 })
   }
 
   const hasEditAccess = hasEditAccessResult.data
@@ -67,6 +66,7 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
     .eq('anime_id', animeId)
 
   if (deleteQuery.error) {
+    console.error(deleteQuery.error)
     return NextResponse.json(deleteQuery.error, { status: deleteQuery.status })
   }
 

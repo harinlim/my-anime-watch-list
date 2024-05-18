@@ -37,16 +37,17 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 
   // Get user associated with username
-  const userQueryResult = await getUserByUsername(supabase, username)
-  if (userQueryResult.error) {
-    if (userQueryResult.status === 406) {
-      return NextResponse.json('User not found', { status: 404 })
-    }
-
-    return NextResponse.json('Failed to fetch user', { status: userQueryResult.status })
+  const userResult = await getUserByUsername(supabase, username)
+  if (userResult.error) {
+    console.error(userResult)
+    return NextResponse.json('Failed to fetch user', { status: 500 })
   }
 
-  const userId = userQueryResult.data.id
+  if (userResult.count === 0 || !userResult.data) {
+    return NextResponse.json('User not found', { status: 404 })
+  }
+
+  const userId = userResult.data.id
 
   const isLoggedInUser = user.id === userId
   if (!isLoggedInUser) {

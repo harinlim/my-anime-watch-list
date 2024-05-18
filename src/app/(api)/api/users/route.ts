@@ -15,23 +15,23 @@ export async function GET() {
     return NextResponse.json('Failed authorization', { status: 401 })
   }
 
-  const userQueryResult = await supabase
+  const userResult = await supabase
     .from('users')
-    .select(`username, email`)
+    .select(`username, email`, { count: 'exact' })
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
-  if (!!userQueryResult.error || !userQueryResult.data) {
-    if (userQueryResult.status === 406) {
-      return NextResponse.json('User not found', { status: 404 })
-    }
+  if (userResult.error) {
+    console.error(userResult)
+    return NextResponse.json('Failed to fetch user', { status: 500 })
+  }
 
-    console.error(userQueryResult.error)
-    return NextResponse.json(userQueryResult, { status: userQueryResult.status })
+  if (userResult.count === 0 || !userResult.data) {
+    return NextResponse.json('User not found', { status: 404 })
   }
 
   return NextResponse.json<User>({
     id: user.id,
-    ...userQueryResult.data,
+    ...userResult.data,
   })
 }

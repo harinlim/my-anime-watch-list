@@ -32,13 +32,13 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     getWatchlistExistsById(supabase, watchlistId),
   ])
 
-  if (!!watchlistExistsResult.error || watchlistExistsResult.count === 0) {
-    if (watchlistExistsResult.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
-
+  if (watchlistExistsResult.error) {
     console.error(watchlistExistsResult)
     return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
+  }
+
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
   }
 
   if (!!collaboratorsQueryResult.error || !collaboratorsQueryResult.data) {
@@ -96,42 +96,38 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }),
   ])
 
-  if (!!watchlistExistsResult.error || !watchlistExistsResult.data) {
-    if (watchlistExistsResult.status === 406) {
-      return NextResponse.json('Watchlist not found', { status: 404 })
-    }
-
+  if (watchlistExistsResult.error) {
     console.error(watchlistExistsResult)
-    return NextResponse.json('Failed to fetch watchlist', { status: watchlistExistsResult.status })
+    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
   }
 
-  if (!!userExistsResult.error || userExistsResult.count === 0) {
-    if (userExistsResult.status === 406) {
-      // This is a 422 because the user ID is invalid
-      return NextResponse.json('Requested user not found', { status: 422 })
-    }
+  if (watchlistExistsResult.count === 0) {
+    return NextResponse.json('Watchlist not found', { status: 404 })
+  }
 
+  if (userExistsResult.error) {
     console.error(userExistsResult)
-    return NextResponse.json('Failed to fetch requested user', { status: userExistsResult.status })
+    return NextResponse.json('Failed to fetch requested user', { status: 500 })
+  }
+
+  if (userExistsResult.count === 0) {
+    // This is a 422 because the user ID is invalid
+    return NextResponse.json('Requested user not found', { status: 422 })
   }
 
   if (isRequestedUserWatchlistCollaboratorResult.error) {
     console.error(isRequestedUserWatchlistCollaboratorResult.error)
-    return NextResponse.json('Failed to check if requested user is a collaborator for watchlist', {
-      status: 500,
-    })
+    return NextResponse.json('Failed to verify requested user role for watchlist', { status: 500 })
   }
 
   const isRequestedUserWatchlistCollaborator = isRequestedUserWatchlistCollaboratorResult.data
   if (isRequestedUserWatchlistCollaborator) {
-    return NextResponse.json('Requested user is already a collaborator for watchlist', {
-      status: 409,
-    })
+    return NextResponse.json('Requested user is already added to the watchlist', { status: 409 })
   }
 
   if (hasEditAccessResult.error) {
     console.error(hasEditAccessResult.error)
-    return NextResponse.json('Failed to check if user has edit access to watchlist', {
+    return NextResponse.json('Failed to verify user access to watchlist', {
       status: 500,
     })
   }

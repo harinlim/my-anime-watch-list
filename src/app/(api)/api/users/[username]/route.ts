@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { getUserByUsername } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 
 import type { NextRequest } from 'next/server'
@@ -11,19 +12,19 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   const supabase = createServerClient()
 
   // Get user associated with username
-  const {
-    data: user,
-    error,
-    status,
-  } = await supabase.from('users').select('id,username').eq('username', username).single()
+  const userResult = await getUserByUsername(supabase, username)
 
-  if (!!error || !user) {
-    if (status === 406) {
-      return NextResponse.json('User not found', { status: 404 })
-    }
-
-    return NextResponse.json('Failed to fetch user', { status })
+  if (userResult.error) {
+    console.error(userResult)
+    return NextResponse.json('Failed to fetch user', { status: 500 })
   }
 
-  return NextResponse.json<{ id: string; username: string }>(user)
+  if (userResult.count === 0 || !userResult.data) {
+    return NextResponse.json('User not found', { status: 404 })
+  }
+
+  return NextResponse.json<{ id: string; username: string }>({
+    id: userResult.data.id,
+    username: userResult.data.username,
+  })
 }

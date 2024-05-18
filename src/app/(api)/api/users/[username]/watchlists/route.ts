@@ -14,19 +14,20 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   const supabase = createServerClient()
 
   // Get user associated with username
-  const useQueryResult = await getUserByUsername(supabase, username)
-  if (useQueryResult.error) {
-    if (useQueryResult.status === 406) {
-      return NextResponse.json('User not found', { status: 404 })
-    }
+  const userResult = await getUserByUsername(supabase, username)
+  if (userResult.error) {
+    console.error(userResult)
+    return NextResponse.json('Failed to fetch user', { status: 500 })
+  }
 
-    return NextResponse.json('Failed to fetch user', { status: useQueryResult.status })
+  if (userResult.count === 0 || !userResult.data) {
+    return NextResponse.json('User not found', { status: 404 })
   }
 
   const watchlistIdsQueryResult = await supabase
     .from('watchlists_users')
     .select('watchlist_id')
-    .eq('user_id', useQueryResult.data.id)
+    .eq('user_id', userResult.data.id)
     .neq('role', 'viewer')
 
   if (watchlistIdsQueryResult.error) {

@@ -21,8 +21,8 @@ export function getWatchlistRoleForUser(
 ) {
   return supabase
     .from('watchlists_users')
-    .select('role')
+    .select('role', { count: 'exact' })
     .eq('watchlist_id', watchlistId)
     .eq('user_id', userId)
-    .single()
+    .maybeSingle()
 }

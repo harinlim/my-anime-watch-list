@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const watchlistCollaboratorParamSchema = z.object({
+export const watchlistCollaboratorQueryParamsSchema = z.object({
   userId: z.string().uuid(),
   watchlistId: z.coerce
     .number()
