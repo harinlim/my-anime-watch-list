@@ -162,10 +162,11 @@ export default async function AnimePage({ params }: { params: { animeId: string 
             <Divider mt={5} />
             <Text mt={5}>{data.synopsis}</Text>
 
-            <div className="mt-64">
-              {/* TODO: Consider making this conditional on user? */}
-              <WatchlistSelect username={user?.username} />
-            </div>
+            {user && (
+              <div className="mt-64">
+                <WatchlistSelect username={user.username} />
+              </div>
+            )}
           </div>
         </div>
       </div>
