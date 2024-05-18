@@ -1,6 +1,6 @@
 import type { ImageMetadata } from '@/lib/kitsu/types'
 import type { Database } from '@/types/generated/supabase'
-import type { ExpandTwo } from '@/types/utils'
+import type { ExpandDeep, ExpandTwo } from '@/types/utils'
 
 export type Watchlist = ExpandTwo<
   Omit<Database['public']['Tables']['watchlists']['Row'], 'search_vector'> & {
@@ -18,7 +18,7 @@ export type WatchlistCollaborators = Database['public']['Tables']['watchlists_us
 }
 
 /** Simplified overview type for watchlists including anime and collaborators */
-export type WatchlistOverview = ExpandTwo<
+export type WatchlistOverview = ExpandDeep<
   Omit<Watchlist, 'anime'> & {
     anime: Pick<WatchlistAnime, 'title' | 'kitsu_id' | 'poster_image'>[]
     watchlists_users: Pick<WatchlistCollaborators, 'role' | 'user_id' | 'username' | 'avatar_url'>[]

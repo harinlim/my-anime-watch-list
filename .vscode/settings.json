@@ -5,5 +5,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
-  "vs-code-prettier-eslint.prettierLast": false
+  "vs-code-prettier-eslint.prettierLast": false,
+
+  // Sets VSCode's default TypeScript version to match the project's version for accurate intellisense
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

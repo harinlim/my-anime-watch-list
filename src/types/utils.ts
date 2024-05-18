@@ -15,8 +15,8 @@ export type ExpandTwo<T> = {
   // eslint-disable-next-line @typescript-eslint/ban-types
 } & {}
 
-// TODO: FIX THIS TO INCLUDE DEPTH FOR INFINITE RECURSION
-export type ExpandDeep<T> = {
-  [K in keyof T]: T[K] extends object ? ExpandDeep<T[K]> : T[K]
-  // eslint-disable-next-line @typescript-eslint/ban-types
-} & {}
+export type ExpandDeep<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: ExpandDeep<O[K]> }
+    : never
+  : T

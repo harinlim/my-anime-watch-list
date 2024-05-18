@@ -1,3 +1,5 @@
+import type { ExpandOne } from '@/types/utils'
+
 type Dimensions = { width: number; height: number }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large'
@@ -91,40 +93,42 @@ type CategoryAttributes = {
 
 export const CATEGORY_ATTRIBUTES = ['title'] as const satisfies (keyof CategoryAttributes)[]
 
-type CategoryData = {
+type CategoryData = ExpandOne<{
   id: string
   type: 'categories'
   links: ResourceLinks
   attributes: CategoryAttributes
-}
+}>
 export type GetAnimeByIdResponse = {
   data: AnimeData
   included?: CategoryData[] | null
 }
 
-type AnimeDataDeserialized = {
-  id: string
-  type: 'anime'
-  links: ResourceLinks
-} & AnimeAttributes
+type AnimeDataDeserialized = ExpandOne<
+  {
+    id: string
+    type: 'anime'
+    links: ResourceLinks
+  } & AnimeAttributes
+>
 
-export type GetAnimeByIdDeserializedResponse = {
+export type GetAnimeByIdDeserializedResponse = ExpandOne<{
   data: AnimeDataDeserialized & {
     categories: string[] | null
   }
-}
+}>
 
-export type SearchAnimeResponse = {
+export type SearchAnimeResponse = ExpandOne<{
   data: AnimeData[]
   meta: PaginationMetadata
   links: PaginationLinks
-}
+}>
 
-export type SearchAnimeDeserializedResponse = {
+export type SearchAnimeDeserializedResponse = ExpandOne<{
   data: AnimeDataDeserialized[]
   meta: PaginationMetadata
   links: PaginationLinks
-}
+}>
 
 export const SEARCH_ANIME_SORT_TYPES = [
   'popularity',
@@ -160,7 +164,7 @@ export type KitsuErrorResponse = {
   }[]
 }
 
-/* 
+/*
 {
   data: {
     id: '43905',
