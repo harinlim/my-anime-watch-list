@@ -1,15 +1,20 @@
+import { Title } from '@mantine/core'
 import { headers } from 'next/headers'
 
 import { fetchWithType, withBaseURL } from '@/lib/api'
+
+import { WatchlistModal } from '../../../components/watchlists/WatchlistModal'
 
 import type { Watchlist } from '@/types/watchlists'
 
 type Props = {
   username?: string
+  animeId: string
+  addedWatchlists: Set<number>
 }
 
 // TODO: Allow adding to watchlist
-export async function WatchlistSelect({ username }: Props) {
+export async function WatchlistSelect({ username, animeId, addedWatchlists }: Props) {
   const watchlistsResponse = await fetchWithType<Watchlist[]>(
     // Get only editable watchlists that anime can be added to
     withBaseURL(`/api/users/${username}/watchlists?editable=true`),
@@ -29,10 +34,14 @@ export async function WatchlistSelect({ username }: Props) {
   // -- Fetch should be server-side tho, via this server component
   return (
     <>
-      <h3 className="text-lg font-bold">My Watchlists</h3>
-      <pre className="whitespace-pre-wrap text-wrap break-words text-left">
-        {JSON.stringify(watchlistsResponse, null, 2)}
-      </pre>
+      <Title order={2}>Actions</Title>
+      <div className="my-4 flex">
+        <WatchlistModal
+          animeId={animeId}
+          editableWatchlists={watchlistsResponse.data}
+          initialAddedWatchlists={addedWatchlists}
+        />
+      </div>
     </>
   )
 }

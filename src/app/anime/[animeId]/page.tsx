@@ -18,6 +18,7 @@ import { notFound } from 'next/navigation'
 
 import { Review } from '@/components/anime/Review'
 import { fetchWithType, withBaseURL } from '@/lib/api'
+import { getAnimeRatingColor } from '@/utils/anime-colors'
 
 import styles from './anime-page.module.css'
 import { WatchlistSelect } from './WatchlistSelect'
@@ -55,22 +56,14 @@ export default async function AnimePage({ params }: { params: { animeId: string 
 
   const { data } = animeResponse
   if (!data) {
-    throw new Error('Failed to fetch anime')
+    throw new Error('Failed to parse anime')
   }
 
   const genres = data.categories ?? []
-  let ratingColor = 'text-red-600'
   const rating = Number(data.averageRating)
+  const ratingColor = getAnimeRatingColor(rating)
 
-  if (rating >= 90) {
-    ratingColor = 'text-emerald-600'
-  } else if (rating >= 80) {
-    ratingColor = 'text-lime-600'
-  } else if (rating >= 70) {
-    ratingColor = 'text-yellow-600'
-  } else if (rating >= 60) {
-    ratingColor = 'text-orange-600'
-  }
+  const addedWatchlistSet = new Set<number>(data.watchlists?.map(watchlist => watchlist.id) ?? [])
 
   return (
     <div className="mt-10 flex w-full items-center justify-center">
@@ -163,8 +156,12 @@ export default async function AnimePage({ params }: { params: { animeId: string 
             <Text mt={5}>{data.synopsis}</Text>
 
             {user && (
-              <div className="mt-64">
-                <WatchlistSelect username={user.username} />
+              <div className="mt-12">
+                <WatchlistSelect
+                  animeId={animeId}
+                  username={user.username}
+                  addedWatchlists={addedWatchlistSet}
+                />
               </div>
             )}
           </div>
