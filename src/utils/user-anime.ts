@@ -12,8 +12,12 @@ export function transformAnimeByUserAssociation({
   // If watchlists is mappable, it will always have at least one watchlist_user
   const userWatchlists = watchlists.map(watchlist => {
     const { watchlists_users, ...rest } = watchlist
-    // There should only ever be 1 watchlist user at most
-    const { role } = watchlists_users[0]
+    // There should only ever be 1 watchlist user due to the inner join
+    const { role } = watchlists_users[0] ?? { role: null }
+    // For now, log this error instead of throwing
+    if (!role) {
+      console.error('transformAnimeByUserAssociation: watchlist user role not found')
+    }
     return { ...rest, role }
   })
 

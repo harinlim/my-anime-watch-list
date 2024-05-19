@@ -49,7 +49,7 @@ export function getAnimeByUserAssociation(
         user_id,
         title,
         is_public,
-        watchlists_users(user_id, role, ...users(username))
+        watchlists_users!inner(user_id, role, ...users(username))
       )`,
       { count: 'exact' }
     )
