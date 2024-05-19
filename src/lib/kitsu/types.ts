@@ -132,7 +132,9 @@ export type SearchAnimeDeserializedResponse = ExpandOne<{
 
 export const SEARCH_ANIME_SORT_TYPES = [
   'popularity',
+  '-popularity',
   'rating',
+  '-rating',
   'users',
   'latest',
   'oldest',
@@ -141,7 +143,9 @@ export type SearchAnimeSortType = (typeof SEARCH_ANIME_SORT_TYPES)[number]
 
 export const SEARCH_ANIME_SORT_MAPPING = {
   popularity: 'popularityRank',
+  '-popularity': '-popularityRank',
   rating: 'ratingRank',
+  '-rating': '-ratingRank',
   users: '-userCount',
   latest: '-startDate',
   oldest: 'startDate',
