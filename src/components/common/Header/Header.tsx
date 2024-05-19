@@ -37,11 +37,11 @@ export function Header({ user }: Props) {
         </Link>
 
         <Group ml={30} className={clsx(styles.links, 'flex-nowrap')}>
-          <Group visibleFrom="md" gap="5">
+          <Group visibleFrom="sm" gap="5" className="flex-nowrap">
             {items}
           </Group>
 
-          <Group gap={20} className="sm flex-nowrap">
+          <Group gap={20} className="flex-nowrap">
             <SearchBar defaultType="/anime" includeSearchType className={styles.search} />
             <ColorSchemeToggle />
           </Group>
