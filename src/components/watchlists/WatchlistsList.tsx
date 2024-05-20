@@ -13,15 +13,17 @@ import type { SearchWatchlistsSortType } from '@/app/(api)/api/watchlists/types'
 type Props = {
   filter?: string
   sort?: SearchWatchlistsSortType
+  direction?: 'asc' | 'desc'
 }
 
-export function WatchlistsList({ filter, sort }: Props) {
+export function WatchlistsList({ filter, sort, direction }: Props) {
   const searchParams = useSearchParams()
 
   const { data, isFetching, isFetchingNextPage, error, hasNextPage, fetchNextPage } =
     useWatchlistsInfiniteSearch({
       search: searchParams.get('search') ?? filter,
       sort: (searchParams.get('sort') as SearchWatchlistsSortType) ?? sort,
+      sortDirection: searchParams.get('direction') ?? direction,
     })
 
   return (

@@ -8,19 +8,25 @@ import type {
   SearchWatchlistsSortType,
 } from '@/api/watchlists/types'
 
+const DEFAULT_PAGE_SIZE = 10
+
+const SORT_DIRECTIONS = ['asc', 'desc'] as const
+
 type UseWatchlistsSearchParams = {
   search?: string
-  sort?: SearchWatchlistsSortType
-  direction?: 'asc' | 'desc'
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  sort?: SearchWatchlistsSortType | string | null
+  /** This cannot be named `direction` due to namespace with useQuery */
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  sortDirection?: (typeof SORT_DIRECTIONS)[number] | string | null
   limit?: number
 }
-
-const DEFAULT_PAGE_SIZE = 10
 
 const fetchWatchlists = async ({
   search,
   sort,
   limit,
+  sortDirection,
   pageParam = 1,
   signal,
 }: { pageParam?: number; signal: AbortSignal } & UseWatchlistsSearchParams) => {
@@ -30,13 +36,18 @@ const fetchWatchlists = async ({
   }
 
   if (search) searchParams.search = search
-  if (sort && SEARCH_WATCHLISTS_SORT_TYPES.includes(sort)) {
-    searchParams.sort = sort
+
+  const parsedSort = SEARCH_WATCHLISTS_SORT_TYPES.find(type => type === sort)
+  if (parsedSort) {
+    searchParams.sort = parsedSort
     searchParams.direction = 'asc'
   } else {
     searchParams.sort = 'updated_at'
     searchParams.direction = 'desc'
   }
+
+  const parsedDirection = SORT_DIRECTIONS.find(dir => dir === sortDirection?.toLowerCase().trim())
+  if (parsedDirection) searchParams.direction = parsedDirection
 
   const response = await fetch(
     // @ts-expect-error -- we know what we're doing
