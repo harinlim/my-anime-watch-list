@@ -11,6 +11,7 @@ import type {
 type UseWatchlistsSearchParams = {
   search?: string
   sort?: SearchWatchlistsSortType
+  direction?: 'asc' | 'desc'
   limit?: number
 }
 
@@ -29,7 +30,13 @@ const fetchWatchlists = async ({
   }
 
   if (search) searchParams.search = search
-  if (sort && SEARCH_WATCHLISTS_SORT_TYPES.includes(sort)) searchParams.sort = sort
+  if (sort && SEARCH_WATCHLISTS_SORT_TYPES.includes(sort)) {
+    searchParams.sort = sort
+    searchParams.direction = 'asc'
+  } else {
+    searchParams.sort = 'updated_at'
+    searchParams.direction = 'desc'
+  }
 
   const response = await fetch(
     // @ts-expect-error -- we know what we're doing

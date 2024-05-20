@@ -39,10 +39,7 @@ export default async function RootLayout({
       <head>
         <ColorSchemeScript />
         {/* <link rel="shortcut icon" href="/favicon.svg" /> */}
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-        />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </head>
       <body
         className={clsx(inter.className, 'bg-background text-foreground min-h-screen min-w-80')}

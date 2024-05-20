@@ -26,7 +26,7 @@ export function WatchlistsList({ filter, sort }: Props) {
 
   return (
     <>
-      <div className="flex w-5/6 flex-col flex-wrap justify-center gap-5 md:w-2/3">
+      <div className="flex w-5/6 flex-col flex-wrap justify-center gap-5 md:w-3/4">
         {data?.pages?.map(page => (
           // TODO: separate each item into component
           // TODO: handle API errors
