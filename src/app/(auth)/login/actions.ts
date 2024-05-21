@@ -3,9 +3,10 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+import { getUserByUsername } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 
-import type { ErrorCode } from './error-codes'
+import type { SupabaseAuthErrorCode } from './error-codes'
 
 export async function login(formData: FormData) {
   const supabase = createServerClient()
@@ -48,6 +49,29 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string
   const username = formData.get('username') as string
 
+  if (!email) {
+    return redirect('/login?message=Please enter an email')
+  }
+
+  if (!password) {
+    return redirect('/login?message=Please enter a password')
+  }
+
+  if (!username) {
+    return redirect('/login?message=Please enter a username')
+  }
+
+  const userResult = await getUserByUsername(supabase, username)
+  if (userResult.error) {
+    return redirect('/login?message=Failed to sign up')
+  }
+
+  if (userResult.count) {
+    // Note there is a unique constraint on the username column, so signup will fail on its
+    // own with a 500 DB error, however, we can provide a more user-friendly messaging
+    return redirect('/login?message=Username already exists')
+  }
+
   const signUpResult = await supabase.auth.signUp({
     email,
     password,
@@ -56,22 +80,12 @@ export async function signup(formData: FormData) {
     },
   })
 
-  const { data, error } = await supabase
-    .from('users')
-    .select('username')
-    .eq('username', username)
-    .single()
-
-  if (!!error || !data) {
-    return redirect('/login?message=Failed to sign up')
-  }
-
   console.info(signUpResult)
 
   if (signUpResult.error) {
     if (signUpResult.error.status === 422) {
       // Supabase doesn't expose this so we need to assert this
-      switch (signUpResult.error.code as ErrorCode) {
+      switch (signUpResult.error.code as SupabaseAuthErrorCode) {
         case 'email_exists': {
           return redirect('/login?message=Email already exists')
         }

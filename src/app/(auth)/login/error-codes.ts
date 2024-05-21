@@ -3,7 +3,7 @@
  * not included in this list (if the client library is older than the version
  * on the server).
  */
-export type ErrorCode =
+export type SupabaseAuthErrorCode =
   | 'unexpected_failure'
   | 'validation_failed'
   | 'bad_json'

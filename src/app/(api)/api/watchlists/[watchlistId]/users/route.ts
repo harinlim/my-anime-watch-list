@@ -50,6 +50,13 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   return NextResponse.json<GetWatchlistCollaboratorsResponse>(collaboratorsQueryResult.data)
 }
 
+/**
+ * Add a user as a collaborator to a watchlist
+ *
+ * - Only those with edit access to a watchlist can add collaborators.
+ * - The user to be added must not already be a collaborator.
+ * - Only editors/viewers can be added at this time.
+ */
 export async function POST(request: NextRequest, { params }: RouteParams) {
   const watchlistId = Number(params.watchlistId)
 

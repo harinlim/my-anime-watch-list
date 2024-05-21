@@ -149,24 +149,38 @@ $$;
 
 ALTER FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
-CREATE OR REPLACE FUNCTION "public"."validate_username_before_user_signup"() RETURNS "trigger"
+CREATE OR REPLACE FUNCTION "public"."update_user_via_auth"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
+declare fields_match boolean;
+declare user_exists boolean;
 begin
-IF EXISTS (
-    SELECT 1
-    FROM public.users
-    WHERE username = new.raw_user_meta_data->>'username' 
+  user_exists := (select exists (
+    select 1 from public.users
+    where id = new.id
+  ));
 
-) THEN
-    RAISE EXCEPTION 'User with username % already exists!', new.raw_user_meta_data->>'username';
-END IF;
-
+  fields_match := (select exists (
+    select 1 from public.users
+    where id = new.id
+      and email = new.raw_user_meta_data->>'email'
+      and username = new.raw_user_meta_data->>'username'
+      and avatar_url = new.raw_user_meta_data->>'avatar_url'
+  ));
+  
+  if user_exists and not fields_match then 
+    update public.users
+    set 
+      email = new.raw_user_meta_data->>'email',
+      username = new.raw_user_meta_data->>'username',
+      avatar_url = new.raw_user_meta_data->>'avatar_url'
+    where id = new.id;
+  end if;
   return new;
 end;
 $$;
 
-ALTER FUNCTION "public"."validate_username_before_user_signup"() OWNER TO "postgres";
+ALTER FUNCTION "public"."update_user_via_auth"() OWNER TO "postgres";
 
 SET default_tablespace = '';
 
@@ -259,7 +273,6 @@ CREATE TABLE IF NOT EXISTS "public"."users" (
     "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
     "username" character varying NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "full_name" "text",
     "avatar_url" "text",
     "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "email" "text" NOT NULL,
@@ -513,9 +526,9 @@ GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "service_role";
 
-GRANT ALL ON FUNCTION "public"."validate_username_before_user_signup"() TO "anon";
-GRANT ALL ON FUNCTION "public"."validate_username_before_user_signup"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."validate_username_before_user_signup"() TO "service_role";
+GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "anon";
+GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "service_role";
 
 GRANT ALL ON TABLE "public"."anime" TO "anon";
 GRANT ALL ON TABLE "public"."anime" TO "authenticated";
