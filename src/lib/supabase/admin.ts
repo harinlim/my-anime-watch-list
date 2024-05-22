@@ -3,14 +3,15 @@ import { cookies } from 'next/headers'
 
 import type { Database } from '@/types/generated/supabase'
 
-export function createServerClient() {
+/** Admin client using service key - MUST KEEP THIS SERVER-SIDE */
+export function createAdminServerClient() {
   const cookieStore = cookies()
 
   // Create a server's supabase client with newly configured cookie,
   // which could be used to maintain user's session
   return createSupabaseClient<Database>(
     process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       cookies: {
         get(name: string) {
