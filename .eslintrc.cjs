@@ -15,7 +15,13 @@ module.exports = {
     'plugin:unicorn/recommended',
     'prettier',
   ],
-  plugins: ['jsx-a11y', '@typescript-eslint', 'import', 'unused-imports'],
+  plugins: [
+    'jsx-a11y',
+    '@typescript-eslint',
+    'import',
+    'unused-imports',
+    'eslint-plugin-react-compiler',
+  ],
   rules: {
     'no-void': ['error', { allowAsStatement: true }],
     'no-console': ['warn', { allow: ['warn', 'error', 'time', 'timeEnd', 'info', 'table'] }],
@@ -42,6 +48,8 @@ module.exports = {
     'react/require-default-props': 'off',
     'react/destructuring-assignment': 'off',
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx', '.jsx'], allow: 'as-needed' }],
+
+    'react-compiler/react-compiler': 'error',
 
     'unicorn/filename-case': 'off',
     'unicorn/prefer-string-raw': 'off',
