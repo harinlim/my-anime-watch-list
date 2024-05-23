@@ -149,12 +149,40 @@ $$;
 
 ALTER FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION "public"."to_json2"("anyelement") RETURNS "json"
+    LANGUAGE "sql"
+    AS $_$
+SELECT COALESCE(to_json($1), json 'null')
+$_$;
+
+ALTER FUNCTION "public"."to_json2"("anyelement") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."to_jsonb2"("anyelement") RETURNS "jsonb"
+    LANGUAGE "sql"
+    AS $_$
+SELECT COALESCE(to_jsonb($1), jsonb 'null')
+$_$;
+
+ALTER FUNCTION "public"."to_jsonb2"("anyelement") OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION "public"."update_user_via_auth"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
-declare fields_match boolean;
-declare user_exists boolean;
+
+declare 
+  fields_match boolean;
+  user_exists boolean;
+  new_email text := new.raw_user_meta_data->>'email';
+  new_username text := new.raw_user_meta_data->>'username';
+  new_avatar_url text;
+
 begin
+  if new.raw_user_meta_data->'avatar_url' = 'null'::jsonb then
+    new_avatar_url := null;
+  else
+    new_avatar_url := new.raw_user_meta_data->>'avatar_url';
+  end if;
+
   user_exists := (select exists (
     select 1 from public.users
     where id = new.id
@@ -163,17 +191,17 @@ begin
   fields_match := (select exists (
     select 1 from public.users
     where id = new.id
-      and email = new.raw_user_meta_data->>'email'
-      and username = new.raw_user_meta_data->>'username'
-      and avatar_url = new.raw_user_meta_data->>'avatar_url'
+      and email = new_email
+      and username = new_username
+      and avatar_url = new_avatar_url
   ));
   
   if user_exists and not fields_match then 
     update public.users
     set 
-      email = new.raw_user_meta_data->>'email',
-      username = new.raw_user_meta_data->>'username',
-      avatar_url = new.raw_user_meta_data->>'avatar_url'
+      email = new_email,
+      username = new_username,
+      avatar_url = new_avatar_url
     where id = new.id;
   end if;
   return new;
@@ -381,6 +409,8 @@ CREATE OR REPLACE TRIGGER "handle_updated_at" BEFORE UPDATE ON "public"."users" 
 
 CREATE OR REPLACE TRIGGER "handle_updated_at" BEFORE UPDATE ON "public"."watchlists" FOR EACH ROW EXECUTE FUNCTION "extensions"."moddatetime"('updated_at');
 
+CREATE OR REPLACE TRIGGER "on_public_user_update" AFTER UPDATE ON "public"."users" FOR EACH ROW EXECUTE FUNCTION "auth"."update_user_via_public"();
+
 ALTER TABLE ONLY "public"."user_reviews"
     ADD CONSTRAINT "user_reviews_anime_id_fkey" FOREIGN KEY ("anime_id") REFERENCES "public"."anime"("kitsu_id") ON DELETE CASCADE;
 
@@ -525,6 +555,14 @@ GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "anon";
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "anon";
+GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement") TO "anon";
+GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement") TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "anon";
 GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "authenticated";
