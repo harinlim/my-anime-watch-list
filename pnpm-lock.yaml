@@ -16,10 +16,10 @@ dependencies:
     version: 7.9.2(react@18.3.1)
   '@supabase/ssr':
     specifier: ^0.3.0
-    version: 0.3.0(@supabase/supabase-js@2.43.3)
+    version: 0.3.0(@supabase/supabase-js@2.43.2)
   '@supabase/supabase-js':
-    specifier: ^2.43.3
-    version: 2.43.3
+    specifier: 2.43.2
+    version: 2.43.2
   '@tabler/icons-react':
     specifier: ^3.5.0
     version: 3.5.0(react@18.3.1)
@@ -1109,8 +1109,8 @@ packages:
       whatwg-url: 5.0.0
     dev: false
 
-  /@supabase/postgrest-js@1.15.3:
-    resolution: {integrity: sha512-kvfFhuurvnn7+XoXvwb6j64BqqS/xguXfM5FY8xPK24Kza+Bl4NPxGSMu3NWZiWPBgW2C27X2yHz/T+VYlXkEA==}
+  /@supabase/postgrest-js@1.15.2:
+    resolution: {integrity: sha512-9/7pUmXExvGuEK1yZhVYXPZnLEkDTwxgMQHXLrN5BwPZZm4iUCL1YEyep/Z2lIZah8d8M433mVAUEGsihUj5KQ==}
     dependencies:
       '@supabase/node-fetch': 2.6.15
     dev: false
@@ -1127,12 +1127,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@supabase/ssr@0.3.0(@supabase/supabase-js@2.43.3):
+  /@supabase/ssr@0.3.0(@supabase/supabase-js@2.43.2):
     resolution: {integrity: sha512-lcVyQ7H6eumb2FB1Wa2N+jYWMfq6CFza3KapikT0fgttMQ+QvDgpNogx9jI8bZgKds+XFSMCojxFvFb+gwdbfA==}
     peerDependencies:
       '@supabase/supabase-js': ^2.33.1
     dependencies:
-      '@supabase/supabase-js': 2.43.3
+      '@supabase/supabase-js': 2.43.2
       cookie: 0.5.0
       ramda: 0.29.1
     dev: false
@@ -1143,13 +1143,13 @@ packages:
       '@supabase/node-fetch': 2.6.15
     dev: false
 
-  /@supabase/supabase-js@2.43.3:
-    resolution: {integrity: sha512-jrlx9sIty4lpG9ukhD9wimzHrFzeLTq/JKhqDqVLKo449NYlZbpcnmhqSjfZmve/0mIq1rbYmVvKQ90Hq4/cVg==}
+  /@supabase/supabase-js@2.43.2:
+    resolution: {integrity: sha512-F9CljeJBo5aPucNhrLoMnpEHi5yqNZ0vH0/CL4mGy+/Ggr7FUrYErVJisa1NptViqyhs1HGNzzwjOYG6626h8g==}
     dependencies:
       '@supabase/auth-js': 2.64.2
       '@supabase/functions-js': 2.3.1
       '@supabase/node-fetch': 2.6.15
-      '@supabase/postgrest-js': 1.15.3
+      '@supabase/postgrest-js': 1.15.2
       '@supabase/realtime-js': 2.9.5
       '@supabase/storage-js': 2.5.5
     transitivePeerDependencies:
