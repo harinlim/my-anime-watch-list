@@ -289,12 +289,19 @@ export type Database = {
         }
         Returns: Json
       }
-      to_jsonb2: {
-        Args: {
-          "": unknown
-        }
-        Returns: Json
-      }
+      to_jsonb2:
+        | {
+            Args: {
+              "": unknown
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              anyelement: string
+            }
+            Returns: Json
+          }
     }
     Enums: {
       collaborator_access: "owner" | "editor" | "viewer"

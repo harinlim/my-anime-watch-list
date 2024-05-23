@@ -76,7 +76,7 @@ export async function signup(formData: FormData) {
     email,
     password,
     options: {
-      data: { username },
+      data: { username, avatar_url: null },
     },
   })
 
@@ -97,11 +97,11 @@ export async function signup(formData: FormData) {
           return redirect('/login?message=Password is too weak')
         }
         default: {
-          return redirect('/login?message=Failed to sign up')
+          break
         }
       }
     }
-
+    console.error(signUpResult)
     return redirect('/login?message=Failed to sign up')
   }
 

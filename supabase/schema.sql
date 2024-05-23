@@ -84,15 +84,14 @@ ALTER FUNCTION "public"."emit_update_watchlist"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $$begin
-  insert into public.users (id, email, username, full_name, avatar_url)
-  values (new.id, 
-  new.email,
-  new.raw_user_meta_data->>'username',
-  new.raw_user_meta_data->>'full_name', 
-  new.raw_user_meta_data->>'avatar_url');
+    AS $$
+begin
+  insert into public.users (id, email, username)
+  values (new.id, new.email, new.raw_user_meta_data->>'username');
+
   return new;
-end;$$;
+end;
+$$;
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
 
@@ -165,6 +164,14 @@ $_$;
 
 ALTER FUNCTION "public"."to_jsonb2"("anyelement") OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION "public"."to_jsonb2"("anyelement" "text") RETURNS "jsonb"
+    LANGUAGE "sql"
+    AS $$
+SELECT COALESCE(to_jsonb(anyelement), jsonb 'null')
+$$;
+
+ALTER FUNCTION "public"."to_jsonb2"("anyelement" "text") OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION "public"."update_user_via_auth"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
     AS $$
@@ -172,7 +179,7 @@ CREATE OR REPLACE FUNCTION "public"."update_user_via_auth"() RETURNS "trigger"
 declare 
   fields_match boolean;
   user_exists boolean;
-  new_email text := new.raw_user_meta_data->>'email';
+  new_email text := new.email;
   new_username text := new.raw_user_meta_data->>'username';
   new_avatar_url text;
 
@@ -563,6 +570,10 @@ GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "service_role";
 GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement") TO "anon";
 GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement") TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."to_jsonb2"("anyelement" "text") TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "anon";
 GRANT ALL ON FUNCTION "public"."update_user_via_auth"() TO "authenticated";
