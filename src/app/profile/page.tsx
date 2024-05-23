@@ -4,9 +4,10 @@ import { redirect } from 'next/navigation'
 
 import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
+import { getUserFromAuth } from '@/db/users'
 import { fetchWithType, withBaseURL } from '@/lib/api'
+import { createServerClient } from '@/lib/supabase/server'
 
-import type { User } from '@/types/users'
 import type { WatchlistOverview } from '@/types/watchlists'
 
 export const dynamic = 'force-dynamic'
@@ -14,11 +15,9 @@ export const revalidate = 0
 
 /** Private profile page, accessible only to the user with cookies */
 export default async function SelfProfilePage() {
-  const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
-    method: 'GET',
-    credentials: 'include',
-    headers: new Headers(headers()),
-  })
+  const supabase = createServerClient()
+
+  const { data: user } = await getUserFromAuth(supabase)
 
   // Use this to get user auth cookies needed for API testing
   if (process.env.NODE_ENV === 'development') {

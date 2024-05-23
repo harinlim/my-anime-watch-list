@@ -1,18 +1,17 @@
 import { ColorSchemeScript, MantineProvider } from '@mantine/core'
 import { clsx } from 'clsx'
 import { Inter } from 'next/font/google'
-import { headers } from 'next/headers'
 
 import { Header } from '@/components/common/Header'
 import { ReactQueryClientProvider } from '@/context/ReactQueryClientContext'
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { getUserFromAuth } from '@/db/users'
+import { createServerClient } from '@/lib/supabase/server'
 
 import { theme } from './theme'
 
 import '@mantine/core/styles.css'
 import './globals.css'
 
-import type { User } from '@/types/users'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
@@ -28,11 +27,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode
 }>) {
-  const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
-    method: 'GET',
-    credentials: 'include',
-    headers: new Headers(headers()),
-  })
+  const supabase = createServerClient()
+
+  const { data: user } = await getUserFromAuth(supabase)
 
   return (
     <html lang="en">

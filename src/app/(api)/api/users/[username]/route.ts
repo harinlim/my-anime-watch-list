@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { getUserByUsername } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 
+import type { PublicUser } from '@/types/users'
 import type { NextRequest } from 'next/server'
 
 type RouteParams = { params: { username: string } }
@@ -23,8 +24,9 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     return NextResponse.json('User not found', { status: 404 })
   }
 
-  return NextResponse.json<{ id: string; username: string }>({
+  return NextResponse.json<PublicUser>({
     id: userResult.data.id,
     username: userResult.data.username,
+    avatar_url: userResult.data.avatar_url,
   })
 }

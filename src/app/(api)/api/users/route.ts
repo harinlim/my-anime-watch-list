@@ -4,6 +4,7 @@ import { createServerClient } from '@/lib/supabase/server'
 
 import type { User } from '@/types/users'
 
+/* Get user information from given auth cookies. */
 export async function GET() {
   const supabase = createServerClient()
   // Check if a user's logged in
@@ -17,7 +18,7 @@ export async function GET() {
 
   const userResult = await supabase
     .from('users')
-    .select(`username, email`, { count: 'exact' })
+    .select(`username, email, avatar_url`, { count: 'exact' })
     .eq('id', user.id)
     .maybeSingle()
 

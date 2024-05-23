@@ -6,30 +6,49 @@ import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType, withBaseURL } from '@/lib/api'
 
+import type { PublicUser } from '@/types/users'
 import type { WatchlistOverview } from '@/types/watchlists'
+
+async function fetchWatchlistOverviews(username: string, init?: Omit<RequestInit, 'method'>) {
+  return fetchWithType<WatchlistOverview[]>(
+    withBaseURL(`/api/users/${username}/watchlists?overview=true&editable=true`),
+    {
+      method: 'GET',
+      credentials: 'include',
+      ...init,
+    }
+  )
+}
+
+async function fetchUserByUsername(username: string, init?: Omit<RequestInit, 'method'>) {
+  return fetchWithType<PublicUser>(withBaseURL(`/api/users/${username}`), {
+    method: 'GET',
+    credentials: 'include',
+    ...init,
+  })
+}
 
 /** Public profile page */
 export default async function ExternalProfilePage({ params }: { params: { username: string } }) {
   const { username } = params
 
-  const {
-    data: watchlists,
-    status,
-    ok,
-  } = await fetchWithType<WatchlistOverview[]>(
-    withBaseURL(`/api/users/${username}/watchlists?overview=true&editable=true`),
-    {
-      method: 'GET',
-      credentials: 'include',
-      headers: new Headers(headers()),
-    }
-  )
+  const headersInit = new Headers(headers())
 
-  if (status === 404) {
+  // TODO: put these into independent components
+  const userResponse = await fetchUserByUsername(username, { headers: headersInit })
+
+  const watchlistsResponse = await fetchWatchlistOverviews(username, { headers: headersInit })
+
+  // These only return 404 when the user is not found
+  if (userResponse.status === 404 || watchlistsResponse.status === 404) {
     return notFound()
   }
 
-  if (!ok) {
+  if (!userResponse.ok) {
+    throw new Error('Failed to fetch user')
+  }
+
+  if (!watchlistsResponse.ok) {
     throw new Error('Failed to fetch watchlists')
   }
 
@@ -41,7 +60,8 @@ export default async function ExternalProfilePage({ params }: { params: { userna
         </Text>
         &apos;s Watchlists
       </Title>
-      <pre className="text-wrap text-left">{JSON.stringify(watchlists, null, 2)}</pre>
+      <pre className="text-wrap text-left">{JSON.stringify(userResponse.data, null, 2)}</pre>
+      <pre className="text-wrap text-left">{JSON.stringify(watchlistsResponse.data, null, 2)}</pre>
       <WatchlistCard />
       <ArticlesCardsGrid />
     </div>
