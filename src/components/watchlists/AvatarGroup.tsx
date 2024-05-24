@@ -7,18 +7,23 @@ import styles from './AvatarGroup.module.css'
 import type { WatchlistOverview } from '@/types/watchlists'
 
 type AvatarGroupProps = {
-  watchlistId: number
+  watchlistId: number | string
   watchlist_users: WatchlistUser[]
 }
 
 type WatchlistUser = WatchlistOverview['watchlists_users'][number]
 
-export function Avatar({ user }: { user: WatchlistUser }) {
+export function Avatar({ user, size = 8 }: { user: WatchlistUser; size?: number }) {
   const a11yLabel = `${user.role}: ${user.username}`
 
   return (
     <Tooltip key={user.user_id} label={`@${user.username}`} position="top">
-      <Link href={`/profile/${user.username}`} prefetch={false}>
+      <Link
+        href={`/profile/${user.username}`}
+        prefetch={false}
+        id={user.user_id}
+        className="shrink-0"
+      >
         {user.avatar_url ? (
           <Image
             key={user.user_id}
@@ -31,6 +36,7 @@ export function Avatar({ user }: { user: WatchlistUser }) {
             key={user.user_id}
             className={clsx(
               styles.ring,
+              `size-${size}`,
               'inline-block size-8 bg-zinc-300 text-gray-400 dark:bg-zinc-500'
             )}
             fill="currentColor"
