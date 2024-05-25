@@ -14,6 +14,8 @@ export type WatchlistUser = Expand<
     Pick<Database['public']['Tables']['users']['Row'], 'username' | 'avatar_url'>
 >
 
+export type CollaboratorRole = Database['public']['Enums']['collaborator_access']
+
 /** Simplified overview type for watchlists including anime and collaborators */
 export type WatchlistOverview = ExpandDeep<
   Omit<Watchlist, 'anime'> & {
