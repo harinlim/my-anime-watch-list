@@ -50,12 +50,14 @@ CREATE TYPE "public"."watch_status" AS ENUM (
 ALTER TYPE "public"."watch_status" OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."add_default_owner"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
-    AS $$begin
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+begin
   insert into public.watchlists_users (watchlist_id, user_id, role)
   values (new.id, new.user_id, 'owner');
   return new;
-end;$$;
+end;
+$$;
 
 ALTER FUNCTION "public"."add_default_owner"() OWNER TO "postgres";
 
