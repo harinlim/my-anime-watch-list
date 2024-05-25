@@ -1,23 +1,25 @@
-import { Tooltip, Image } from '@mantine/core'
+import { Tooltip, Image, Box } from '@mantine/core'
 import clsx from 'clsx'
 import Link from 'next/link'
 
 import styles from './AvatarGroup.module.css'
 
-import type { WatchlistOverview } from '@/types/watchlists'
+import type { WatchlistUser } from '@/types/watchlists'
 
 type AvatarGroupProps = {
   watchlistId: number | string
   watchlist_users: WatchlistUser[]
+  maxAvatars?: number
+  onClickMore?: () => void
 }
 
-type WatchlistUser = WatchlistOverview['watchlists_users'][number]
+const DEFAULT_AVATARS_TO_SHOW = 3
 
 export function Avatar({ user, size = 8 }: { user: WatchlistUser; size?: number }) {
   const a11yLabel = `${user.role}: ${user.username}`
 
   return (
-    <Tooltip key={user.user_id} label={`@${user.username}`} position="top">
+    <Tooltip label={`@${user.username}`} position="top">
       <Link
         href={`/profile/${user.username}`}
         prefetch={false}
@@ -56,9 +58,22 @@ export function Avatar({ user, size = 8 }: { user: WatchlistUser; size?: number 
   )
 }
 
-export function AvatarGroup({ watchlistId, watchlist_users }: AvatarGroupProps) {
-  const watchlistUsersOverview = watchlist_users.slice(0, 2)
+export function AvatarGroup({
+  watchlistId,
+  watchlist_users,
+  maxAvatars = DEFAULT_AVATARS_TO_SHOW,
+  onClickMore,
+}: AvatarGroupProps) {
+  // Show at most `maxAvatar` avatars. If there is an overflow, use the last "avatar" to show remaining users.
+  const watchlistUsersOverview =
+    watchlist_users.length > maxAvatars ? watchlist_users.slice(0, maxAvatars - 1) : watchlist_users
   const remainingUsers = watchlist_users.length - watchlistUsersOverview.length
+
+  const remainingUsersButtonProps = onClickMore
+    ? ({ onClick: onClickMore, type: 'button' } as const)
+    : undefined
+
+  const remainingUsersLabel = `And ${remainingUsers} more ${remainingUsers > 1 ? 'contributors' : 'contributor'}`
 
   return (
     <div className="flex -space-x-2">
@@ -66,17 +81,21 @@ export function AvatarGroup({ watchlistId, watchlist_users }: AvatarGroupProps) 
         <Avatar key={`${watchlistId}:avatar-${user.user_id}`} user={user} />
       ))}
       {remainingUsers > 0 && (
-        <span
-          aria-label={`And ${remainingUsers} more contributors`}
-          className={clsx(
-            styles.ring,
-            'inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-600'
-          )}
-        >
-          <span aria-hidden className="text-sm leading-none text-gray-600 dark:text-neutral-200">
-            {remainingUsers}+
-          </span>
-        </span>
+        <Tooltip label={remainingUsersLabel} position="top">
+          <Box
+            component={onClickMore ? 'button' : 'span'}
+            aria-label={remainingUsersLabel}
+            className={clsx(
+              styles.ring,
+              'inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-600'
+            )}
+            {...remainingUsersButtonProps}
+          >
+            <span aria-hidden className="text-sm leading-none text-gray-600 dark:text-neutral-200">
+              {remainingUsers}+
+            </span>
+          </Box>
+        </Tooltip>
       )}
     </div>
   )
