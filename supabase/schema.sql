@@ -492,9 +492,7 @@ CREATE POLICY "Enable update access for watchlist editors and owners" ON "public
 
 CREATE POLICY "Enable update for all users" ON "public"."anime" FOR UPDATE USING (true);
 
-CREATE POLICY "Enable update for permitted users" ON "public"."watchlists" FOR UPDATE USING (((( SELECT "auth"."uid"() AS "uid") = "user_id") OR (( SELECT "auth"."uid"() AS "uid") IN ( SELECT "watchlists_users"."user_id"
-   FROM "public"."watchlists_users"
-  WHERE (("watchlists_users"."watchlist_id" = "watchlists"."id") AND ("watchlists_users"."user_id" = ( SELECT "auth"."uid"() AS "uid")) AND ("watchlists_users"."role" = ANY (ARRAY['owner'::"public"."collaborator_access", 'editor'::"public"."collaborator_access"])))))));
+CREATE POLICY "Enable update for permitted users" ON "public"."watchlists" FOR UPDATE USING (((( SELECT "auth"."uid"() AS "uid") = "user_id") OR "public"."has_edit_access_to_watchlist"(( SELECT "auth"."uid"() AS "uid"), "id")));
 
 CREATE POLICY "Enable update for users based on user_id" ON "public"."user_reviews" FOR UPDATE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
