@@ -10,6 +10,9 @@ import { searchWatchlistsQueryParamsSchema, watchlistRequestBodySchema } from '.
 import type { SearchWatchlistsResponse } from './types'
 import type { WatchlistOverview } from '@/types/watchlists'
 
+/**
+ *  Get watchlist collection with optional search, sort, and pagination
+ */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
 
@@ -82,6 +85,9 @@ export async function GET(request: NextRequest) {
   })
 }
 
+/**
+ *  Create a new watchlist
+ */
 export async function POST(request: NextRequest) {
   const supabase = createServerClient()
 

@@ -37,9 +37,9 @@ This also includes a RESTful CRUD API for the following resources:
 - [x] `/api/watchlists`
   - [x] `GET`: Search and return a collection of public watchlists, given query parameters. For an authenticated user, this would include any private watchlists for that specific user as well.
   - [x] `POST`: (_protected_) Create a new watchlist.
-- [ ] `/api/watchlists/:watchlistId`
+- [x] `/api/watchlists/:watchlistId`
   - [x] `GET`: Retrieve the watchlist resource given the associated watchlist id.
-  - [ ] `PUT`: (_protected_) Update the watchlist metadata (name, description, public)
+  - [x] `PUT`: (_protected_) Update the watchlist metadata (name, description, public)
   - [x] `DELETE`: (_protected_) Delete the watchlist
 - [x] `/api/watchlists/:watchlistId/users`
   - [x] `GET`: Get collaborators for the watchlist
