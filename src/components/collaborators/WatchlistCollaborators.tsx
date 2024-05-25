@@ -1,16 +1,30 @@
+'use client'
+
 import { Text } from '@mantine/core'
 
 import { Avatar, AvatarGroup } from '@/components/watchlists/AvatarGroup'
 
-import type { WatchlistUser } from '@/types/watchlists'
+import { useCollaborators } from './CollaboratorsContext'
+import { useEditCollaboratorsModal } from './CollaboratorsModal/CollaboratorsModalContext'
 
 type Props = {
-  collaborators: WatchlistUser[]
   watchlistId: number | string
-  isList?: boolean
-}
+} & (
+  | {
+      isList: true
+      maxAvatars?: never
+    }
+  | {
+      isList?: false
+      maxAvatars: number
+    }
+)
 
-export function WatchlistCollaborators({ collaborators, watchlistId, isList }: Props) {
+export function WatchlistCollaborators({ watchlistId, isList, maxAvatars }: Props) {
+  const [, editCollaboratorsModal] = useEditCollaboratorsModal()
+
+  const { data: collaborators } = useCollaborators()
+
   return (
     <div>
       {isList ? (
@@ -24,7 +38,12 @@ export function WatchlistCollaborators({ collaborators, watchlistId, isList }: P
         </ul>
       ) : (
         <div className="pt-2">
-          <AvatarGroup watchlistId={watchlistId} watchlist_users={collaborators} />
+          <AvatarGroup
+            watchlistId={watchlistId}
+            watchlist_users={collaborators}
+            onClickMore={editCollaboratorsModal.open}
+            maxAvatars={maxAvatars}
+          />
         </div>
       )}
     </div>

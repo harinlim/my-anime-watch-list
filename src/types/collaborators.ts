@@ -1,13 +1,8 @@
+import type { Database } from './generated/supabase'
 import type { WatchlistUser } from './watchlists'
 
-export enum ROLE {
-  Owner = 'owner',
-  Editor = 'editor',
-  Viewer = 'viewer',
-}
+export type Role = Database['public']['Enums']['collaborator_access']
 
-export type GroupedCollaborators = Record<string, WatchlistUser[]>
+export type ChangableRole = Exclude<Role, 'owner'>
 
 export type ChangableRoleUser = Omit<WatchlistUser, 'role'> & { role: ChangableRole }
-export type ChangableRole = ROLE.Editor | ROLE.Viewer
-export type Role = ROLE.Owner | ChangableRole
