@@ -75,6 +75,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }
 
+  // Validate request body
   const body = await safeParseRequestBody(request, watchlistCollaboratorRequestBodySchema)
   if (!body.success) {
     if (body.error) {
@@ -85,6 +86,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   const { userId: userToAddId, role } = body.data
 
+  // Get validation queries
   const [
     watchlistExistsResult,
     userExistsResult,
@@ -103,6 +105,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }),
   ])
 
+  // Verify the watchlist exists
   if (watchlistExistsResult.error) {
     console.error(watchlistExistsResult)
     return NextResponse.json('Failed to fetch watchlist', { status: 500 })
@@ -112,6 +115,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Watchlist not found', { status: 404 })
   }
 
+  // Verify the user exists
   if (userExistsResult.error) {
     console.error(userExistsResult)
     return NextResponse.json('Failed to fetch requested user', { status: 500 })
@@ -122,6 +126,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Requested user not found', { status: 422 })
   }
 
+  // Verify the requested user is not already a collaborator
   if (isRequestedUserWatchlistCollaboratorResult.error) {
     console.error(isRequestedUserWatchlistCollaboratorResult.error)
     return NextResponse.json('Failed to verify requested user role for watchlist', { status: 500 })
@@ -132,6 +137,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('Requested user is already added to the watchlist', { status: 409 })
   }
 
+  // Verify the user has edit access to the watchlist
   if (hasEditAccessResult.error) {
     console.error(hasEditAccessResult.error)
     return NextResponse.json('Failed to verify user access to watchlist', {
@@ -144,6 +150,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('User does not have edit access to watchlist', { status: 403 })
   }
 
+  // Add the user as a collaborator
   const { error } = await supabase.from('watchlists_users').insert({
     watchlist_id: watchlistId,
     user_id: userToAddId,
