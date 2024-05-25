@@ -2,9 +2,10 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 import { queryWatchlistOverviews } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
+import { safeParseRequestBody } from '@/lib/zod/api'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
-import { searchWatchlistsQueryParamsSchema } from './schemas'
+import { searchWatchlistsQueryParamsSchema, watchlistRequestBodySchema } from './schemas'
 
 import type { SearchWatchlistsResponse } from './types'
 import type { WatchlistOverview } from '@/types/watchlists'
@@ -79,4 +80,42 @@ export async function GET(request: NextRequest) {
       next: nextOffset < total ? queryParams.page + 1 : undefined,
     },
   })
+}
+
+export async function POST(request: NextRequest) {
+  const supabase = createServerClient()
+
+  // Check if a user's logged in
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json('Failed authorization', { status: 401 })
+  }
+
+  // Validate request body
+  const body = await safeParseRequestBody(request, watchlistRequestBodySchema)
+  if (!body.success) {
+    if (body.error) {
+      return NextResponse.json(transformZodValidationErrorToResponse(body.error), { status: 422 })
+    }
+    return NextResponse.json(body.message, { status: 400 })
+  }
+
+  const { title, description, isPublic } = body.data
+
+  const { error, status } = await supabase.from('watchlists').insert({
+    title,
+    description,
+    is_public: isPublic,
+    user_id: user.id,
+  })
+
+  if (error) {
+    console.error(error)
+    return NextResponse.json('Failed to create watchlist', { status })
+  }
+
+  return NextResponse.json({ title, description, isPublic, userId: user.id }, { status: 201 })
 }
