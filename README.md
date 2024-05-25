@@ -34,9 +34,9 @@ This also includes a RESTful CRUD API for the following resources:
   - [x] `GET`: Retrieve the anime resource given the associated anime id. Also include any associated resources associated with this anime and an authenticated user (user ratings, watch status, watchlists added)
   - [x] `PATCH`: (_protected_) Update anime status associated with the user (ratings, watch status)
   - [x] `DELETE`: (_protected_) Remove anime status associated with the user (ratings, watch status)
-- [ ] `/api/watchlists`
+- [x] `/api/watchlists`
   - [x] `GET`: Search and return a collection of public watchlists, given query parameters. For an authenticated user, this would include any private watchlists for that specific user as well.
-  - [ ] `POST`: (_protected_) Create a new watchlist.
+  - [x] `POST`: (_protected_) Create a new watchlist.
 - [ ] `/api/watchlists/:watchlistId`
   - [x] `GET`: Retrieve the watchlist resource given the associated watchlist id.
   - [ ] `PUT`: (_protected_) Update the watchlist metadata (name, description, public)
