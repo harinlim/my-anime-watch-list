@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 import { SEARCH_WATCHLISTS_SORT_TYPES } from '@/api/watchlists/types'
-import { useUser } from '@/context/UserContext'
+import { useCurrentUser } from '@/context/UserContext'
 
 import type {
   SearchWatchlistsQueryParams,
@@ -66,7 +66,7 @@ const fetchWatchlists = async ({
 
 export function useWatchlistsInfiniteSearch(params: UseWatchlistsSearchParams = {}) {
   // Temporary fix for dynamically changing query results when a user is logged in
-  const userId = useUser()?.id
+  const userId = useCurrentUser()?.id
 
   return useInfiniteQuery({
     queryKey: [`watchlists`, { ...params, userId }],

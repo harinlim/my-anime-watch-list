@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useUser } from '@/context/UserContext'
+import { useCurrentUser } from '@/context/UserContext'
 
 import type { WatchlistUser } from '@/types/watchlists'
 
@@ -26,7 +26,7 @@ export function useWatchlistUsers({
   initialData: WatchlistUser[]
   watchlistId: number
 }) {
-  const userId = useUser()?.id
+  const userId = useCurrentUser()?.id
 
   return useQuery<WatchlistUser[]>({
     queryKey: ['collaborators', { watchlistId, userId }],

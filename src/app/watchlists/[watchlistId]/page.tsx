@@ -50,8 +50,6 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
 
   // TODO: Add watchlist owner
 
-  const watchlistDetails = <WatchlistDetails watchlist={watchlist} />
-
   return (
     <CollaboratorsProvider initialData={collaborators} watchlistId={watchlist.id}>
       <EditCollaboratorsModalProvider>
@@ -70,7 +68,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
                     <WatchlistSidebarButton className="lg:hidden" />
 
                     <WatchlistSidebar className="block lg:hidden">
-                      {watchlistDetails}
+                      <WatchlistDetails watchlist={watchlist} />
                     </WatchlistSidebar>
                   </WatchlistSidebarProvider>
                 </Group>
@@ -86,7 +84,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
               </div>
 
               <WatchlistAccordion watchlist={watchlist} className="block sm:hidden">
-                {watchlistDetails}
+                <WatchlistDetails watchlist={watchlist} />
               </WatchlistAccordion>
             </section>
 
@@ -94,7 +92,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
               <section className="min-w-lg h-[80vh] w-full bg-slate-700">Table</section>
 
               <section className="w-xs hidden h-full max-w-xs md:pl-10 lg:block">
-                {watchlistDetails}
+                <WatchlistDetails watchlist={watchlist} />
               </section>
             </div>
           </div>

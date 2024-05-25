@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { useUser } from '@/context/UserContext'
+import { useCurrentUser } from '@/context/UserContext'
 
 export function useDeleteWatchlistCollaborator({ watchlistId }: { watchlistId: number }) {
   const queryClient = useQueryClient()
 
-  const userId = useUser()?.id
+  const userId = useCurrentUser()?.id
 
   return useMutation({
     mutationFn: async (collaboratorId: string) =>

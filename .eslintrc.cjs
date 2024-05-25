@@ -42,7 +42,7 @@ module.exports = {
 
     'jsx-a11y/label-has-associated-control': ['warn', { assert: 'either' }],
 
-    'react/jsx-max-depth': ['warn', { max: 8 }],
+    'react/jsx-max-depth': ['warn', { max: 9 }],
     'react/jsx-curly-newline': ['error', 'consistent'],
     'react/jsx-props-no-spreading': 'off',
     'react/require-default-props': 'off',

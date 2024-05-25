@@ -3,7 +3,7 @@
 import { LoadingOverlay } from '@mantine/core'
 import { useCallback } from 'react'
 
-import { useUser } from '@/context/UserContext'
+import { useCurrentUser } from '@/context/UserContext'
 import { useDeleteWatchlistCollaborator } from '@/data/use-delete-watchlist-collaborator'
 import { useEditWatchlistCollaborator } from '@/data/use-edit-watchlist-collaborator'
 
@@ -16,7 +16,7 @@ type EditCollaboratorsModalContentProps = {
 }
 
 export function EditCollaboratorsModalContent({ watchlistId }: EditCollaboratorsModalContentProps) {
-  const user = useUser()
+  const user = useCurrentUser()
 
   const { data: collaborators, isLoading, error } = useCollaborators()
 
