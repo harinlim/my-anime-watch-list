@@ -34,8 +34,14 @@ const fetchAnime = async ({
   const response = await fetch(
     // @ts-expect-error -- we know what we're doing
     `/api/anime?${new URLSearchParams(searchParams).toString()}`,
-    { signal }
+    { method: 'GET', signal }
   )
+
+  if (!response.ok) {
+    console.error('Failed to fetch anime', await response.json())
+    throw new Error('Failed to fetch anime')
+  }
+
   return response.json() as Promise<SearchAnimeResponse>
 }
 
