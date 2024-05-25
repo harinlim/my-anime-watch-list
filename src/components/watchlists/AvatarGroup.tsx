@@ -20,12 +20,7 @@ export function Avatar({ user, size = 8 }: { user: WatchlistUser; size?: number 
 
   return (
     <Tooltip label={`@${user.username}`} position="top">
-      <Link
-        href={`/profile/${user.username}`}
-        prefetch={false}
-        id={user.user_id}
-        className="shrink-0"
-      >
+      <Link href={`/profile/${user.username}`} prefetch={false} className="shrink-0">
         {user.avatar_url ? (
           <Image
             key={user.user_id}
