@@ -170,7 +170,7 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
   }
 
   // Verify the user has permission to remove the collaborator or themself
-  if (userToDeleteId === user.id && !hasOwnerAccess) {
+  if (userToDeleteId !== user.id && !hasOwnerAccess) {
     return NextResponse.json('User is not permitted to remove requested', { status: 403 })
   }
 
