@@ -9,3 +9,9 @@ export const searchWatchlistsQueryParamsSchema = z.object({
   page: z.coerce.number().int('Page must be an integer'),
   limit: z.coerce.number().int('Limit must be an integer'),
 })
+
+export const watchlistRequestBodySchema = z.object({
+  title: z.string().min(1).max(100),
+  description: z.string().max(4000),
+  isPublic: z.boolean(),
+})
