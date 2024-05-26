@@ -4,7 +4,7 @@ import { createServerClient } from '@/lib/supabase/server'
 
 import { searchUsersParamsSchema } from './schemas'
 
-import type { User } from '@/types/users'
+import type { User, PublicUser } from '@/types/users'
 import type { NextRequest } from 'next/server'
 
 /**  Get user information from given auth cookies OR by search.
@@ -72,12 +72,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json('Failed to fetch users', { status: 500 })
   }
 
-  return NextResponse.json<User[]>(
-    usersResults.data.map(({ id, email, username, avatar_url }) => ({
+  return NextResponse.json<PublicUser[]>(
+    usersResults.data.map(({ id, username, avatar_url }) => ({
       id,
       username,
       avatar_url,
-      email,
     })),
     { status: 200 }
   )
