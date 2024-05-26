@@ -8,17 +8,13 @@ import {
   ModalTitle,
   ModalCloseButton,
   ModalBody,
-  Container,
-  Button,
-  Text,
-  Flex,
   ScrollAreaAutosize,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { IconUserPlus } from '@tabler/icons-react'
 
 import { useEditCollaboratorsModal } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModalContext'
 
+import { AddCollaboratorsModalContent } from './AddCollaboratorModalContent'
 import { CollaboratorsModalContent } from './CollaboratorsModalContent'
 
 type EditCollaboratorsModalProps = {
@@ -47,7 +43,7 @@ export function CollaboratorsModal({
     overrideExists ? { isOpen, close } : undefined
   )
 
-  const [addCollaborator, { toggle: openAddCollaborator }] = useDisclosure(false)
+  const [isAddCollaboratorContent, { toggle: toggleContent }] = useDisclosure(false)
 
   return (
     <ModalRoot
@@ -61,34 +57,18 @@ export function CollaboratorsModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          <ModalTitle>{addCollaborator && 'Add '}Collaborators</ModalTitle>
+          <ModalTitle>{isAddCollaboratorContent && 'Add '}Collaborators</ModalTitle>
           <ModalCloseButton />
         </ModalHeader>
 
         <ModalBody className="p-0">
-          {addCollaborator ? (
-            <Container>
-              <Flex direction="column" gap="md">
-                <Text size="sm" className="mb-4">
-                  Add a collaborator to this watchlist by entering their email address.
-                </Text>
-                <Button
-                  size="lg"
-                  radius="md"
-                  color="cyan"
-                  className="w-fit"
-                  onClick={openAddCollaborator}
-                >
-                  <IconUserPlus size={20} />
-                  <Text>Add collaborator</Text>
-                </Button>
-              </Flex>
-            </Container>
+          {isAddCollaboratorContent ? (
+            <AddCollaboratorsModalContent closeAddCollaboratorContent={toggleContent} />
           ) : (
             <CollaboratorsModalContent
               watchlistId={watchlistId}
               isPublicWatchlist={isPublicWatchlist}
-              openAddCollaborator={openAddCollaborator}
+              openAddCollaboratorContent={toggleContent}
             />
           )}
         </ModalBody>

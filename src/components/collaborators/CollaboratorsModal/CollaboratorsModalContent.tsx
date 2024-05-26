@@ -16,13 +16,13 @@ import { CollaboratorListItem } from './CollaboratorListItem'
 type Props = {
   watchlistId: number
   isPublicWatchlist: boolean
-  openAddCollaborator: () => void
+  openAddCollaboratorContent: () => void
 }
 
 export function CollaboratorsModalContent({
   watchlistId,
   isPublicWatchlist,
-  openAddCollaborator,
+  openAddCollaboratorContent,
 }: Props) {
   const user = useCurrentUser()
 
@@ -120,12 +120,12 @@ export function CollaboratorsModalContent({
         </ul>
       </div>
 
-      {!hasEditAccess && (
-        <div className="sticky bottom-0 left-0 right-0 z-20 bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
+      {hasEditAccess && (
+        <div className="sticky bottom-0 left-0 right-0 z-20 flex flex-col bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
           <Divider />
           <UnstyledButton
-            onClick={openAddCollaborator}
-            className="m-3 w-fit rounded-md px-4 py-3 hover:bg-[var(--mantine-color-gray-1)]  dark:hover:bg-[var(--mantine-color-dark-6)]"
+            onClick={openAddCollaboratorContent}
+            className="m-3 rounded-sm px-4 py-3 hover:bg-[var(--mantine-color-gray-1)]  dark:hover:bg-[var(--mantine-color-dark-6)]"
           >
             <Group className="flex-nowrap gap-1">
               <IconPlus size={20} />
