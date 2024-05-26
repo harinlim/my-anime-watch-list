@@ -4,7 +4,7 @@ import { Text } from '@mantine/core'
 
 import { Avatar, AvatarGroup } from '@/components/watchlists/AvatarGroup'
 
-import { useCollaborators } from './CollaboratorsContext'
+import { useCollaboratorsQuery } from './CollaboratorsContext'
 import { useEditCollaboratorsModal } from './CollaboratorsModal/CollaboratorsModalContext'
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
 export function WatchlistCollaborators({ watchlistId, isList, maxAvatars }: Props) {
   const [, editCollaboratorsModal] = useEditCollaboratorsModal()
 
-  const { data: collaborators } = useCollaborators()
+  const { data: collaborators } = useCollaboratorsQuery()
 
   return (
     <div>

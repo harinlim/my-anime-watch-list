@@ -78,7 +78,7 @@ export function CollaboratorRoleDropdown({
           radius="sm"
           rightSection={<IconChevronDown size={16} className="stroke-black dark:stroke-white" />}
           onClick={() => combobox.toggleDropdown()}
-          className="h-11 bg-transparent opacity-60 hover:bg-[var(--mantine-color-gray-1)] hover:opacity-100 dark:hover:bg-[var(--mantine-color-dark-6)]"
+          className="h-11 min-w-28 bg-transparent opacity-60 hover:bg-[var(--mantine-color-gray-1)] hover:opacity-100 dark:hover:bg-[var(--mantine-color-dark-6)]"
         >
           <Text className="py-4 text-sm capitalize text-[var(--mantine-color-dark-9)] dark:text-[var(--mantine-color-gray-3)]">
             {role}

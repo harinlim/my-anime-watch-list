@@ -1,4 +1,4 @@
-import { Container, Flex, Button, Text } from '@mantine/core'
+import { Container, Flex, Button, Text, Group } from '@mantine/core'
 import { IconUserPlus } from '@tabler/icons-react'
 
 import { UserSearchAutocomplete } from './UserSearchAutocomplete'
@@ -22,16 +22,28 @@ export function AddCollaboratorsModalContent({
           </Text>
         </Flex>
 
-        <Button
-          size="lg"
-          radius="md"
-          color="cyan"
-          className="w-fit"
-          onClick={closeAddCollaboratorContent}
-        >
-          <IconUserPlus size={20} />
-          <Text>Add collaborator</Text>
-        </Button>
+        <Group>
+          <Button
+            size="lg"
+            radius="md"
+            color="cyan"
+            className="w-fit"
+            onClick={closeAddCollaboratorContent}
+          >
+            <IconUserPlus size={20} />
+            <Text>Add collaborator</Text>
+          </Button>
+
+          <Button
+            size="lg"
+            radius="md"
+            color="red"
+            className="w-fit"
+            onClick={closeAddCollaboratorContent}
+          >
+            <Text>Cancel</Text>
+          </Button>
+        </Group>
       </Flex>
     </Container>
   )

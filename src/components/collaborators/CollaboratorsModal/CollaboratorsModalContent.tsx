@@ -1,7 +1,6 @@
 'use client'
 
-import { Divider, Group, LoadingOverlay, UnstyledButton, Text } from '@mantine/core'
-import { IconPlus } from '@tabler/icons-react'
+import { LoadingOverlay } from '@mantine/core'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
@@ -10,28 +9,24 @@ import { useCurrentUser } from '@/context/UserContext'
 import { useDeleteWatchlistCollaborator } from '@/data/use-delete-watchlist-collaborator'
 import { useEditWatchlistCollaborator } from '@/data/use-edit-watchlist-collaborator'
 
-import { useCollaborators } from '../CollaboratorsContext'
+import { useCollaboratorsData, useCollaboratorsQuery } from '../CollaboratorsContext'
 
 import { CollaboratorListItem } from './CollaboratorListItem'
 
 type Props = {
   watchlistId: number
   isPublicWatchlist: boolean
-  openAddCollaboratorContent: () => void
   className?: string
 }
 
-export function CollaboratorsModalContent({
-  watchlistId,
-  isPublicWatchlist,
-  openAddCollaboratorContent,
-  className,
-}: Props) {
+export function CollaboratorsModalContent({ watchlistId, isPublicWatchlist, className }: Props) {
   const user = useCurrentUser()
 
   const router = useRouter()
 
-  const { data: collaborators, isLoading, error } = useCollaborators()
+  const { isLoading, error } = useCollaboratorsQuery()
+  const { collaboratorsWithoutUser: collaborators, currentUserCollaborator } =
+    useCollaboratorsData()
 
   const {
     mutate: updateCollaborator,
@@ -70,73 +65,47 @@ export function CollaboratorsModalContent({
     [deleteCollaborator, updateCollaborator, router, isPublicWatchlist, user]
   )
 
-  if (error) return <div>failed to load</div>
-
-  const userAsCollaborator =
-    collaborators.find(collaborator => collaborator.user_id === user?.id) ?? null
-
-  // Remove the current user from the list of collaborators
-  // Note the list should be sorted by role by default
-  const groupedCollaborators = collaborators.filter(
-    collaborator => collaborator.user_id !== user?.id
-  )
+  if (!collaborators || error) return <div>failed to load</div>
 
   const hasEditAccess =
-    userAsCollaborator?.role === 'owner' || userAsCollaborator?.role === 'editor'
+    currentUserCollaborator?.role === 'owner' || currentUserCollaborator?.role === 'editor'
 
   return (
-    <>
-      <section className={clsx('relative min-h-56 px-4 pb-6', className)}>
-        <LoadingOverlay visible={isLoading} />
+    <div className={clsx('relative px-4 pb-2', className)}>
+      <LoadingOverlay visible={isLoading} />
 
-        <ul>
-          {userAsCollaborator && (
-            <CollaboratorListItem
-              collaborator={userAsCollaborator}
-              canEdit={userAsCollaborator?.role === 'editor'}
-              canDelete={userAsCollaborator.role !== 'owner'}
-              isSelf
-              isPending={isDeletePending && userAsCollaborator.user_id === deletedUserId}
-              onChange={handleEditCollaborator}
-              className={
-                // Use border as a divider due to HTML semantics with list elements
-                userAsCollaborator && groupedCollaborators.length > 0
-                  ? 'mb-1 h-16 border-b-[1px] border-b-[--mantine-color-gray-1] pb-2 pt-2 dark:border-b-[--mantine-color-dark-5]'
-                  : undefined
-              }
-            />
-          )}
+      <ul>
+        {currentUserCollaborator && (
+          <CollaboratorListItem
+            collaborator={currentUserCollaborator}
+            canEdit={currentUserCollaborator?.role === 'editor'}
+            canDelete={currentUserCollaborator.role !== 'owner'}
+            isSelf
+            isPending={isDeletePending && currentUserCollaborator.user_id === deletedUserId}
+            onChange={handleEditCollaborator}
+            className={
+              // Use border as a divider due to HTML semantics with list elements
+              currentUserCollaborator && collaborators.length > 0
+                ? 'mb-1 h-16 border-b-[1px] border-b-[--mantine-color-gray-1] pb-2 pt-2 dark:border-b-[--mantine-color-dark-5]'
+                : undefined
+            }
+          />
+        )}
 
-          {groupedCollaborators.map(collaborator => (
-            <CollaboratorListItem
-              key={collaborator.user_id}
-              collaborator={collaborator}
-              canEdit={hasEditAccess && collaborator.role !== 'owner'}
-              canDelete={userAsCollaborator?.role === 'owner'}
-              isPending={
-                (isDeletePending && collaborator.user_id === deletedUserId) ||
-                (isUpdatePending && collaborator.user_id === updatedUserId)
-              }
-              onChange={handleEditCollaborator}
-            />
-          ))}
-        </ul>
-      </section>
-
-      {hasEditAccess && (
-        <div className="sticky bottom-0 left-0 right-0 z-20 flex flex-col bg-[--mantine-color-white] dark:bg-[--mantine-color-dark-7]">
-          <Divider />
-          <UnstyledButton
-            onClick={openAddCollaboratorContent}
-            className="m-3 rounded-sm px-4 py-3 hover:bg-[--mantine-color-gray-2] dark:hover:bg-[--mantine-color-dark-4]"
-          >
-            <Group component="span" className="flex-nowrap gap-1">
-              <IconPlus size={20} />
-              <Text className="line-clamp-1">Add collaborator</Text>
-            </Group>
-          </UnstyledButton>
-        </div>
-      )}
-    </>
+        {collaborators.map(collaborator => (
+          <CollaboratorListItem
+            key={collaborator.user_id}
+            collaborator={collaborator}
+            canEdit={hasEditAccess && collaborator.role !== 'owner'}
+            canDelete={currentUserCollaborator?.role === 'owner'}
+            isPending={
+              (isDeletePending && collaborator.user_id === deletedUserId) ||
+              (isUpdatePending && collaborator.user_id === updatedUserId)
+            }
+            onChange={handleEditCollaborator}
+          />
+        ))}
+      </ul>
+    </div>
   )
 }

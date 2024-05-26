@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
   ModalBody,
   FocusTrapInitialFocus,
+  Stack,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
@@ -16,6 +17,7 @@ import { useEditCollaboratorsModal } from '@/components/collaborators/Collaborat
 
 import { AddCollaboratorsModalContent } from './AddCollaboratorModalContent'
 import { CollaboratorsModalContent } from './CollaboratorsModalContent'
+import { CollaboratorModalFooter } from './CollaboratorsModalFooter'
 
 type EditCollaboratorsModalProps = {
   watchlistId: number
@@ -52,29 +54,35 @@ export function CollaboratorsModal({
 
       <FocusTrapInitialFocus />
 
-      <ModalContent className="overflow-hidden">
-        <ModalHeader className="border-b-[1px] border-b-[--mantine-color-gray-3] dark:border-b-[--mantine-color-dark-4]">
-          <ModalTitle>{isAddCollaboratorContentOpen && 'Add '}Collaborators</ModalTitle>
-          <ModalCloseButton aria-label="Close modal" />
-        </ModalHeader>
+      <ModalContent className="flex min-h-60 min-w-80">
+        <Stack gap={0} className="w-full">
+          <ModalHeader className="relative z-0 border-b-[1px] border-b-[--mantine-color-gray-3] dark:border-b-[--mantine-color-dark-4]">
+            <ModalTitle>{isAddCollaboratorContentOpen && 'Add '}Collaborators</ModalTitle>
+            <ModalCloseButton aria-label="Close modal" />
+          </ModalHeader>
 
-        <ModalBody className="flex h-full max-h-[--modal-size] w-full flex-col p-0">
-          {isAddCollaboratorContentOpen ? (
-            <AddCollaboratorsModalContent
-              closeAddCollaboratorContent={toggleAddCollaboratorContent}
-            />
-          ) : (
-            <CollaboratorsModalContent
-              watchlistId={watchlistId}
-              isPublicWatchlist={isPublicWatchlist}
-              openAddCollaboratorContent={toggleAddCollaboratorContent}
-              className="h-full overflow-auto"
+          <ModalBody component="section" p={0} className="flex shrink flex-col overflow-hidden">
+            {isAddCollaboratorContentOpen ? (
+              <AddCollaboratorsModalContent
+                closeAddCollaboratorContent={toggleAddCollaboratorContent}
+              />
+            ) : (
+              <CollaboratorsModalContent
+                watchlistId={watchlistId}
+                isPublicWatchlist={isPublicWatchlist}
+                className="min-h-40 overflow-auto"
+              />
+            )}
+          </ModalBody>
+
+          {!isAddCollaboratorContentOpen && (
+            // For now, we hold this here until add functionality is fleshed out
+            <CollaboratorModalFooter
+              className="shrink-0 grow-0 basis-[calc(3.75rem_*_var(--mantine-scale))] border-t-[1px] border-t-[--mantine-color-gray-3] dark:border-t-[--mantine-color-dark-4]"
+              onClickAddCollaborator={toggleAddCollaboratorContent}
             />
           )}
-
-          {/* Optional positioning for a modal footer here. Leaving this for reference */}
-          {/* <div className="flex justify-center bg-[var(--mantine-color-gray-1)] p-4 dark:bg-[var(--mantine-color-dark-6)]" /> */}
-        </ModalBody>
+        </Stack>
       </ModalContent>
     </ModalRoot>
   )
