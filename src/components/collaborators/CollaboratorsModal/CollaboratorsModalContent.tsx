@@ -1,5 +1,6 @@
 'use client'
 
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { LoadingOverlay } from '@mantine/core'
 import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
@@ -20,8 +21,9 @@ type Props = {
 }
 
 export function CollaboratorsModalContent({ watchlistId, isPublicWatchlist, className }: Props) {
-  const user = useCurrentUser()
+  const [animateRef] = useAutoAnimate<HTMLUListElement>({ duration: 150 })
 
+  const user = useCurrentUser()
   const router = useRouter()
 
   const { isLoading, error } = useCollaboratorsQuery()
@@ -74,7 +76,7 @@ export function CollaboratorsModalContent({ watchlistId, isPublicWatchlist, clas
     <div className={clsx('relative px-4 pb-2', className)}>
       <LoadingOverlay visible={isLoading} />
 
-      <ul>
+      <ul ref={animateRef}>
         {currentUserCollaborator && (
           <CollaboratorListItem
             collaborator={currentUserCollaborator}
