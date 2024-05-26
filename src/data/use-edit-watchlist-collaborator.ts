@@ -22,6 +22,7 @@ export function useEditWatchlistCollaborator({ watchlistId }: { watchlistId: num
         `/api/watchlists/${watchlistId}/users/${collaboratorId}`,
         { method: 'PATCH', credentials: 'include', body: JSON.stringify({ role }) },
         {
+          skipResult: true, // Returns a 204 on success
           prefix: response =>
             `(${response.status} ${response.statusText}) Failed to change collaborator role`,
           toMessage: response => response.clone().json() as unknown as string,

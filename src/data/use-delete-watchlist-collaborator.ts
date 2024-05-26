@@ -14,6 +14,7 @@ export function useDeleteWatchlistCollaborator({ watchlistId }: { watchlistId: n
         `/api/watchlists/${watchlistId}/users/${collaboratorId}`,
         { method: 'DELETE', credentials: 'include' },
         {
+          skipResult: true, // Returns a 204 on success
           prefix: response =>
             `(${response.status} ${response.statusText}) Failed to delete collaborator`,
           toMessage: response => response.clone().json() as unknown as string,

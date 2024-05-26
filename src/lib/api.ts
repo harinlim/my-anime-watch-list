@@ -50,10 +50,15 @@ export class HttpError<T = unknown> extends Error {
   }
 }
 
-export async function fetchWithError<TData = void, TError = string>(
+export async function fetchWithError<
+  SkipResult extends boolean = false,
+  TData = SkipResult extends false ? object : undefined,
+  TError = string,
+>(
   url: string | URL | Request,
   init: RequestInit = {},
-  errorProps?: {
+  props?: {
+    skipResult?: SkipResult
     toBody?: (errorResponse: Response) => TError | Promise<TError>
     toMessage?: (errorResponse: Response) => string | undefined | Promise<string | undefined>
     prefix?: string | ((errorResponse: Response) => string | Promise<string>)
@@ -63,15 +68,20 @@ export async function fetchWithError<TData = void, TError = string>(
   if (!response.ok) {
     throw new HttpError({
       response: response.clone(),
-      body: errorProps?.toBody ? await errorProps.toBody(response) : await response.clone().json(),
-      message: errorProps?.toMessage ? await errorProps.toMessage(response) : undefined,
-      prefix: errorProps?.prefix
-        ? typeof errorProps.prefix === 'string'
-          ? errorProps.prefix
-          : await errorProps.prefix(response)
+      body: props?.toBody ? await props.toBody(response) : await response.clone().json(),
+      message: props?.toMessage ? await props.toMessage(response) : undefined,
+      prefix: props?.prefix
+        ? typeof props.prefix === 'string'
+          ? props.prefix
+          : await props.prefix(response)
         : undefined,
     })
   }
 
-  return (await response.json()) as TData
+  // TODO: I want to link the status with this skipResult without affecting the end result json
+  if (response.status === 204 || props?.skipResult) {
+    return undefined as TData
+  }
+
+  return response.json() as Promise<TData>
 }
