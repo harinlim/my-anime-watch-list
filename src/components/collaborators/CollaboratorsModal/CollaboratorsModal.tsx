@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ScrollAreaAutosize,
+  FocusTrapInitialFocus,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 
