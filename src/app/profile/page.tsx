@@ -5,8 +5,9 @@ import { redirect } from 'next/navigation'
 import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { getUserFromAuth } from '@/db/users'
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { fetchWithType } from '@/lib/api'
 import { createServerClient } from '@/lib/supabase/server'
+import { withBaseURL } from '@/lib/url'
 
 import type { WatchlistOverview } from '@/types/watchlists'
 

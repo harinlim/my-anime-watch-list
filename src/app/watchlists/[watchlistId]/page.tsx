@@ -6,7 +6,8 @@ import { CollaboratorsProvider } from '@/components/collaborators/CollaboratorsC
 import { CollaboratorsModal } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModal'
 import { EditCollaboratorsModalProvider } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModalContext'
 import { WatchlistPrivacyIndicator } from '@/components/watchlists/WatchlistPrivacyIndicator'
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { fetchWithType } from '@/lib/api'
+import { withBaseURL } from '@/lib/url'
 
 import { EditCollaboratorsButton } from './EditCollaboratorsButton'
 import { EditWatchlistButton } from './EditWatchlistButton'

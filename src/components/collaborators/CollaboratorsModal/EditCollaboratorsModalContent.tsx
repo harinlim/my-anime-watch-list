@@ -1,6 +1,7 @@
 'use client'
 
 import { LoadingOverlay } from '@mantine/core'
+import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 
 import { useCurrentUser } from '@/context/UserContext'
@@ -21,6 +22,8 @@ export function EditCollaboratorsModalContent({
   isPublicWatchlist,
 }: EditCollaboratorsModalContentProps) {
   const user = useCurrentUser()
+
+  const router = useRouter()
 
   const { data: collaborators, isLoading, error } = useCollaborators()
 
@@ -43,12 +46,22 @@ export function EditCollaboratorsModalContent({
   const handleEditCollaborator = useCallback(
     (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => {
       if (option === 'remove') {
-        deleteCollaborator({ collaboratorId, isPublicWatchlist })
+        deleteCollaborator(
+          { collaboratorId },
+          {
+            onSuccess: () => {
+              // Redirect to the watchlists page if the current user is removed from a private watchlist
+              if (collaboratorId === user?.id && !isPublicWatchlist) {
+                router.replace('/watchlists')
+              }
+            },
+          }
+        )
       } else {
         updateCollaborator({ role: option, collaboratorId })
       }
     },
-    [deleteCollaborator, isPublicWatchlist, updateCollaborator]
+    [deleteCollaborator, updateCollaborator, router, isPublicWatchlist, user]
   )
 
   if (error) return <div>failed to load</div>

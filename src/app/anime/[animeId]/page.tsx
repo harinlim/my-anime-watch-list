@@ -17,7 +17,8 @@ import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { Review } from '@/components/anime/Review'
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { fetchWithType } from '@/lib/api'
+import { withBaseURL } from '@/lib/url'
 import { getAnimeRatingColor } from '@/utils/anime-colors'
 
 import styles from './anime-page.module.css'

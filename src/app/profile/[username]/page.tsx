@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 
 import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { fetchWithType } from '@/lib/api'
+import { withBaseURL } from '@/lib/url'
 
 import type { PublicUser } from '@/types/users'
 import type { WatchlistOverview } from '@/types/watchlists'
