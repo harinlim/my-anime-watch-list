@@ -78,6 +78,9 @@ export function EditCollaboratorsModalContent({
     collaborator => collaborator.user_id !== user?.id
   )
 
+  const hasEditAccess =
+    userAsCollaborator?.role === 'owner' || userAsCollaborator?.role === 'editor'
+
   return (
     <>
       <div className="relative min-h-56 px-4 pb-6">
@@ -105,11 +108,7 @@ export function EditCollaboratorsModalContent({
             <CollaboratorListItem
               key={collaborator.user_id}
               collaborator={collaborator}
-              canEdit={
-                !!userAsCollaborator &&
-                userAsCollaborator?.role !== 'viewer' &&
-                collaborator.role !== 'owner'
-              }
+              canEdit={hasEditAccess && collaborator.role !== 'owner'}
               canDelete={userAsCollaborator?.role === 'owner'}
               isPending={
                 (isDeletePending && collaborator.user_id === deletedUserId) ||
@@ -121,21 +120,20 @@ export function EditCollaboratorsModalContent({
         </ul>
       </div>
 
-      {userAsCollaborator?.role === 'owner' ||
-        (userAsCollaborator?.role === 'editor' && (
-          <div className="sticky bottom-0 left-0 right-0 z-20 bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
-            <Divider />
-            <UnstyledButton
-              onClick={openAddCollaborator}
-              className="m-3 w-fit rounded-md px-4 py-3 hover:bg-[var(--mantine-color-gray-1)]  dark:hover:bg-[var(--mantine-color-dark-6)]"
-            >
-              <Group className="flex-nowrap gap-1">
-                <IconPlus size={20} />
-                <Text className="line-clamp-1">Add collaborator</Text>
-              </Group>
-            </UnstyledButton>
-          </div>
-        ))}
+      {hasEditAccess && (
+        <div className="sticky bottom-0 left-0 right-0 z-20 bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
+          <Divider />
+          <UnstyledButton
+            onClick={openAddCollaborator}
+            className="m-3 w-fit rounded-md px-4 py-3 hover:bg-[var(--mantine-color-gray-1)]  dark:hover:bg-[var(--mantine-color-dark-6)]"
+          >
+            <Group className="flex-nowrap gap-1">
+              <IconPlus size={20} />
+              <Text className="line-clamp-1">Add collaborator</Text>
+            </Group>
+          </UnstyledButton>
+        </div>
+      )}
     </>
   )
 }
