@@ -1,9 +1,7 @@
 import { Container, Flex, Button, Text } from '@mantine/core'
 import { IconUserPlus } from '@tabler/icons-react'
-import { QueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
 
-import { UserSearchCombobox } from './UserSearchCombobox'
+import { UserSearchAutocomplete } from './UserSearchAutocomplete'
 
 type AddCollaboratorsModalContentProps = {
   closeAddCollaboratorContent: () => void
@@ -12,22 +10,10 @@ type AddCollaboratorsModalContentProps = {
 export function AddCollaboratorsModalContent({
   closeAddCollaboratorContent,
 }: AddCollaboratorsModalContentProps) {
-  const [search, setSearch] = useState('')
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchIntervalInBackground: false,
-        staleTime: 5 * 60 * 1000,
-        refetchOnWindowFocus: false,
-      },
-    },
-  })
-
   return (
     <Container className="space-y-4">
       <Flex>
-        <UserSearchCombobox />
+        <UserSearchAutocomplete />
       </Flex>
       <Flex direction="column" gap="md">
         <Flex>

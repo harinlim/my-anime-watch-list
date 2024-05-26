@@ -83,10 +83,10 @@ export function CollaboratorsModalContent({
 
   return (
     <>
-      <div className="relative min-h-56 px-4 pb-6">
+      <section className="relative min-h-56 px-4 pb-6">
         <LoadingOverlay visible={isLoading} />
 
-        <ul className="flex flex-col">
+        <ul>
           {userAsCollaborator && (
             <CollaboratorListItem
               collaborator={userAsCollaborator}
@@ -118,7 +118,7 @@ export function CollaboratorsModalContent({
             />
           ))}
         </ul>
-      </div>
+      </section>
 
       {hasEditAccess && (
         <div className="sticky bottom-0 left-0 right-0 z-20 flex flex-col bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">

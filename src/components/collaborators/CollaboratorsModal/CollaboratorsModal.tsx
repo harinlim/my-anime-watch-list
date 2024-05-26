@@ -43,7 +43,8 @@ export function CollaboratorsModal({
     overrideExists ? { isOpen, close } : undefined
   )
 
-  const [isAddCollaboratorContent, { toggle: toggleContent }] = useDisclosure(false)
+  const [isAddCollaboratorContentOpen, { toggle: toggleAddCollaboratorContent }] =
+    useDisclosure(false)
 
   return (
     <ModalRoot
@@ -55,20 +56,25 @@ export function CollaboratorsModal({
       yOffset="25vh"
     >
       <ModalOverlay />
+
+      <FocusTrapInitialFocus />
+
       <ModalContent>
         <ModalHeader>
-          <ModalTitle>{isAddCollaboratorContent && 'Add '}Collaborators</ModalTitle>
-          <ModalCloseButton />
+          <ModalTitle>{isAddCollaboratorContentOpen && 'Add '}Collaborators</ModalTitle>
+          <ModalCloseButton aria-label="Close modal" />
         </ModalHeader>
 
         <ModalBody className="p-0">
-          {isAddCollaboratorContent ? (
-            <AddCollaboratorsModalContent closeAddCollaboratorContent={toggleContent} />
+          {isAddCollaboratorContentOpen ? (
+            <AddCollaboratorsModalContent
+              closeAddCollaboratorContent={toggleAddCollaboratorContent}
+            />
           ) : (
             <CollaboratorsModalContent
               watchlistId={watchlistId}
               isPublicWatchlist={isPublicWatchlist}
-              openAddCollaboratorContent={toggleContent}
+              openAddCollaboratorContent={toggleAddCollaboratorContent}
             />
           )}
         </ModalBody>

@@ -19,7 +19,7 @@ import type { SetStateAction } from 'react'
 
 const data = ['🍎 Apples', '🍌 Bananas', '🥦 Broccoli', '🥕 Carrots', '🍫 Chocolate']
 
-export function UserSearchCombobox() {
+export function UserSearchAutocomplete() {
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
     onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
@@ -33,7 +33,7 @@ export function UserSearchCombobox() {
       current.includes(val) ? current.filter(v => v !== val) : [...current, val]
     )
 
-  const handleValueRemove = (val: string) => setValue(current => current.filter(v => v !== val))
+  const handleValueRemove = (val?: string) => setValue(current => current.filter(v => v !== val))
 
   const values = value.map(item => (
     <Pill key={item} withRemoveButton onRemove={() => handleValueRemove(item)}>
@@ -53,7 +53,7 @@ export function UserSearchCombobox() {
     ))
 
   return (
-    <Combobox store={combobox} onOptionSubmit={handleValueSelect} className="w-full">
+    <Combobox store={combobox} onOptionSubmit={handleValueSelect}>
       <ComboboxDropdownTarget>
         <PillsInput onClick={() => combobox.openDropdown()}>
           <PillGroup>
