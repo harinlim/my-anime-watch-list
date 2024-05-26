@@ -39,6 +39,7 @@ function arePropsEqual(prevProps: Props, nextProps: Props) {
 export const CollaboratorListItem = memo(
   ({ collaborator, canEdit, canDelete, isPending, isSelf, onChange, className }: Props) => (
     <li className={clsx('relative flex h-14 items-center justify-between gap-3 pl-3', className)}>
+      {/* TODO: handle dark mode overlay */}
       <LoadingOverlay visible={isPending} loaderProps={{ children: ' ' }} />
 
       <Group wrap="nowrap">

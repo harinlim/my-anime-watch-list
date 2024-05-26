@@ -8,7 +8,6 @@ import {
   ModalTitle,
   ModalCloseButton,
   ModalBody,
-  ScrollAreaAutosize,
   FocusTrapInitialFocus,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -48,25 +47,18 @@ export function CollaboratorsModal({
     useDisclosure(false)
 
   return (
-    <ModalRoot
-      scrollAreaComponent={ScrollAreaAutosize}
-      classNames={{}}
-      opened={opened}
-      onClose={handleCloseRoot}
-      size="md"
-      yOffset="25vh"
-    >
+    <ModalRoot opened={opened} onClose={handleCloseRoot} size="md" yOffset="25vh">
       <ModalOverlay />
 
       <FocusTrapInitialFocus />
 
-      <ModalContent>
-        <ModalHeader>
+      <ModalContent className="overflow-hidden">
+        <ModalHeader className="border-b-[1px] border-b-[--mantine-color-gray-3] dark:border-b-[--mantine-color-dark-4]">
           <ModalTitle>{isAddCollaboratorContentOpen && 'Add '}Collaborators</ModalTitle>
           <ModalCloseButton aria-label="Close modal" />
         </ModalHeader>
 
-        <ModalBody className="p-0">
+        <ModalBody className="flex h-full max-h-[--modal-size] w-full flex-col p-0">
           {isAddCollaboratorContentOpen ? (
             <AddCollaboratorsModalContent
               closeAddCollaboratorContent={toggleAddCollaboratorContent}
@@ -76,8 +68,12 @@ export function CollaboratorsModal({
               watchlistId={watchlistId}
               isPublicWatchlist={isPublicWatchlist}
               openAddCollaboratorContent={toggleAddCollaboratorContent}
+              className="h-full overflow-auto"
             />
           )}
+
+          {/* Optional positioning for a modal footer here. Leaving this for reference */}
+          {/* <div className="flex justify-center bg-[var(--mantine-color-gray-1)] p-4 dark:bg-[var(--mantine-color-dark-6)]" /> */}
         </ModalBody>
       </ModalContent>
     </ModalRoot>

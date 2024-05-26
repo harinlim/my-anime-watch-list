@@ -2,6 +2,7 @@
 
 import { Divider, Group, LoadingOverlay, UnstyledButton, Text } from '@mantine/core'
 import { IconPlus } from '@tabler/icons-react'
+import clsx from 'clsx'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 
@@ -17,12 +18,14 @@ type Props = {
   watchlistId: number
   isPublicWatchlist: boolean
   openAddCollaboratorContent: () => void
+  className?: string
 }
 
 export function CollaboratorsModalContent({
   watchlistId,
   isPublicWatchlist,
   openAddCollaboratorContent,
+  className,
 }: Props) {
   const user = useCurrentUser()
 
@@ -83,7 +86,7 @@ export function CollaboratorsModalContent({
 
   return (
     <>
-      <section className="relative min-h-56 px-4 pb-6">
+      <section className={clsx('relative min-h-56 px-4 pb-6', className)}>
         <LoadingOverlay visible={isLoading} />
 
         <ul>
@@ -98,7 +101,7 @@ export function CollaboratorsModalContent({
               className={
                 // Use border as a divider due to HTML semantics with list elements
                 userAsCollaborator && groupedCollaborators.length > 0
-                  ? 'mb-2 border-b-[1px] border-b-[--mantine-color-gray-3] pb-1'
+                  ? 'mb-1 h-16 border-b-[1px] border-b-[--mantine-color-gray-1] pb-2 pt-2 dark:border-b-[--mantine-color-dark-5]'
                   : undefined
               }
             />
@@ -121,13 +124,13 @@ export function CollaboratorsModalContent({
       </section>
 
       {hasEditAccess && (
-        <div className="sticky bottom-0 left-0 right-0 z-20 flex flex-col bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
+        <div className="sticky bottom-0 left-0 right-0 z-20 flex flex-col bg-[--mantine-color-white] dark:bg-[--mantine-color-dark-7]">
           <Divider />
           <UnstyledButton
             onClick={openAddCollaboratorContent}
-            className="m-3 rounded-sm px-4 py-3 hover:bg-[var(--mantine-color-gray-1)]  dark:hover:bg-[var(--mantine-color-dark-6)]"
+            className="m-3 rounded-sm px-4 py-3 hover:bg-[--mantine-color-gray-2] dark:hover:bg-[--mantine-color-dark-4]"
           >
-            <Group className="flex-nowrap gap-1">
+            <Group component="span" className="flex-nowrap gap-1">
               <IconPlus size={20} />
               <Text className="line-clamp-1">Add collaborator</Text>
             </Group>
