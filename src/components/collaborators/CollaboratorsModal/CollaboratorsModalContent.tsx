@@ -120,7 +120,7 @@ export function CollaboratorsModalContent({
         </ul>
       </div>
 
-      {hasEditAccess && (
+      {!hasEditAccess && (
         <div className="sticky bottom-0 left-0 right-0 z-20 bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
           <Divider />
           <UnstyledButton

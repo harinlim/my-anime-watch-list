@@ -19,7 +19,7 @@ import { IconUserPlus } from '@tabler/icons-react'
 
 import { useEditCollaboratorsModal } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModalContext'
 
-import { CollaboratorsModalContent } from './EditCollaboratorsModalContent'
+import { CollaboratorsModalContent } from './CollaboratorsModalContent'
 
 type EditCollaboratorsModalProps = {
   watchlistId: number
@@ -64,6 +64,7 @@ export function CollaboratorsModal({
           <ModalTitle>{addCollaborator && 'Add '}Collaborators</ModalTitle>
           <ModalCloseButton />
         </ModalHeader>
+
         <ModalBody className="p-0">
           {addCollaborator ? (
             <Container>
