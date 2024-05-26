@@ -14,12 +14,15 @@ type Props = {
   watchlist: WatchlistOverview
 }
 
-const arePropsEqual = (prevProps: Props, nextProps: Props) =>
-  prevProps.watchlist === nextProps.watchlist ||
-  (prevProps.watchlist.id === nextProps.watchlist.id &&
-    prevProps.watchlist.updated_at === nextProps.watchlist.updated_at &&
-    JSON.stringify(prevProps.watchlist.watchlists_users) ===
-      JSON.stringify(nextProps.watchlist.watchlists_users))
+function arePropsEqual(prevProps: Props, nextProps: Props) {
+  return (
+    prevProps.watchlist === nextProps.watchlist ||
+    (prevProps.watchlist.id === nextProps.watchlist.id &&
+      prevProps.watchlist.updated_at === nextProps.watchlist.updated_at &&
+      JSON.stringify(prevProps.watchlist.watchlists_users) ===
+        JSON.stringify(nextProps.watchlist.watchlists_users))
+  )
+}
 
 export const WatchlistRow = memo(
   ({ watchlist }: Props) => (

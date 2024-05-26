@@ -13,17 +13,17 @@ import { useCollaborators } from '../CollaboratorsContext'
 
 import { CollaboratorListItem } from './CollaboratorListItem'
 
-type EditCollaboratorsModalContentProps = {
+type Props = {
   watchlistId: number
   isPublicWatchlist: boolean
   openAddCollaborator: () => void
 }
 
-export function EditCollaboratorsModalContent({
+export function CollaboratorsModalContent({
   watchlistId,
   isPublicWatchlist,
   openAddCollaborator,
-}: EditCollaboratorsModalContentProps) {
+}: Props) {
   const user = useCurrentUser()
 
   const router = useRouter()
