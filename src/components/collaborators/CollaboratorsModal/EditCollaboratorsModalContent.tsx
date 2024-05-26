@@ -1,6 +1,7 @@
 'use client'
 
-import { LoadingOverlay } from '@mantine/core'
+import { Divider, Group, LoadingOverlay, UnstyledButton, Text } from '@mantine/core'
+import { IconPlus } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
 import { useCallback } from 'react'
 
@@ -15,11 +16,13 @@ import { CollaboratorListItem } from './CollaboratorListItem'
 type EditCollaboratorsModalContentProps = {
   watchlistId: number
   isPublicWatchlist: boolean
+  openAddCollaborator: () => void
 }
 
 export function EditCollaboratorsModalContent({
   watchlistId,
   isPublicWatchlist,
+  openAddCollaborator,
 }: EditCollaboratorsModalContentProps) {
   const user = useCurrentUser()
 
@@ -76,41 +79,63 @@ export function EditCollaboratorsModalContent({
   )
 
   return (
-    <div className="relative min-h-56 px-4 pb-6">
-      <LoadingOverlay visible={isLoading} />
+    <>
+      <div className="relative min-h-56 px-4 pb-6">
+        <LoadingOverlay visible={isLoading} />
 
-      <ul className="flex flex-col">
-        {userAsCollaborator && (
-          <CollaboratorListItem
-            collaborator={userAsCollaborator}
-            canEdit={userAsCollaborator?.role === 'editor'}
-            canDelete={userAsCollaborator.role !== 'owner'}
-            isSelf
-            isPending={isDeletePending && userAsCollaborator.user_id === deletedUserId}
-            onChange={handleEditCollaborator}
-            className={
-              // Use border as a divider due to HTML semantics with list elements
-              userAsCollaborator && groupedCollaborators.length > 0
-                ? 'mb-2 border-b-[1px] border-b-[--mantine-color-gray-3] pb-1'
-                : undefined
-            }
-          />
-        )}
+        <ul className="flex flex-col">
+          {userAsCollaborator && (
+            <CollaboratorListItem
+              collaborator={userAsCollaborator}
+              canEdit={userAsCollaborator?.role === 'editor'}
+              canDelete={userAsCollaborator.role !== 'owner'}
+              isSelf
+              isPending={isDeletePending && userAsCollaborator.user_id === deletedUserId}
+              onChange={handleEditCollaborator}
+              className={
+                // Use border as a divider due to HTML semantics with list elements
+                userAsCollaborator && groupedCollaborators.length > 0
+                  ? 'mb-2 border-b-[1px] border-b-[--mantine-color-gray-3] pb-1'
+                  : undefined
+              }
+            />
+          )}
 
-        {groupedCollaborators.map(collaborator => (
-          <CollaboratorListItem
-            key={collaborator.user_id}
-            collaborator={collaborator}
-            canEdit={userAsCollaborator?.role !== 'viewer' && collaborator.role !== 'owner'}
-            canDelete={userAsCollaborator?.role === 'owner'}
-            isPending={
-              (isDeletePending && collaborator.user_id === deletedUserId) ||
-              (isUpdatePending && collaborator.user_id === updatedUserId)
-            }
-            onChange={handleEditCollaborator}
-          />
+          {groupedCollaborators.map(collaborator => (
+            <CollaboratorListItem
+              key={collaborator.user_id}
+              collaborator={collaborator}
+              canEdit={
+                !!userAsCollaborator &&
+                userAsCollaborator?.role !== 'viewer' &&
+                collaborator.role !== 'owner'
+              }
+              canDelete={userAsCollaborator?.role === 'owner'}
+              isPending={
+                (isDeletePending && collaborator.user_id === deletedUserId) ||
+                (isUpdatePending && collaborator.user_id === updatedUserId)
+              }
+              onChange={handleEditCollaborator}
+            />
+          ))}
+        </ul>
+      </div>
+
+      {userAsCollaborator?.role === 'owner' ||
+        (userAsCollaborator?.role === 'editor' && (
+          <div className="sticky bottom-0 left-0 right-0 z-20 bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
+            <Divider />
+            <UnstyledButton
+              onClick={openAddCollaborator}
+              className="m-3 w-fit rounded-md px-4 py-3 hover:bg-[var(--mantine-color-gray-1)]  dark:hover:bg-[var(--mantine-color-dark-6)]"
+            >
+              <Group className="flex-nowrap gap-1">
+                <IconPlus size={20} />
+                <Text className="line-clamp-1">Add collaborator</Text>
+              </Group>
+            </UnstyledButton>
+          </div>
         ))}
-      </ul>
-    </div>
+    </>
   )
 }
