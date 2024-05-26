@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useCurrentUser } from '@/context/UserContext'
 
-import type { Role } from '@/types/collaborators'
+import type { CollaboratorRole } from '@/types/watchlists'
 
 export function useEditWatchlistCollaborator({ watchlistId }: { watchlistId: number }) {
   const queryClient = useQueryClient()
@@ -10,7 +10,13 @@ export function useEditWatchlistCollaborator({ watchlistId }: { watchlistId: num
   const userId = useCurrentUser()?.id
 
   return useMutation({
-    mutationFn: async ({ collaboratorId, role }: { collaboratorId: string; role: Role }) =>
+    mutationFn: async ({
+      collaboratorId,
+      role,
+    }: {
+      collaboratorId: string
+      role: CollaboratorRole
+    }) =>
       fetch(`/api/watchlists/${watchlistId}/users/${collaboratorId}`, {
         method: 'PATCH',
         body: JSON.stringify({ role }),

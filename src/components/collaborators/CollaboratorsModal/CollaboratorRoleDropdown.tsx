@@ -14,14 +14,14 @@ import {
 import { IconChevronDown } from '@tabler/icons-react'
 import { useCallback, useState } from 'react'
 
-import type { ChangableRole, ChangableRoleUser } from '@/types/collaborators'
+import type { CollaboratorRole, WatchlistUser } from '@/types/watchlists'
 
 type Props = {
   onChange: (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => void
   canEdit?: boolean
   canDelete?: boolean
   isDisabled?: boolean
-  collaborator: ChangableRoleUser
+  collaborator: WatchlistUser
 }
 
 const SELECTABLE_ROLES = ['editor', 'viewer'] as const
@@ -36,7 +36,7 @@ export function CollaboratorRoleDropdown({
   canEdit = false,
   collaborator,
 }: Props) {
-  const [role, setRole] = useState<ChangableRole>(collaborator.role)
+  const [role, setRole] = useState<CollaboratorRole>(collaborator.role)
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),

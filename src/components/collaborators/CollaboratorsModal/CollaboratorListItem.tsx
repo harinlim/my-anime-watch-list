@@ -8,7 +8,6 @@ import { Avatar } from '@/components/watchlists/AvatarGroup'
 
 import { CollaboratorRoleDropdown } from './CollaboratorRoleDropdown'
 
-import type { ChangableRoleUser } from '@/types/collaborators'
 import type { WatchlistUser } from '@/types/watchlists'
 
 type Props = {
@@ -20,6 +19,19 @@ type Props = {
   onChange: (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => void
   className?: string
 }
+
+const arePropsEqual = (prevProps: Props, nextProps: Props) =>
+  prevProps.collaborator === nextProps.collaborator ||
+  (prevProps.collaborator.user_id === nextProps.collaborator.user_id &&
+    prevProps.collaborator.role === nextProps.collaborator.role &&
+    prevProps.collaborator.username === nextProps.collaborator.username &&
+    prevProps.collaborator.avatar_url === nextProps.collaborator.avatar_url &&
+    prevProps.canEdit === nextProps.canEdit &&
+    prevProps.canDelete === nextProps.canDelete &&
+    prevProps.isPending === nextProps.isPending &&
+    prevProps.isSelf === nextProps.isSelf &&
+    prevProps.onChange === nextProps.onChange &&
+    prevProps.className === nextProps.className)
 
 export const CollaboratorListItem = memo(
   ({ collaborator, canEdit, canDelete, isPending, isSelf, onChange, className }: Props) => (
@@ -40,11 +52,12 @@ export const CollaboratorListItem = memo(
           canDelete={canDelete}
           isDisabled={isPending}
           onChange={onChange}
-          collaborator={collaborator as ChangableRoleUser}
+          collaborator={collaborator}
         />
       ) : (
         <Text className="pl-4 pr-8 text-sm capitalize italic opacity-60">{collaborator.role}</Text>
       )}
     </li>
-  )
+  ),
+  arePropsEqual
 )
