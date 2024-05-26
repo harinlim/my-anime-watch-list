@@ -150,6 +150,39 @@ $$;
 
 ALTER FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
+SET default_tablespace = '';
+
+SET default_table_access_method = "heap";
+
+CREATE TABLE IF NOT EXISTS "public"."users" (
+    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
+    "username" character varying NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "avatar_url" "text",
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "email" "text" NOT NULL,
+    CONSTRAINT "users_username_check" CHECK (("length"(("username")::"text") >= 3)),
+    CONSTRAINT "users_username_length" CHECK (("char_length"(("username")::"text") <= 50))
+);
+
+ALTER TABLE "public"."users" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."users" IS 'public user profiles';
+
+CREATE OR REPLACE FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") RETURNS SETOF "public"."users"
+    LANGUAGE "plpgsql"
+    AS $$
+begin
+  return query
+  select * from users 
+  where to_tsvector(username) @@ to_tsquery(prefix || ':*')
+  order by length(username), username
+  limit 20;
+end;
+$$;
+
+ALTER FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION "public"."to_json2"("anyelement") RETURNS "json"
     LANGUAGE "sql"
     AS $_$
@@ -218,10 +251,6 @@ end;
 $$;
 
 ALTER FUNCTION "public"."update_user_via_auth"() OWNER TO "postgres";
-
-SET default_tablespace = '';
-
-SET default_table_access_method = "heap";
 
 CREATE TABLE IF NOT EXISTS "public"."anime" (
     "kitsu_id" "text" NOT NULL,
@@ -305,21 +334,6 @@ CREATE TABLE IF NOT EXISTS "public"."user_reviews" (
 ALTER TABLE "public"."user_reviews" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."user_reviews" IS 'user reviews of anime';
-
-CREATE TABLE IF NOT EXISTS "public"."users" (
-    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "username" character varying NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "avatar_url" "text",
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "email" "text" NOT NULL,
-    CONSTRAINT "users_username_check" CHECK (("length"(("username")::"text") >= 3)),
-    CONSTRAINT "users_username_length" CHECK (("char_length"(("username")::"text") <= 50))
-);
-
-ALTER TABLE "public"."users" OWNER TO "postgres";
-
-COMMENT ON TABLE "public"."users" IS 'public user profiles';
 
 CREATE TABLE IF NOT EXISTS "public"."watchlists" (
     "id" bigint NOT NULL,
@@ -563,6 +577,14 @@ GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "service_role";
 
+GRANT ALL ON TABLE "public"."users" TO "anon";
+GRANT ALL ON TABLE "public"."users" TO "authenticated";
+GRANT ALL ON TABLE "public"."users" TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") TO "service_role";
+
 GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "anon";
 GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "service_role";
@@ -586,10 +608,6 @@ GRANT ALL ON TABLE "public"."anime" TO "service_role";
 GRANT ALL ON TABLE "public"."user_reviews" TO "anon";
 GRANT ALL ON TABLE "public"."user_reviews" TO "authenticated";
 GRANT ALL ON TABLE "public"."user_reviews" TO "service_role";
-
-GRANT ALL ON TABLE "public"."users" TO "anon";
-GRANT ALL ON TABLE "public"."users" TO "authenticated";
-GRANT ALL ON TABLE "public"."users" TO "service_role";
 
 GRANT ALL ON TABLE "public"."watchlists" TO "anon";
 GRANT ALL ON TABLE "public"."watchlists" TO "authenticated";

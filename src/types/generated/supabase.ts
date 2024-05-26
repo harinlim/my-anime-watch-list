@@ -283,6 +283,19 @@ export type Database = {
         }
         Returns: string[]
       }
+      search_users_by_username_prefix: {
+        Args: {
+          prefix: string
+        }
+        Returns: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          id: string
+          updated_at: string
+          username: string
+        }[]
+      }
       to_json2: {
         Args: {
           "": unknown
