@@ -13,9 +13,13 @@ import { CollaboratorListItem } from './CollaboratorListItem'
 
 type EditCollaboratorsModalContentProps = {
   watchlistId: number
+  isPublicWatchlist: boolean
 }
 
-export function EditCollaboratorsModalContent({ watchlistId }: EditCollaboratorsModalContentProps) {
+export function EditCollaboratorsModalContent({
+  watchlistId,
+  isPublicWatchlist,
+}: EditCollaboratorsModalContentProps) {
   const user = useCurrentUser()
 
   const { data: collaborators, isLoading, error } = useCollaborators()
@@ -30,19 +34,21 @@ export function EditCollaboratorsModalContent({ watchlistId }: EditCollaborators
 
   const {
     mutate: deleteCollaborator,
-    variables: deletedUserId,
+    variables: deleteVariables,
     isPending: isDeletePending,
   } = useDeleteWatchlistCollaborator({ watchlistId })
+
+  const deletedUserId = deleteVariables?.collaboratorId
 
   const handleEditCollaborator = useCallback(
     (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => {
       if (option === 'remove') {
-        deleteCollaborator(collaboratorId)
+        deleteCollaborator({ collaboratorId, isPublicWatchlist })
       } else {
         updateCollaborator({ role: option, collaboratorId })
       }
     },
-    [deleteCollaborator, updateCollaborator]
+    [deleteCollaborator, isPublicWatchlist, updateCollaborator]
   )
 
   if (error) return <div>failed to load</div>

@@ -26,6 +26,7 @@ import { EditCollaboratorsModalContent } from './EditCollaboratorsModalContent'
 
 type EditCollaboratorsModalProps = {
   watchlistId: number
+  isPublicWatchlist: boolean
 } & (
   | {
       isOpen: boolean
@@ -37,7 +38,12 @@ type EditCollaboratorsModalProps = {
     }
 )
 
-export function CollaboratorsModal({ isOpen, close, watchlistId }: EditCollaboratorsModalProps) {
+export function CollaboratorsModal({
+  isOpen,
+  close,
+  watchlistId,
+  isPublicWatchlist,
+}: EditCollaboratorsModalProps) {
   const overrideExists = isOpen !== undefined || close !== undefined
 
   const [opened, { close: handleCloseRoot }] = useEditCollaboratorsModal(
@@ -82,7 +88,10 @@ export function CollaboratorsModal({ isOpen, close, watchlistId }: EditCollabora
             </Container>
           ) : (
             <>
-              <EditCollaboratorsModalContent watchlistId={watchlistId} />
+              <EditCollaboratorsModalContent
+                watchlistId={watchlistId}
+                isPublicWatchlist={isPublicWatchlist}
+              />
               <div className="sticky bottom-0 left-0 right-0 z-20 bg-[var(--mantine-color-white)] dark:bg-[var(--mantine-color-dark-7)]">
                 <Divider />
                 <UnstyledButton

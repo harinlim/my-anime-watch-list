@@ -53,7 +53,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
   return (
     <CollaboratorsProvider initialData={collaborators} watchlistId={watchlist.id}>
       <EditCollaboratorsModalProvider>
-        <CollaboratorsModal watchlistId={watchlist.id} />
+        <CollaboratorsModal watchlistId={watchlist.id} isPublicWatchlist={watchlist.is_public} />
 
         <div className="flex justify-center p-10">
           <div className="w-full items-center lg:max-w-5xl">
