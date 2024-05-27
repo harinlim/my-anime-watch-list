@@ -24,6 +24,15 @@ export function useDeleteWatchlistCollaborator({ watchlistId }: { watchlistId: n
     // TODO: expand on error handling here
     onError: (error, variables) => console.error(error.message, variables),
 
+    onSuccess: (_, { collaboratorId }) => {
+      if (collaboratorId === userId) {
+        // Invalidate the watchlist query if the current user is removed
+        void queryClient.invalidateQueries({
+          queryKey: ['watchlists', userId],
+        })
+      }
+    },
+
     // make sure to _return_ the Promise from the query invalidation
     // so that the mutation stays in `pending` state until the refetch is finished
     onSettled: () => {

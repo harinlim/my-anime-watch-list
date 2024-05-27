@@ -69,7 +69,7 @@ export function useWatchlistsInfiniteSearch(params: UseWatchlistsSearchParams = 
   const userId = useCurrentUser()?.id
 
   return useInfiniteQuery({
-    queryKey: [`watchlists`, { ...params, userId }],
+    queryKey: ['watchlists', userId, { ...params }],
     queryFn: async args => fetchWatchlists({ ...params, ...args }),
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.meta?.next,
