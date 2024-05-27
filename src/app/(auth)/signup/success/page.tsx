@@ -3,7 +3,8 @@ import { IconArrowRight } from '@tabler/icons-react'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { fetchWithType } from '@/lib/api'
+import { withBaseURL } from '@/lib/url'
 
 import type { User } from '@/types/users'
 

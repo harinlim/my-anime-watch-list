@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 import { SEARCH_WATCHLISTS_SORT_TYPES } from '@/api/watchlists/types'
+import { useCurrentUser } from '@/context/UserContext'
 
 import type {
   SearchWatchlistsQueryParams,
@@ -52,14 +53,23 @@ const fetchWatchlists = async ({
   const response = await fetch(
     // @ts-expect-error -- we know what we're doing
     `/api/watchlists?${new URLSearchParams(searchParams).toString()}`,
-    { signal }
+    { method: 'GET', credentials: 'include', signal }
   )
+
+  if (!response.ok) {
+    console.error('Failed to fetch watchlists', await response.json())
+    throw new Error('Failed to fetch watchlists')
+  }
+
   return response.json() as Promise<SearchWatchlistsResponse>
 }
 
 export function useWatchlistsInfiniteSearch(params: UseWatchlistsSearchParams = {}) {
+  // Temporary fix for dynamically changing query results when a user is logged in
+  const userId = useCurrentUser()?.id
+
   return useInfiniteQuery({
-    queryKey: [`watchlists`, { ...params }],
+    queryKey: ['watchlists', userId, { ...params }],
     queryFn: async args => fetchWatchlists({ ...params, ...args }),
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.meta?.next,

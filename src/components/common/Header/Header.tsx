@@ -7,6 +7,7 @@ import { ColorSchemeToggle } from './ColorSchemeToggle'
 import styles from './Header.module.css'
 import { SearchBar } from './SearchBar'
 import { UserMenu } from './UserMenu'
+import { UserMenuDropdown } from './UserMenuDropdown'
 
 import type { User } from '@/types/users'
 
@@ -47,7 +48,9 @@ export function Header({ user }: Props) {
           </Group>
 
           {user?.id ? (
-            <UserMenu user={user} />
+            <UserMenu user={user}>
+              <UserMenuDropdown />
+            </UserMenu>
           ) : (
             <Anchor component={Link} href="/login" className={styles.link}>
               Sign in

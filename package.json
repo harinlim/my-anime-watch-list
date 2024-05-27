@@ -24,6 +24,7 @@
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.8.2",
     "@mantine/core": "~7.10.0",
     "@mantine/form": "^7.10.0",
     "@mantine/hooks": "~7.10.0",

@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 
 import { Header } from '@/components/common/Header'
 import { ReactQueryClientProvider } from '@/context/ReactQueryClientContext'
+import { UserProvider } from '@/context/UserContext'
 import { getUserFromAuth } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 
@@ -41,12 +42,14 @@ export default async function RootLayout({
       <body
         className={clsx(inter.className, 'bg-background text-foreground min-h-screen min-w-80')}
       >
-        <ReactQueryClientProvider>
-          <MantineProvider defaultColorScheme="dark" theme={theme}>
-            <Header user={user} />
-            <main className="min-h-full">{children}</main>
-          </MantineProvider>
-        </ReactQueryClientProvider>
+        <UserProvider user={user}>
+          <ReactQueryClientProvider>
+            <MantineProvider defaultColorScheme="dark" theme={theme}>
+              <Header user={user} />
+              <main className="min-h-full">{children}</main>
+            </MantineProvider>
+          </ReactQueryClientProvider>
+        </UserProvider>
       </body>
     </html>
   )

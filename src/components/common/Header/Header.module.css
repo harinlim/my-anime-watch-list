@@ -37,10 +37,6 @@
   }
 }
 
-.usermenu div {
-  flex-wrap: nowrap;
-}
-
 .search {
   @media (max-width: 605px) {
     display: none !important;

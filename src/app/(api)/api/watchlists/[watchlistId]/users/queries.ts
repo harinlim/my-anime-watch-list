@@ -15,6 +15,8 @@ export function getWatchlistCollaborators(supabase: SupabaseClient<Database>, wa
     .from('watchlists_users')
     .select('user_id, role, ...users(username, avatar_url)', { count: 'exact' })
     .eq('watchlist_id', watchlistId)
+    .order('role') // sort on enum as follows: owner, editor, viewer
+    .order('users(username)')
 }
 
 type _TestGetWatchlistCollaboratsReturn = Expect<

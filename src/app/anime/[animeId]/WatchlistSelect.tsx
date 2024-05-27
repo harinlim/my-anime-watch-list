@@ -1,7 +1,8 @@
 import { Title } from '@mantine/core'
 import { headers } from 'next/headers'
 
-import { fetchWithType, withBaseURL } from '@/lib/api'
+import { fetchWithType } from '@/lib/api'
+import { withBaseURL } from '@/lib/url'
 
 import { WatchlistModal } from '../../../components/watchlists/WatchlistModal'
 
