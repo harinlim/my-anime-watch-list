@@ -6,23 +6,30 @@ import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 import { MAX_USERS_LIMIT } from './constants'
 import { searchUsersParamsSchema } from './schemas'
 
+import type { UserSearchOptions } from './types'
 import type { User, PublicUser } from '@/types/users'
 import type { NextRequest } from 'next/server'
 
-/**  Get user information from given auth cookies OR by search.
+function prepareSearchOptions({
+  search,
+  excludeWatchlistId,
+}: {
+  search: string
+  excludeWatchlistId?: number | null
+}): UserSearchOptions {
+  if (excludeWatchlistId) {
+    return { prefix: search, exclude_watchlist_id: excludeWatchlistId }
+  }
+  return { prefix: search }
+}
+
+/**
+ * Get user information from given auth cookies OR by search.
  * If no search query is provided, return the user's information aka ME
  * If a search query is provided, return all users that have usernames starting with the search query
  */
 export async function GET(request: NextRequest) {
   const supabase = createServerClient()
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json('Failed authorization', { status: 401 })
-  }
 
   const { searchParams } = request.nextUrl
 
@@ -30,6 +37,7 @@ export async function GET(request: NextRequest) {
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
     search: searchParams.get('search'),
     limit: searchParams.get('limit') || null,
+    excludeWatchlistId: searchParams.get('excludedWatchlistId') || null,
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
   })
 
@@ -44,8 +52,16 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // If no search query is provided, return the current user's information aka ME
+  // If no search param is provided, return the current user's information aka ME
   if (searchParamsResult.data.search === null) {
+    // Check if a user's logged in
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json('Failed authorization', { status: 401 })
+    }
+
     const userResult = await supabase
       .from('users')
       .select(`username, email, avatar_url`, { count: 'exact' })
@@ -67,30 +83,17 @@ export async function GET(request: NextRequest) {
     })
   }
 
-  const { limit, search: searchValue } = searchParamsResult.data
+  const { limit, search: searchValue, excludeWatchlistId } = searchParamsResult.data
 
-  // If an empty search query is provided, return all users
-  if (searchValue === '') {
-    const userSearchResults = await supabase
-      .from('users')
-      .select('id, username, avatar_url')
-      .order('username')
-      .limit(limit ?? MAX_USERS_LIMIT)
-
-    if (userSearchResults.error) {
-      console.error(userSearchResults.error)
-      return NextResponse.json('Failed to fetch users', { status: 500 })
-    }
-
-    return NextResponse.json<PublicUser[]>(userSearchResults.data, { status: 200 })
-  }
+  const searchOptions = prepareSearchOptions({
+    search: searchValue,
+    excludeWatchlistId,
+  })
 
   // If a search query is provided, return all users that have usernames starting with the search query
   // RPC is ordered by length of username, then by username (alphabetically)
   const userSearchResults = await supabase
-    .rpc('search_users_by_username_prefix', {
-      prefix: searchValue,
-    })
+    .rpc('search_users', searchOptions)
     .select('id, username, avatar_url')
     .limit(limit ?? MAX_USERS_LIMIT)
 

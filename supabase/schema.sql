@@ -150,38 +150,135 @@ $$;
 
 ALTER FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
-SET default_tablespace = '';
-
-SET default_table_access_method = "heap";
-
-CREATE TABLE IF NOT EXISTS "public"."users" (
-    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "username" character varying NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "avatar_url" "text",
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "email" "text" NOT NULL,
-    CONSTRAINT "users_username_check" CHECK (("length"(("username")::"text") >= 3)),
-    CONSTRAINT "users_username_length" CHECK (("char_length"(("username")::"text") <= 50))
-);
-
-ALTER TABLE "public"."users" OWNER TO "postgres";
-
-COMMENT ON TABLE "public"."users" IS 'public user profiles';
-
-CREATE OR REPLACE FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") RETURNS SETOF "public"."users"
+CREATE OR REPLACE FUNCTION "public"."search_users"("prefix" "text") RETURNS TABLE("id" "uuid", "username" character varying, "avatar_url" "text", "rank" double precision)
     LANGUAGE "plpgsql"
     AS $$
 begin
   return query
-  select * from users 
-  where to_tsvector(username) @@ to_tsquery(prefix || ':*')
-  order by length(username), username
+    select * from search_users(prefix, null, null);
+end;
+$$;
+
+ALTER FUNCTION "public"."search_users"("prefix" "text") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint) RETURNS TABLE("id" "uuid", "username" character varying, "avatar_url" "text", "rank" double precision)
+    LANGUAGE "plpgsql"
+    AS $$
+begin
+  return query
+    select * from search_users(prefix, exclude_watchlist_id, null);
+end;
+$$;
+
+ALTER FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint) OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."search_users"("prefix" "text", "querying_user_id" "uuid") RETURNS TABLE("id" "uuid", "username" character varying, "avatar_url" "text", "rank" double precision)
+    LANGUAGE "plpgsql"
+    AS $$
+begin
+  return query
+    select * from search_users(prefix, null, querying_user_id);
+end;
+$$;
+
+ALTER FUNCTION "public"."search_users"("prefix" "text", "querying_user_id" "uuid") OWNER TO "postgres";
+
+CREATE OR REPLACE FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint, "querying_user_id" "uuid") RETURNS TABLE("id" "uuid", "username" character varying, "avatar_url" "text", "rank" double precision)
+    LANGUAGE "plpgsql"
+    AS $$
+declare
+  exists_prefix boolean := (prefix <> '') is true; -- prefix is not null or empty string
+  ts_prefix_query tsquery := '';
+  self_uid uuid := querying_user_id;
+begin
+  if exists_prefix then
+    ts_prefix_query := to_tsquery('simple', prefix || ':*');
+  end if;
+
+  if querying_user_id is not null then
+    -- Disallow access to privileged response via API / RPC
+    if (select auth.role() in ('anon', 'authenticated')) then
+      raise exception 'Attempted to access privileged function, uid (%)', (select auth.uid());
+    end if;
+    -- raise log 'search_users self_uid is null, using (%)' , (select auth.uid());
+  else
+    self_uid := (select auth.uid());
+  end if;
+
+  -- if non authenticated request, provide general result
+  if self_uid is null then
+    return query
+    with users_excluding_watchlist as (
+      select * 
+      from users
+      where exclude_watchlist_id is null or users.id not in (
+        select user_id 
+        from watchlists_users
+        where watchlist_id = exclude_watchlist_id
+      )
+    )
+    select
+      u.id,
+      u.username,
+      u.avatar_url,
+      (case when exists_prefix 
+        then ts_rank(to_tsvector('simple', u.username), ts_prefix_query)
+        else 1.0
+      end) * 1.0 as adjusted_rank
+    from users_excluding_watchlist as u
+    where not exists_prefix or to_tsvector(u.username) @@ ts_prefix_query
+    order by
+      adjusted_rank desc,
+      length(u.username),
+      u.username
+    limit 20;
+  end if;
+
+  -- otherwise, provide user-specific result including relationships
+  return query
+  with users_excluding_watchlist as (
+    select * 
+    from users
+    where exclude_watchlist_id is null or users.id not in (
+      select user_id 
+      from watchlists_users
+      where watchlist_id = exclude_watchlist_id
+    )
+  ), 
+  full_user_relationships as (
+    select
+      user1 as user_id,
+      shared_watchlist_count
+    from user_relationships
+    where user2 = self_uid
+    union
+    select
+      user2 as user_id,
+      shared_watchlist_count
+    from user_relationships
+    where user1 = self_uid
+  )
+
+  select
+    u.id,
+    u.username,
+    u.avatar_url,
+    (case when exists_prefix 
+      then ts_rank(to_tsvector('simple', u.username), ts_prefix_query)
+      else 1.0
+     end) * (1 + COALESCE(full_user_relationships.shared_watchlist_count, 0)) AS adjusted_rank
+  from users_excluding_watchlist as u
+  left join full_user_relationships on u.id = full_user_relationships.user_id
+  where not exists_prefix or to_tsvector(u.username) @@ ts_prefix_query
+  order by
+    adjusted_rank desc,
+    length(u.username),
+    u.username
   limit 20;
 end;
 $$;
 
-ALTER FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") OWNER TO "postgres";
+ALTER FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint, "querying_user_id" "uuid") OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."to_json2"("anyelement") RETURNS "json"
     LANGUAGE "sql"
@@ -252,6 +349,78 @@ $$;
 
 ALTER FUNCTION "public"."update_user_via_auth"() OWNER TO "postgres";
 
+CREATE TEXT SEARCH DICTIONARY "public"."english_stem_nostop" (
+    TEMPLATE = "pg_catalog"."snowball",
+    language = 'english' );
+
+ALTER TEXT SEARCH DICTIONARY "public"."english_stem_nostop" OWNER TO "postgres";
+
+CREATE TEXT SEARCH CONFIGURATION "public"."english_nostop" (
+    PARSER = "pg_catalog"."default" );
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "asciiword" WITH "public"."english_stem_nostop";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "word" WITH "public"."english_stem_nostop";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "numword" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "email" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "url" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "host" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "sfloat" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "version" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "hword_numpart" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "hword_part" WITH "public"."english_stem_nostop";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "hword_asciipart" WITH "public"."english_stem_nostop";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "numhword" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "asciihword" WITH "public"."english_stem_nostop";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "hword" WITH "public"."english_stem_nostop";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "url_path" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "file" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "float" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "int" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop"
+    ADD MAPPING FOR "uint" WITH "simple";
+
+ALTER TEXT SEARCH CONFIGURATION "public"."english_nostop" OWNER TO "postgres";
+
+SET default_tablespace = '';
+
+SET default_table_access_method = "heap";
+
 CREATE TABLE IF NOT EXISTS "public"."anime" (
     "kitsu_id" "text" NOT NULL,
     "title" "text" NOT NULL,
@@ -319,6 +488,29 @@ COMMENT ON TABLE "public"."anime" IS 'simplified kitsu proxy';
 
 COMMENT ON COLUMN "public"."anime"."poster_image" IS 'kitsu poster images';
 
+CREATE TABLE IF NOT EXISTS "public"."watchlists_users" (
+    "watchlist_id" bigint NOT NULL,
+    "user_id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
+    "role" "public"."collaborator_access" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+ALTER TABLE "public"."watchlists_users" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."watchlists_users" IS 'collaborators on watchlists';
+
+CREATE OR REPLACE VIEW "public"."user_relationships" WITH ("security_invoker"='on') AS
+ SELECT "wu1"."user_id" AS "user1",
+    "wu2"."user_id" AS "user2",
+    "count"(*) AS "shared_watchlist_count"
+   FROM ("public"."watchlists_users" "wu1"
+     JOIN "public"."watchlists_users" "wu2" ON (("wu1"."watchlist_id" = "wu2"."watchlist_id")))
+  WHERE ("wu1"."user_id" < "wu2"."user_id")
+  GROUP BY "wu1"."user_id", "wu2"."user_id"
+  ORDER BY ("count"(*)) DESC;
+
+ALTER TABLE "public"."user_relationships" OWNER TO "postgres";
+
 CREATE TABLE IF NOT EXISTS "public"."user_reviews" (
     "anime_id" character varying NOT NULL,
     "user_id" "uuid" NOT NULL,
@@ -334,6 +526,21 @@ CREATE TABLE IF NOT EXISTS "public"."user_reviews" (
 ALTER TABLE "public"."user_reviews" OWNER TO "postgres";
 
 COMMENT ON TABLE "public"."user_reviews" IS 'user reviews of anime';
+
+CREATE TABLE IF NOT EXISTS "public"."users" (
+    "id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
+    "username" character varying NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "avatar_url" "text",
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "email" "text" NOT NULL,
+    CONSTRAINT "users_username_check" CHECK (("length"(("username")::"text") >= 3)),
+    CONSTRAINT "users_username_length" CHECK (("char_length"(("username")::"text") <= 50))
+);
+
+ALTER TABLE "public"."users" OWNER TO "postgres";
+
+COMMENT ON TABLE "public"."users" IS 'public user profiles';
 
 CREATE TABLE IF NOT EXISTS "public"."watchlists" (
     "id" bigint NOT NULL,
@@ -368,17 +575,6 @@ ALTER TABLE "public"."watchlists" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS 
     NO MAXVALUE
     CACHE 1
 );
-
-CREATE TABLE IF NOT EXISTS "public"."watchlists_users" (
-    "watchlist_id" bigint NOT NULL,
-    "user_id" "uuid" DEFAULT "auth"."uid"() NOT NULL,
-    "role" "public"."collaborator_access" NOT NULL,
-    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL
-);
-
-ALTER TABLE "public"."watchlists_users" OWNER TO "postgres";
-
-COMMENT ON TABLE "public"."watchlists_users" IS 'collaborators on watchlists';
 
 ALTER TABLE "public"."watchlists_users" ALTER COLUMN "watchlist_id" ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME "public"."watchlists_users_watchlist_id_seq"
@@ -577,13 +773,21 @@ GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "authenticated";
 GRANT ALL ON FUNCTION "public"."jsonschema_validation_errors"("schema" "json", "instance" "json") TO "service_role";
 
-GRANT ALL ON TABLE "public"."users" TO "anon";
-GRANT ALL ON TABLE "public"."users" TO "authenticated";
-GRANT ALL ON TABLE "public"."users" TO "service_role";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text") TO "service_role";
 
-GRANT ALL ON FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") TO "anon";
-GRANT ALL ON FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") TO "authenticated";
-GRANT ALL ON FUNCTION "public"."search_users_by_username_prefix"("prefix" "text") TO "service_role";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint) TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "querying_user_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "querying_user_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "querying_user_id" "uuid") TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint, "querying_user_id" "uuid") TO "anon";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint, "querying_user_id" "uuid") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."search_users"("prefix" "text", "exclude_watchlist_id" bigint, "querying_user_id" "uuid") TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "anon";
 GRANT ALL ON FUNCTION "public"."to_json2"("anyelement") TO "authenticated";
@@ -605,9 +809,21 @@ GRANT ALL ON TABLE "public"."anime" TO "anon";
 GRANT ALL ON TABLE "public"."anime" TO "authenticated";
 GRANT ALL ON TABLE "public"."anime" TO "service_role";
 
+GRANT ALL ON TABLE "public"."watchlists_users" TO "anon";
+GRANT ALL ON TABLE "public"."watchlists_users" TO "authenticated";
+GRANT ALL ON TABLE "public"."watchlists_users" TO "service_role";
+
+GRANT ALL ON TABLE "public"."user_relationships" TO "anon";
+GRANT ALL ON TABLE "public"."user_relationships" TO "authenticated";
+GRANT ALL ON TABLE "public"."user_relationships" TO "service_role";
+
 GRANT ALL ON TABLE "public"."user_reviews" TO "anon";
 GRANT ALL ON TABLE "public"."user_reviews" TO "authenticated";
 GRANT ALL ON TABLE "public"."user_reviews" TO "service_role";
+
+GRANT ALL ON TABLE "public"."users" TO "anon";
+GRANT ALL ON TABLE "public"."users" TO "authenticated";
+GRANT ALL ON TABLE "public"."users" TO "service_role";
 
 GRANT ALL ON TABLE "public"."watchlists" TO "anon";
 GRANT ALL ON TABLE "public"."watchlists" TO "authenticated";
@@ -620,10 +836,6 @@ GRANT ALL ON TABLE "public"."watchlists_anime" TO "service_role";
 GRANT ALL ON SEQUENCE "public"."watchlists_id_seq" TO "anon";
 GRANT ALL ON SEQUENCE "public"."watchlists_id_seq" TO "authenticated";
 GRANT ALL ON SEQUENCE "public"."watchlists_id_seq" TO "service_role";
-
-GRANT ALL ON TABLE "public"."watchlists_users" TO "anon";
-GRANT ALL ON TABLE "public"."watchlists_users" TO "authenticated";
-GRANT ALL ON TABLE "public"."watchlists_users" TO "service_role";
 
 GRANT ALL ON SEQUENCE "public"."watchlists_users_watchlist_id_seq" TO "anon";
 GRANT ALL ON SEQUENCE "public"."watchlists_users_watchlist_id_seq" TO "authenticated";
