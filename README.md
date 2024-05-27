@@ -17,10 +17,10 @@ This also includes a RESTful CRUD API for the following resources:
 
 - [x] `/api/users`
   - [x] `GET`: (_protected_) Get the user information of an authenticated user via authorization tokens
-  - [x] `GET`: Get users based on the following search parameters. The users returned are by default ordered by username length and in lexicographic order. If a search term is included, the users are first ordered by a ranking by text search. If the querying user is logged in, this rank is adjusted by the count of shared watchlists the querying user has with the user
-    - `search: string` - Return users with usernames prefixed with the search string. If empty string, return all users
-    - `excludeWatchlistId: string` - Return users that are not already collaborators of the watchlist with this ID
-    - `limit: string` - Return this many users (max/default of 20)
+  - [x] `GET`: Get users based on the following search parameters ordered by relevance
+    - `search: string` - Return users with usernames prefixed with the search string
+    - `excludeWatchlistId: string` - Return users that are not already collaborators of this watchlist
+    - `limit: string` - Return this many users
 - [x] `/api/users/:username`
   - [x] `GET`: Get public user information associated with the user. For now, this is just the user id and username
 - [x] `/api/users/:username/watchlists`
