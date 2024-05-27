@@ -225,7 +225,29 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_relationships: {
+        Row: {
+          shared_watchlist_count: number | null
+          user1: string | null
+          user2: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlists_users_user_id_fkey"
+            columns: ["user2"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlists_users_user_id_fkey"
+            columns: ["user1"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_edit_access_to_watchlist: {
@@ -283,6 +305,55 @@ export type Database = {
         }
         Returns: string[]
       }
+      search_users:
+        | {
+            Args: {
+              prefix: string
+            }
+            Returns: {
+              id: string
+              username: string
+              avatar_url: string
+              rank: number
+            }[]
+          }
+        | {
+            Args: {
+              prefix: string
+              exclude_watchlist_id: number
+            }
+            Returns: {
+              id: string
+              username: string
+              avatar_url: string
+              rank: number
+            }[]
+          }
+        | {
+            Args: {
+              prefix: string
+              exclude_watchlist_id: number
+              querying_user_id: string
+            }
+            Returns: {
+              id: string
+              username: string
+              avatar_url: string
+              rank: number
+            }[]
+          }
+        | {
+            Args: {
+              prefix: string
+              querying_user_id: string
+            }
+            Returns: {
+              id: string
+              username: string
+              avatar_url: string
+              rank: number
+            }[]
+          }
       to_json2: {
         Args: {
           "": unknown
