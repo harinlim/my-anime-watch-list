@@ -41,8 +41,6 @@ export async function GET(request: NextRequest) {
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
   })
 
-  console.log(searchParamsResult)
-
   // If search params are invalid, return an error
   if (!searchParamsResult.success) {
     return NextResponse.json(
