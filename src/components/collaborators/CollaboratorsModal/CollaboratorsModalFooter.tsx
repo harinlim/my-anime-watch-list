@@ -23,7 +23,7 @@ export function CollaboratorModalFooter({ onClickAddCollaborator, className }: P
   return (
     <section
       className={clsx(
-        'flex bg-[--mantine-color-white] px-2 py-1 align-middle dark:bg-[--mantine-color-dark-7]',
+        'flex bg-[--mantine-color-white] px-1 py-1 align-middle dark:bg-[--mantine-color-dark-7]',
         className
       )}
     >
