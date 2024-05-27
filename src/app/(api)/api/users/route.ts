@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
   }
 
   // If no search query is provided, return the user's information aka ME
-  if (!searchParamsResult.data.search) {
+  if (searchParamsResult.data.search === null) {
     const userResult = await supabase
       .from('users')
       .select(`username, email, avatar_url`, { count: 'exact' })
@@ -58,14 +58,29 @@ export async function GET(request: NextRequest) {
 
   const searchValue = searchParamsResult.data.search
 
+  // If an empty search query is provided, return all users
+  if (searchValue === '') {
+    const usersResults = await supabase
+      .from('users')
+      .select('id, username, avatar_url')
+      .order('username')
+      .limit(20)
+
+    if (usersResults.error) {
+      console.error(usersResults.error)
+      return NextResponse.json('Failed to fetch users', { status: 500 })
+    }
+
+    return NextResponse.json<PublicUser[]>(usersResults.data, { status: 200 })
+  }
+
   // If a search query is provided, return all users that have usernames starting with the search query
+  // RPC is ordered by length of username, then by username (alphabetically)
   const usersResults = await supabase
     .rpc('search_users_by_username_prefix', {
       prefix: searchValue,
     })
     .limit(20)
-
-  console.error(usersResults)
 
   if (usersResults.error) {
     console.error(usersResults.error)
