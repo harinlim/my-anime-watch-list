@@ -37,9 +37,11 @@ export async function GET(request: NextRequest) {
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
     search: searchParams.get('search'),
     limit: searchParams.get('limit') || null,
-    excludeWatchlistId: searchParams.get('excludedWatchlistId') || null,
+    excludeWatchlistId: searchParams.get('excludeWatchlistId') || null,
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
   })
+
+  console.log(searchParamsResult)
 
   // If search params are invalid, return an error
   if (!searchParamsResult.success) {

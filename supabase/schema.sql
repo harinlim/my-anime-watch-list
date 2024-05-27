@@ -232,8 +232,9 @@ begin
       length(u.username),
       u.username
     limit 20;
-  end if;
 
+  else
+  
   -- otherwise, provide user-specific result including relationships
   return query
   with users_excluding_watchlist as (
@@ -275,6 +276,9 @@ begin
     length(u.username),
     u.username
   limit 20;
+
+  end if;
+
 end;
 $$;
 
