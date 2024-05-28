@@ -1,6 +1,6 @@
 'use client'
 
-import { ActionIcon } from '@mantine/core'
+import { ActionIcon as ActionIconButton } from '@mantine/core'
 import { IconEdit } from '@tabler/icons-react'
 
 import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
@@ -14,7 +14,8 @@ export function EditWatchlistButton() {
   if (!hasEditAccess) return null
 
   return (
-    <ActionIcon
+    <ActionIconButton
+      type="button"
       variant="default"
       size="xl"
       radius="xl"
@@ -22,6 +23,6 @@ export function EditWatchlistButton() {
       className="p-1 opacity-80"
     >
       <IconEdit size={32} />
-    </ActionIcon>
+    </ActionIconButton>
   )
 }

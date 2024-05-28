@@ -52,7 +52,7 @@ export function Header({ user }: Props) {
               <UserMenuDropdown />
             </UserMenu>
           ) : (
-            <Anchor component={Link} href="/login" className={styles.link}>
+            <Anchor component={Link} href="/login" className={clsx(styles.link, 'shrink-0')}>
               Sign in
             </Anchor>
           )}

@@ -1,6 +1,6 @@
 'use client'
 
-import { ActionIcon } from '@mantine/core'
+import { ActionIcon as ActionIconButton } from '@mantine/core'
 import { IconInfoCircle } from '@tabler/icons-react'
 import clsx from 'clsx'
 
@@ -10,7 +10,8 @@ export function WatchlistSidebarButton({ className }: { className?: string }) {
   const [, { open }] = useWatchlistSidebar()
 
   return (
-    <ActionIcon
+    <ActionIconButton
+      type="button"
       variant="default"
       size="xl"
       radius="xl"
@@ -19,6 +20,6 @@ export function WatchlistSidebarButton({ className }: { className?: string }) {
       className={clsx('p-1 opacity-80', className)}
     >
       <IconInfoCircle size={32} />
-    </ActionIcon>
+    </ActionIconButton>
   )
 }

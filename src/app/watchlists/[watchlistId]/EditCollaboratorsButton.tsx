@@ -1,6 +1,6 @@
 'use client'
 
-import { ActionIcon } from '@mantine/core'
+import { ActionIcon as ActionIconButton } from '@mantine/core'
 import { IconUserPlus, IconUsers } from '@tabler/icons-react'
 
 import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
@@ -14,7 +14,8 @@ export function EditCollaboratorsButton() {
     currentUserCollaborator?.role === 'owner' || currentUserCollaborator?.role === 'editor'
 
   return (
-    <ActionIcon
+    <ActionIconButton
+      type="button"
       variant="default"
       size="xl"
       radius="xl"
@@ -23,6 +24,6 @@ export function EditCollaboratorsButton() {
       className="p-1 opacity-80"
     >
       {hasEditAccess ? <IconUserPlus size={32} /> : <IconUsers size={30} />}
-    </ActionIcon>
+    </ActionIconButton>
   )
 }
