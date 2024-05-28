@@ -1,6 +1,8 @@
 import { createServerClient as createSupabaseClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
+import { SERVER_COOKIE_OPTIONS } from './cookies'
+
 import type { Database } from '@/types/generated/supabase'
 
 export function createServerClient() {
@@ -14,9 +16,11 @@ export function createServerClient() {
     {
       cookies: {
         get(name: string) {
+          console.log('GETTING COOKIE FROM SERVER', name)
           return cookieStore.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
+          console.log('CALLING SET FROM SERVER', name, value)
           try {
             cookieStore.set({ name, value, ...options })
           } catch {
@@ -26,6 +30,7 @@ export function createServerClient() {
           }
         },
         remove(name: string, options: CookieOptions) {
+          console.log('CALLING REMOVE FROM SERVER', name)
           try {
             cookieStore.set({ name, value: '', ...options })
           } catch {
@@ -35,6 +40,7 @@ export function createServerClient() {
           }
         },
       },
+      cookieOptions: SERVER_COOKIE_OPTIONS
     }
   )
 }

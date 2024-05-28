@@ -21,7 +21,9 @@ import type { Watchlist, WatchlistUser } from '@/types/watchlists'
 export default async function WatchlistPage({ params }: { params: { watchlistId: string } }) {
   const { watchlistId } = params
 
-  const [watchlistResponse, collaboratorsResponse] = await Promise.all([
+  // const supabase = createServerClient()
+
+  const [watchlistResponse, collaboratorsResponse, u] = await Promise.all([
     fetchWithType<Watchlist>(withBaseURL(`/api/watchlists/${watchlistId}`), {
       method: 'GET',
       credentials: 'include',
@@ -32,7 +34,10 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
       credentials: 'include',
       headers: new Headers(headers()),
     }),
+    // supabase.auth.getUser(),
   ])
+
+  // console.log(u.data.user)
 
   if (watchlistResponse.status === 404) {
     return notFound()
