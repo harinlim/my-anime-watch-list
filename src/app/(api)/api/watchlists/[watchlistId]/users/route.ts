@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { getUserExistsById } from '@/db/users'
+import { getUsersExistByIds } from '@/db/users'
 import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 import { safeParseRequestBody } from '@/lib/zod/api'
@@ -79,28 +79,33 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   const body = await safeParseRequestBody(request, watchlistCollaboratorRequestBodySchema)
   if (!body.success) {
     if (body.error) {
+      console.error(body.error)
       return NextResponse.json(transformZodValidationErrorToResponse(body.error), { status: 422 })
     }
     return NextResponse.json(body.message, { status: 400 })
   }
 
-  const { userId: userToAddId, role } = body.data
+  const { data: usersToAdd } = body
 
   // Get validation queries
+
   const [
     watchlistExistsResult,
-    userExistsResult,
-    isRequestedUserWatchlistCollaboratorResult,
     hasEditAccessResult,
+    usersExistResult,
+    areRequestedUsersWatchlistCollaboratorResult,
   ] = await Promise.all([
     getWatchlistExistsById(supabase, watchlistId),
-    getUserExistsById(supabase, userToAddId),
-    supabase.rpc('has_watchlist', {
-      _user_id: userToAddId,
-      _watchlist_id: watchlistId,
-    }),
     supabase.rpc('has_edit_access_to_watchlist', {
       _user_id: user.id,
+      _watchlist_id: watchlistId,
+    }),
+    getUsersExistByIds(
+      supabase,
+      usersToAdd.map(userToAdd => userToAdd.userId)
+    ),
+    supabase.rpc('has_watchlist_batch', {
+      _user_ids: usersToAdd.map(userToAdd => userToAdd.userId),
       _watchlist_id: watchlistId,
     }),
   ])
@@ -113,28 +118,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
   if (watchlistExistsResult.count === 0) {
     return NextResponse.json('Watchlist not found', { status: 404 })
-  }
-
-  // Verify the user exists
-  if (userExistsResult.error) {
-    console.error(userExistsResult)
-    return NextResponse.json('Failed to fetch requested user', { status: 500 })
-  }
-
-  if (userExistsResult.count === 0) {
-    // This is a 422 because the user ID is invalid
-    return NextResponse.json('Requested user not found', { status: 422 })
-  }
-
-  // Verify the requested user is not already a collaborator
-  if (isRequestedUserWatchlistCollaboratorResult.error) {
-    console.error(isRequestedUserWatchlistCollaboratorResult.error)
-    return NextResponse.json('Failed to verify requested user role for watchlist', { status: 500 })
-  }
-
-  const isRequestedUserWatchlistCollaborator = isRequestedUserWatchlistCollaboratorResult.data
-  if (isRequestedUserWatchlistCollaborator) {
-    return NextResponse.json('Requested user is already added to the watchlist', { status: 409 })
   }
 
   // Verify the user has edit access to the watchlist
@@ -150,19 +133,51 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json('User does not have edit access to watchlist', { status: 403 })
   }
 
-  // Add the user as a collaborator
-  const { error } = await supabase.from('watchlists_users').insert({
-    watchlist_id: watchlistId,
-    user_id: userToAddId,
-    role,
-  })
-
-  if (error) {
-    console.error(error)
-    return NextResponse.json('Failed to add requested user as collaborator to watchlist', {
+  // Verify the user exists
+  if (usersExistResult.error) {
+    console.error(usersExistResult)
+    return NextResponse.json('Failed to fetch requested users', {
       status: 500,
     })
   }
 
-  return NextResponse.json({ watchlistId, userId: userToAddId, role }, { status: 201 })
+  if (usersExistResult.count === 0) {
+    // This is a 422 because the user ID is invalid
+    return NextResponse.json('Requested users not found', {
+      status: 422,
+    })
+  }
+
+  // Verify the requested user is not already a collaborator
+  if (areRequestedUsersWatchlistCollaboratorResult.error) {
+    console.error(areRequestedUsersWatchlistCollaboratorResult.error)
+    return NextResponse.json('Failed to verify requested user role for watchlist with ID', {
+      status: 500,
+    })
+  }
+
+  const areRequestedUsersWatchlistCollaborator = areRequestedUsersWatchlistCollaboratorResult.data
+  if (areRequestedUsersWatchlistCollaborator) {
+    return NextResponse.json('Requested user is already added to the watchlist', {
+      status: 409,
+    })
+  }
+
+  // Add the user as a collaborator
+  const { error } = await supabase.from('watchlists_users').insert(
+    usersToAdd.map(userToAdd => ({
+      watchlist_id: watchlistId,
+      user_id: userToAdd.userId,
+      role: userToAdd.role,
+    }))
+  )
+
+  if (error) {
+    console.error(error)
+    return NextResponse.json('Failed to add requested users as collaborators to watchlist', {
+      status: 500,
+    })
+  }
+
+  return NextResponse.json({ watchlistId, users: usersToAdd }, { status: 201 })
 }

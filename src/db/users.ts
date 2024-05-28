@@ -29,6 +29,10 @@ export function getUserExistsById(supabase: SupabaseClient<Database>, userId: st
   return supabase.from('users').select(undefined, { count: 'exact', head: true }).eq('id', userId)
 }
 
+export function getUsersExistByIds(supabase: SupabaseClient<Database>, userIds: string[]) {
+  return supabase.from('users').select(undefined, { count: 'exact', head: true }).in('id', userIds)
+}
+
 export function getUserByUsername(supabase: SupabaseClient<Database>, username: string) {
   return supabase
     .from('users')

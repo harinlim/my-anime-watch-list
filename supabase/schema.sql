@@ -136,6 +136,22 @@ CREATE OR REPLACE FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchli
 
 ALTER FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
+CREATE OR REPLACE FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) RETURNS boolean
+    LANGUAGE "sql" SECURITY DEFINER
+    AS $$
+SELECT EXISTS (
+  SELECT 1
+  FROM (
+      SELECT UNNEST(_user_ids) AS user_id
+    ) AS user_array
+    LEFT JOIN watchlists_users wu ON user_array.user_id = wu.user_id
+    WHERE wu.watchlist_id = _watchlist_id
+    HAVING COUNT(user_array.user_id) = ARRAY_LENGTH(_user_ids, 1)
+  );
+$$;
+
+ALTER FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) OWNER TO "postgres";
+
 CREATE OR REPLACE FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
     LANGUAGE "sql" SECURITY DEFINER
     AS $$
@@ -235,47 +251,47 @@ begin
 
   else
   
-  -- otherwise, provide user-specific result including relationships
-  return query
-  with users_excluding_watchlist as (
-    select * 
-    from users
-    where exclude_watchlist_id is null or users.id not in (
-      select user_id 
-      from watchlists_users
-      where watchlist_id = exclude_watchlist_id
+    -- otherwise, provide user-specific result including relationships
+    return query
+    with users_excluding_watchlist as (
+      select * 
+      from users
+      where exclude_watchlist_id is null or users.id not in (
+        select user_id 
+        from watchlists_users
+        where watchlist_id = exclude_watchlist_id
+      )
+    ), 
+    full_user_relationships as (
+      select
+        user1 as user_id,
+        shared_watchlist_count
+      from user_relationships
+      where user2 = self_uid
+      union
+      select
+        user2 as user_id,
+        shared_watchlist_count
+      from user_relationships
+      where user1 = self_uid
     )
-  ), 
-  full_user_relationships as (
-    select
-      user1 as user_id,
-      shared_watchlist_count
-    from user_relationships
-    where user2 = self_uid
-    union
-    select
-      user2 as user_id,
-      shared_watchlist_count
-    from user_relationships
-    where user1 = self_uid
-  )
 
-  select
-    u.id,
-    u.username,
-    u.avatar_url,
-    (case when exists_prefix 
-      then ts_rank(to_tsvector('simple', u.username), ts_prefix_query)
-      else 1.0
-     end) * (1 + COALESCE(full_user_relationships.shared_watchlist_count, 0)) AS adjusted_rank
-  from users_excluding_watchlist as u
-  left join full_user_relationships on u.id = full_user_relationships.user_id
-  where not exists_prefix or to_tsvector(u.username) @@ ts_prefix_query
-  order by
-    adjusted_rank desc,
-    length(u.username),
-    u.username
-  limit 20;
+    select
+      u.id,
+      u.username,
+      u.avatar_url,
+      (case when exists_prefix 
+        then ts_rank(to_tsvector('simple', u.username), ts_prefix_query)
+        else 1.0
+      end) * (1 + COALESCE(full_user_relationships.shared_watchlist_count, 0)) AS adjusted_rank
+    from users_excluding_watchlist as u
+    left join full_user_relationships on u.id = full_user_relationships.user_id
+    where not exists_prefix or to_tsvector(u.username) @@ ts_prefix_query
+    order by
+      adjusted_rank desc,
+      length(u.username),
+      u.username
+    limit 20;
 
   end if;
 
@@ -752,6 +768,10 @@ GRANT ALL ON FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid"
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) TO "anon";
+GRANT ALL ON FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
