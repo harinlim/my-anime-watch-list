@@ -102,7 +102,7 @@ export async function updateSession(request: NextRequest) {
     response.cookies.set({ name: AUTH_TOKEN_KEY, value: '', maxAge: 0 })
 
     // console.log(response.headers)
-    
+
     // const middlewareCookie = response.headers.get('x-middleware-request-cookie')
     // if (middlewareCookie) {
     //   const withDeletedCookie = setCookieFromString(middlewareCookie, process.env.SUPABASE_AUTH_TOKEN_KEY!, '')
