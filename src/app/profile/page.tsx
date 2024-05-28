@@ -18,6 +18,7 @@ export const revalidate = 0
 export default async function SelfProfilePage() {
   const supabase = createServerClient()
 
+  // We use the latest profile information from the auth table
   const { data: user } = await getUserFromAuth(supabase)
 
   // Use this to get user auth cookies needed for API testing
