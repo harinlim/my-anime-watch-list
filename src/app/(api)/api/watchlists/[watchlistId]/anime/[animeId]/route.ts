@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { getUserFromSession } from '@/db/users'
 import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 
@@ -20,11 +21,8 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
   const { animeId } = params
 
   const supabase = createServerClient()
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
+  const { data: user } = await getUserFromSession(supabase)
   if (!user) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }
