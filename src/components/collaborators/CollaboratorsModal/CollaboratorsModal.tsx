@@ -48,8 +48,13 @@ export function CollaboratorsModal({
   const [isAddCollaboratorContentOpen, { toggle: toggleAddCollaboratorContent }] =
     useDisclosure(false)
 
+  const handleCloseModal = () => {
+    if (isAddCollaboratorContentOpen) toggleAddCollaboratorContent()
+    handleCloseRoot()
+  }
+
   return (
-    <ModalRoot opened={opened} onClose={handleCloseRoot} size="md" yOffset="25vh">
+    <ModalRoot opened={opened} onClose={handleCloseModal} size="md" yOffset="25vh">
       <ModalOverlay />
 
       <FocusTrapInitialFocus />
@@ -64,6 +69,7 @@ export function CollaboratorsModal({
           <ModalBody component="section" p={0} className="flex shrink flex-col overflow-hidden">
             {isAddCollaboratorContentOpen ? (
               <AddCollaboratorsModalContent
+                watchlistId={watchlistId}
                 closeAddCollaboratorContent={toggleAddCollaboratorContent}
               />
             ) : (
