@@ -1,0 +1,94 @@
+diff --git a/dist/main/GoTrueClient.js b/dist/main/GoTrueClient.js
+index 11125ff7186f75970090a44b9c8789cc61d8d95d..fa35447b8c17f091d287d134d428002e5d9928e0 100644
+--- a/dist/main/GoTrueClient.js
++++ b/dist/main/GoTrueClient.js
+@@ -52,7 +52,7 @@ class GoTrueClient {
+         this.initializePromise = null;
+         this.detectSessionInUrl = true;
+         this.hasCustomAuthorizationHeader = false;
+-        this.suppressGetSessionWarning = false;
++        this.suppressGetSessionWarning = true // PATCH: suppress warning for `getSession` by default
+         this.lockAcquired = false;
+         this.pendingInLock = [];
+         /**
+@@ -892,6 +892,14 @@ class GoTrueClient {
+         }
+         catch (error) {
+             if ((0, errors_1.isAuthError)(error)) {
++                // PATCH: If the token itself is invalid due to one of these reasons, remove the session 
++                // token from the storage and return an error
++                if (error.code === 'user_not_found' || 
++                    error.code === 'session_not_found' || 
++                    error.code === 'flow_state_not_found' || 
++                    error.code === 'flow_state_expired') {
++                    await this._removeSession()
++                }
+                 return { data: { user: null }, error };
+             }
+             throw error;
+diff --git a/dist/module/GoTrueClient.js b/dist/module/GoTrueClient.js
+index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..3d1b549b462c0c820bf7143387da93ca5ab450d7 100644
+--- a/dist/module/GoTrueClient.js
++++ b/dist/module/GoTrueClient.js
+@@ -47,7 +47,7 @@ export default class GoTrueClient {
+         this.initializePromise = null;
+         this.detectSessionInUrl = true;
+         this.hasCustomAuthorizationHeader = false;
+-        this.suppressGetSessionWarning = false;
++        this.suppressGetSessionWarning = true // PATCH: suppress warning for `getSession` by default
+         this.lockAcquired = false;
+         this.pendingInLock = [];
+         /**
+@@ -887,6 +887,14 @@ export default class GoTrueClient {
+         }
+         catch (error) {
+             if (isAuthError(error)) {
++                // PATCH: If the token itself is invalid due to one of these reasons, remove the session 
++                // token from the storage and return an error
++                if (error.code === 'user_not_found' || 
++                    error.code === 'session_not_found' || 
++                    error.code === 'flow_state_not_found' || 
++                    error.code === 'flow_state_expired') {
++                    await this._removeSession()
++                }
+                 return { data: { user: null }, error };
+             }
+             throw error;
+diff --git a/src/GoTrueClient.ts b/src/GoTrueClient.ts
+index 88bedadcc615bea08e673ae5e79ad848578146ff..985945f0df43db13b986734f45400a42119421db 100644
+--- a/src/GoTrueClient.ts
++++ b/src/GoTrueClient.ts
+@@ -156,7 +156,7 @@ export default class GoTrueClient {
+     [key: string]: string
+   }
+   protected hasCustomAuthorizationHeader = false
+-  protected suppressGetSessionWarning = false
++  protected suppressGetSessionWarning = true // PATCH: suppress warning for `getSession` by default
+   protected fetch: Fetch
+   protected lock: LockFunc
+   protected lockAcquired = false
+@@ -1163,6 +1163,8 @@ export default class GoTrueClient {
+     return result
+   }
+ 
++
++
+   private async _getUser(jwt?: string): Promise<UserResponse> {
+     try {
+       if (jwt) {
+@@ -1192,6 +1194,15 @@ export default class GoTrueClient {
+       })
+     } catch (error) {
+       if (isAuthError(error)) {
++        // PATCH: If the token itself is invalid due to one of these reasons, remove the session 
++        // token from the storage and return an error
++        if (error.code === 'user_not_found' || 
++          error.code === 'session_not_found' || 
++          error.code === 'flow_state_not_found' || 
++          error.code === 'flow_state_expired') {
++          await this._removeSession()
++        }
++
+         return { data: { user: null }, error }
+       }
+ 

@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@supabase/auth-js@2.64.2':
+    hash: quz4mnuloayzy4dypauktjjd6e
+    path: patches/@supabase__auth-js@2.64.2.patch
+
 dependencies:
   '@formkit/auto-animate':
     specifier: ^0.8.2
@@ -1176,11 +1181,12 @@ packages:
       '@sinonjs/commons': 3.0.1
     dev: true
 
-  /@supabase/auth-js@2.64.2:
+  /@supabase/auth-js@2.64.2(patch_hash=quz4mnuloayzy4dypauktjjd6e):
     resolution: {integrity: sha512-s+lkHEdGiczDrzXJ1YWt2y3bxRi+qIUnXcgkpLSrId7yjBeaXBFygNjTaoZLG02KNcYwbuZ9qkEIqmj2hF7svw==}
     dependencies:
       '@supabase/node-fetch': 2.6.15
     dev: false
+    patched: true
 
   /@supabase/functions-js@2.3.1:
     resolution: {integrity: sha512-QyzNle/rVzlOi4BbVqxLSH828VdGY1RElqGFAj+XeVypj6+PVtMlD21G8SDnsPQDtlqqTtoGRgdMlQZih5hTuw==}
@@ -1232,7 +1238,7 @@ packages:
   /@supabase/supabase-js@2.43.4:
     resolution: {integrity: sha512-/pLPaxiIsn5Vaz3s32HC6O/VNwfeddnzS0bZRpOW0AKcPuXroD8pT9G8mpiBlZfpKsMmq6k7tlhW7Sr1PAQ1lw==}
     dependencies:
-      '@supabase/auth-js': 2.64.2
+      '@supabase/auth-js': 2.64.2(patch_hash=quz4mnuloayzy4dypauktjjd6e)
       '@supabase/functions-js': 2.3.1
       '@supabase/node-fetch': 2.6.15
       '@supabase/postgrest-js': 1.15.2

@@ -7,6 +7,13 @@ export async function middleware(request: NextRequest) {
   return updateSession(request)
 }
 
+// TODO: Add request header to skip user refresh in the middleware if it's already been checked
+// Right now, we have to call the supabase server on every route to validate user sessions,
+// whcih is redundant when using API calls from a server component. We only need it at the first layer
+// (client->server).
+
+// TODO: Consider adding CORS protection with API routes to prevent direct calls we do not want to expose.
+
 export const config = {
   matcher: [
     /*
