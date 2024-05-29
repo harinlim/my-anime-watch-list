@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
 
   const supabase = createServerClient()
-  // Check if a user's logged in
 
   const queryParamsResult = searchWatchlistsQueryParamsSchema.safeParse({
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
@@ -92,7 +91,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const supabase = createServerClient()
 
-  // Check if a user's logged in
   const { data: user } = await getUserFromSession(supabase)
   if (!user) {
     return NextResponse.json('Failed authorization', { status: 401 })
