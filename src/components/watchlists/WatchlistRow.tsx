@@ -33,7 +33,7 @@ export const WatchlistRow = memo(
             <WatchlistCoverPhoto watchlist={watchlist} />
           </Box>
           <Flex direction="column" className="ml-4">
-            <Link href={`/watchlists/${watchlist.id}`} className="hover:underline">
+            <Link href={`/watchlists/${watchlist.id}`} prefetch={false} className="hover:underline">
               <Text className="line-clamp-2 text-lg font-bold md:text-xl">{watchlist.title}</Text>
             </Link>
             <Text className="line-clamp-3 text-base">{watchlist.description}</Text>
