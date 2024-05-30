@@ -6,6 +6,7 @@ import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { getUserFromAuth } from '@/db/users'
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
 import { createServerClient } from '@/lib/supabase/server'
 import { withBaseURL } from '@/lib/url'
 
@@ -35,7 +36,7 @@ export default async function SelfProfilePage() {
     {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: proxyRequestHeaders(),
     }
   )
 

@@ -13,12 +13,12 @@ import {
   Group,
 } from '@mantine/core'
 import clsx from 'clsx'
-import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { Review } from '@/components/anime/Review'
 import { getUserFromSession } from '@/db/users'
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
 import { createServerClient } from '@/lib/supabase/server'
 import { withBaseURL } from '@/lib/url'
 import { getAnimeRatingColor } from '@/utils/anime-colors'
@@ -39,7 +39,7 @@ export default async function AnimePage({ params }: { params: { animeId: string 
     {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: proxyRequestHeaders(),
     }
   )
 

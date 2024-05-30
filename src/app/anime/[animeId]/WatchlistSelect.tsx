@@ -1,10 +1,9 @@
 import { Title } from '@mantine/core'
-import { headers } from 'next/headers'
 
+import { WatchlistModal } from '@/components/watchlists/WatchlistModal'
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
-
-import { WatchlistModal } from '../../../components/watchlists/WatchlistModal'
 
 import type { Watchlist } from '@/types/watchlists'
 
@@ -22,7 +21,7 @@ export async function WatchlistSelect({ username, animeId, addedWatchlists }: Pr
     {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: proxyRequestHeaders(),
     }
   )
 

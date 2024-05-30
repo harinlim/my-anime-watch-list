@@ -1,10 +1,10 @@
 import { Title, Text } from '@mantine/core'
-import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
 import type { PublicUser } from '@/types/users'
@@ -33,7 +33,7 @@ async function fetchUserByUsername(username: string, init?: Omit<RequestInit, 'm
 export default async function ExternalProfilePage({ params }: { params: { username: string } }) {
   const { username } = params
 
-  const headersInit = new Headers(headers())
+  const headersInit = proxyRequestHeaders()
 
   // TODO: put these into independent components
   const userResponse = await fetchUserByUsername(username, { headers: headersInit })

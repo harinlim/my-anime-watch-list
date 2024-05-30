@@ -1,6 +1,8 @@
 import { createServerClient as createSupabaseClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+import { isProxyRequest } from '@/lib/headers'
+
 import { AUTH_TOKEN_KEY, SERVER_AUTH_COOKIE_OPTIONS } from './cookies'
 
 import type { Database } from '@/types/generated/supabase'
@@ -64,6 +66,11 @@ export async function updateSession(request: NextRequest) {
       cookieOptions: SERVER_AUTH_COOKIE_OPTIONS,
     }
   )
+
+  // Skip auth check if the request is a proxy (i.e., auth and cookies have already been checked and refreshed)
+  if (isProxyRequest(request)) {
+    return response
+  }
 
   // Refreshing the auth token if refresh token is available and valid.
   const {

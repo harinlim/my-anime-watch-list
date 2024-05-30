@@ -1,6 +1,5 @@
-import { headers } from 'next/headers'
-
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
 import type { AnimeByWatchlist } from '@/types/anime'
@@ -13,7 +12,7 @@ export async function AnimeTable({ watchlistId }: { watchlistId: string }) {
     {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: proxyRequestHeaders(),
     }
   )
 
