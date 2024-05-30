@@ -6,8 +6,11 @@ settings:
 
 patchedDependencies:
   '@supabase/auth-js@2.64.2':
-    hash: okkncojdsgww7joeozjbj2ok3e
+    hash: uzdgc6wbzmbfxdd5mdf524xabi
     path: patches/@supabase__auth-js@2.64.2.patch
+  '@supabase/supabase-js@2.43.4':
+    hash: lng36h2hqlvkg2nlbmiyyn2rku
+    path: patches/@supabase__supabase-js@2.43.4.patch
 
 dependencies:
   '@formkit/auto-animate':
@@ -27,7 +30,7 @@ dependencies:
     version: 0.3.0(@supabase/supabase-js@2.43.4)
   '@supabase/supabase-js':
     specifier: 2.43.4
-    version: 2.43.4
+    version: 2.43.4(patch_hash=lng36h2hqlvkg2nlbmiyyn2rku)
   '@tabler/icons-react':
     specifier: ^3.5.0
     version: 3.5.0(react@18.3.1)
@@ -1181,7 +1184,7 @@ packages:
       '@sinonjs/commons': 3.0.1
     dev: true
 
-  /@supabase/auth-js@2.64.2(patch_hash=okkncojdsgww7joeozjbj2ok3e):
+  /@supabase/auth-js@2.64.2(patch_hash=uzdgc6wbzmbfxdd5mdf524xabi):
     resolution: {integrity: sha512-s+lkHEdGiczDrzXJ1YWt2y3bxRi+qIUnXcgkpLSrId7yjBeaXBFygNjTaoZLG02KNcYwbuZ9qkEIqmj2hF7svw==}
     dependencies:
       '@supabase/node-fetch': 2.6.15
@@ -1224,7 +1227,7 @@ packages:
     peerDependencies:
       '@supabase/supabase-js': ^2.33.1
     dependencies:
-      '@supabase/supabase-js': 2.43.4
+      '@supabase/supabase-js': 2.43.4(patch_hash=lng36h2hqlvkg2nlbmiyyn2rku)
       cookie: 0.5.0
       ramda: 0.29.1
     dev: false
@@ -1235,10 +1238,10 @@ packages:
       '@supabase/node-fetch': 2.6.15
     dev: false
 
-  /@supabase/supabase-js@2.43.4:
+  /@supabase/supabase-js@2.43.4(patch_hash=lng36h2hqlvkg2nlbmiyyn2rku):
     resolution: {integrity: sha512-/pLPaxiIsn5Vaz3s32HC6O/VNwfeddnzS0bZRpOW0AKcPuXroD8pT9G8mpiBlZfpKsMmq6k7tlhW7Sr1PAQ1lw==}
     dependencies:
-      '@supabase/auth-js': 2.64.2(patch_hash=okkncojdsgww7joeozjbj2ok3e)
+      '@supabase/auth-js': 2.64.2(patch_hash=uzdgc6wbzmbfxdd5mdf524xabi)
       '@supabase/functions-js': 2.3.1
       '@supabase/node-fetch': 2.6.15
       '@supabase/postgrest-js': 1.15.2
@@ -1248,6 +1251,7 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: false
+    patched: true
 
   /@swc/counter@0.1.3:
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}

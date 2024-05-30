@@ -1,0 +1,116 @@
+diff --git a/dist/main/SupabaseClient.js b/dist/main/SupabaseClient.js
+index 5c2193aabde60a66b410fef712eb400f512f7461..a6496da0f491d1fcaf17f1f11de1f902fb89074d 100644
+--- a/dist/main/SupabaseClient.js
++++ b/dist/main/SupabaseClient.js
+@@ -168,7 +168,7 @@ class SupabaseClient {
+             return (_b = (_a = data.session) === null || _a === void 0 ? void 0 : _a.access_token) !== null && _b !== void 0 ? _b : null;
+         });
+     }
+-    _initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, storageKey, flowType, debug, }, headers, fetch) {
++    _initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, storageKey, flowType, debug, suppressGetSessionWarning, }, headers, fetch) {
+         var _a;
+         const authHeaders = {
+             Authorization: `Bearer ${this.supabaseKey}`,
+@@ -188,6 +188,7 @@ class SupabaseClient {
+             // auth checks if there is a custom authorizaiton header using this flag
+             // so it knows whether to return an error when getUser is called with no session
+             hasCustomAuthorizationHeader: (_a = 'Authorization' in this.headers) !== null && _a !== void 0 ? _a : false,
++            suppressGetSessionWarning,
+         });
+     }
+     _initRealtimeClient(options) {
+diff --git a/dist/main/lib/types.d.ts b/dist/main/lib/types.d.ts
+index 7087c015817c9d8ad493a71508303cbe9117f944..e97c9445cb1cc16cb3876c46c05b0ab20c5eb960 100644
+--- a/dist/main/lib/types.d.ts
++++ b/dist/main/lib/types.d.ts
+@@ -47,6 +47,13 @@ export declare type SupabaseClientOptions<SchemaName> = {
+          * @experimental
+          */
+         lock?: SupabaseAuthClientOptions['lock'];
++        /**
++         * (PATCH) Suppress the warning when `getSession` is called without a previous call to `getUser`. 
++         * Only use this if you are sure that you are handling user tokens correctly.
++         * 
++         * @experimental
++         */
++        suppressGetSessionWarning?: SupabaseAuthClientOptions['suppressGetSessionWarning'];
+     };
+     /**
+      * Options passed to the realtime-js instance
+diff --git a/dist/module/SupabaseClient.js b/dist/module/SupabaseClient.js
+index 734f6ebaf9a85b1c9e020002a3e097409520784f..1e6e41b9181a8ab5910618b7022bd2be032ec273 100644
+--- a/dist/module/SupabaseClient.js
++++ b/dist/module/SupabaseClient.js
+@@ -166,7 +166,7 @@ export default class SupabaseClient {
+             return (_b = (_a = data.session) === null || _a === void 0 ? void 0 : _a.access_token) !== null && _b !== void 0 ? _b : null;
+         });
+     }
+-    _initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, storageKey, flowType, debug, }, headers, fetch) {
++    _initSupabaseAuthClient({ autoRefreshToken, persistSession, detectSessionInUrl, storage, storageKey, flowType, debug, suppressGetSessionWarning, }, headers, fetch) {
+         var _a;
+         const authHeaders = {
+             Authorization: `Bearer ${this.supabaseKey}`,
+@@ -186,6 +186,7 @@ export default class SupabaseClient {
+             // auth checks if there is a custom authorizaiton header using this flag
+             // so it knows whether to return an error when getUser is called with no session
+             hasCustomAuthorizationHeader: (_a = 'Authorization' in this.headers) !== null && _a !== void 0 ? _a : false,
++            suppressGetSessionWarning,
+         });
+     }
+     _initRealtimeClient(options) {
+diff --git a/dist/module/lib/types.d.ts b/dist/module/lib/types.d.ts
+index 7087c015817c9d8ad493a71508303cbe9117f944..e97c9445cb1cc16cb3876c46c05b0ab20c5eb960 100644
+--- a/dist/module/lib/types.d.ts
++++ b/dist/module/lib/types.d.ts
+@@ -47,6 +47,13 @@ export declare type SupabaseClientOptions<SchemaName> = {
+          * @experimental
+          */
+         lock?: SupabaseAuthClientOptions['lock'];
++        /**
++         * (PATCH) Suppress the warning when `getSession` is called without a previous call to `getUser`. 
++         * Only use this if you are sure that you are handling user tokens correctly.
++         * 
++         * @experimental
++         */
++        suppressGetSessionWarning?: SupabaseAuthClientOptions['suppressGetSessionWarning'];
+     };
+     /**
+      * Options passed to the realtime-js instance
+diff --git a/src/SupabaseClient.ts b/src/SupabaseClient.ts
+index 46e61b76b397240d983ac68e03b447859346d3bc..e3ef6e8358fe294b05ee294f4eb36a276c15a131 100644
+--- a/src/SupabaseClient.ts
++++ b/src/SupabaseClient.ts
+@@ -258,6 +258,7 @@ export default class SupabaseClient<
+       storageKey,
+       flowType,
+       debug,
++      suppressGetSessionWarning,
+     }: SupabaseAuthClientOptions,
+     headers?: Record<string, string>,
+     fetch?: Fetch
+@@ -280,6 +281,7 @@ export default class SupabaseClient<
+       // auth checks if there is a custom authorizaiton header using this flag
+       // so it knows whether to return an error when getUser is called with no session
+       hasCustomAuthorizationHeader: 'Authorization' in this.headers ?? false,
++      suppressGetSessionWarning,
+     })
+   }
+ 
+diff --git a/src/lib/types.ts b/src/lib/types.ts
+index 9621c7d67e36fdde4d8249250b56e39fc972e3f8..cd55611f35170cb498083efb1b67b70bcdf675d2 100644
+--- a/src/lib/types.ts
++++ b/src/lib/types.ts
+@@ -51,6 +51,13 @@ export type SupabaseClientOptions<SchemaName> = {
+      * @experimental
+      */
+     lock?: SupabaseAuthClientOptions['lock']
++    /**
++     * (PATCH) Suppress the warning when `getSession` is called without a previous call to `getUser`. 
++     * Only use this if you are sure that you are handling user tokens correctly.
++     * 
++     * @experimental
++     */
++    suppressGetSessionWarning?: SupabaseAuthClientOptions['suppressGetSessionWarning']
+   }
+   /**
+    * Options passed to the realtime-js instance

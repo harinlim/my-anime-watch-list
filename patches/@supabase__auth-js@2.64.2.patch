@@ -1,17 +1,24 @@
 diff --git a/dist/main/GoTrueClient.js b/dist/main/GoTrueClient.js
-index 11125ff7186f75970090a44b9c8789cc61d8d95d..fc20b4e870dd5eebd0613431a5dfc5f5d0043334 100644
+index 11125ff7186f75970090a44b9c8789cc61d8d95d..eb4bbed3ae8f198892494d56c95464dd736c40da 100644
 --- a/dist/main/GoTrueClient.js
 +++ b/dist/main/GoTrueClient.js
-@@ -52,7 +52,7 @@ class GoTrueClient {
-         this.initializePromise = null;
-         this.detectSessionInUrl = true;
-         this.hasCustomAuthorizationHeader = false;
--        this.suppressGetSessionWarning = false;
-+        this.suppressGetSessionWarning = true // PATCH: suppress warning for `getSession` by default
-         this.lockAcquired = false;
-         this.pendingInLock = [];
-         /**
-@@ -892,6 +892,10 @@ class GoTrueClient {
+@@ -23,6 +23,7 @@ const DEFAULT_OPTIONS = {
+     flowType: 'implicit',
+     debug: false,
+     hasCustomAuthorizationHeader: false,
++    suppressGetSessionWarning: false,
+ };
+ /** Current session will be checked for refresh at this interval. */
+ const AUTO_REFRESH_TICK_DURATION = 30 * 1000;
+@@ -85,6 +86,7 @@ class GoTrueClient {
+         this.detectSessionInUrl = settings.detectSessionInUrl;
+         this.flowType = settings.flowType;
+         this.hasCustomAuthorizationHeader = settings.hasCustomAuthorizationHeader;
++        this.suppressGetSessionWarning = settings.suppressGetSessionWarning;
+         if (settings.lock) {
+             this.lock = settings.lock;
+         }
+@@ -892,6 +894,10 @@ class GoTrueClient {
          }
          catch (error) {
              if ((0, errors_1.isAuthError)(error)) {
@@ -22,20 +29,45 @@ index 11125ff7186f75970090a44b9c8789cc61d8d95d..fc20b4e870dd5eebd0613431a5dfc5f5
                  return { data: { user: null }, error };
              }
              throw error;
+diff --git a/dist/main/lib/types.d.ts b/dist/main/lib/types.d.ts
+index de1616ef0c3ec26cf70d8d6df84901362a3d24be..6b041a095da0fd5fce2a05ef4525c8bea70e0b1d 100644
+--- a/dist/main/lib/types.d.ts
++++ b/dist/main/lib/types.d.ts
+@@ -44,6 +44,13 @@ export declare type GoTrueClientOptions = {
+      * @experimental
+      */
+     hasCustomAuthorizationHeader?: boolean;
++    /**
++     * (PATCH) Suppress the warning when `getSession` is called without a previous call to `getUser`. 
++     * Only use this if you are sure that you are handling user tokens correctly.
++     * 
++     * @experimental
++     */
++    suppressGetSessionWarning?: boolean;
+ };
+ export declare type WeakPasswordReasons = 'length' | 'characters' | 'pwned' | string;
+ export declare type WeakPassword = {
 diff --git a/dist/module/GoTrueClient.js b/dist/module/GoTrueClient.js
-index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..1dfce305895571a08db9ffbeea07e64fa1806bc9 100644
+index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..843997d441894a52cd023cbadf4c6457d073851b 100644
 --- a/dist/module/GoTrueClient.js
 +++ b/dist/module/GoTrueClient.js
-@@ -47,7 +47,7 @@ export default class GoTrueClient {
-         this.initializePromise = null;
-         this.detectSessionInUrl = true;
-         this.hasCustomAuthorizationHeader = false;
--        this.suppressGetSessionWarning = false;
-+        this.suppressGetSessionWarning = true // PATCH: suppress warning for `getSession` by default
-         this.lockAcquired = false;
-         this.pendingInLock = [];
-         /**
-@@ -887,6 +887,10 @@ export default class GoTrueClient {
+@@ -18,6 +18,7 @@ const DEFAULT_OPTIONS = {
+     flowType: 'implicit',
+     debug: false,
+     hasCustomAuthorizationHeader: false,
++    suppressGetSessionWarning: false,
+ };
+ /** Current session will be checked for refresh at this interval. */
+ const AUTO_REFRESH_TICK_DURATION = 30 * 1000;
+@@ -80,6 +81,7 @@ export default class GoTrueClient {
+         this.detectSessionInUrl = settings.detectSessionInUrl;
+         this.flowType = settings.flowType;
+         this.hasCustomAuthorizationHeader = settings.hasCustomAuthorizationHeader;
++        this.suppressGetSessionWarning = settings.suppressGetSessionWarning;
+         if (settings.lock) {
+             this.lock = settings.lock;
+         }
+@@ -887,6 +889,10 @@ export default class GoTrueClient {
          }
          catch (error) {
              if (isAuthError(error)) {
@@ -46,20 +78,45 @@ index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..1dfce305895571a08db9ffbeea07e64f
                  return { data: { user: null }, error };
              }
              throw error;
+diff --git a/dist/module/lib/types.d.ts b/dist/module/lib/types.d.ts
+index de1616ef0c3ec26cf70d8d6df84901362a3d24be..6b041a095da0fd5fce2a05ef4525c8bea70e0b1d 100644
+--- a/dist/module/lib/types.d.ts
++++ b/dist/module/lib/types.d.ts
+@@ -44,6 +44,13 @@ export declare type GoTrueClientOptions = {
+      * @experimental
+      */
+     hasCustomAuthorizationHeader?: boolean;
++    /**
++     * (PATCH) Suppress the warning when `getSession` is called without a previous call to `getUser`. 
++     * Only use this if you are sure that you are handling user tokens correctly.
++     * 
++     * @experimental
++     */
++    suppressGetSessionWarning?: boolean;
+ };
+ export declare type WeakPasswordReasons = 'length' | 'characters' | 'pwned' | string;
+ export declare type WeakPassword = {
 diff --git a/src/GoTrueClient.ts b/src/GoTrueClient.ts
-index 88bedadcc615bea08e673ae5e79ad848578146ff..dcf71042adbd5898dceedd3618a1fbf2e546818d 100644
+index 88bedadcc615bea08e673ae5e79ad848578146ff..c5088e3a7a47dba52d13b7aa65427d7d432478ad 100644
 --- a/src/GoTrueClient.ts
 +++ b/src/GoTrueClient.ts
-@@ -156,7 +156,7 @@ export default class GoTrueClient {
-     [key: string]: string
-   }
-   protected hasCustomAuthorizationHeader = false
--  protected suppressGetSessionWarning = false
-+  protected suppressGetSessionWarning = true // PATCH: suppress warning for `getSession` by default
-   protected fetch: Fetch
-   protected lock: LockFunc
-   protected lockAcquired = false
-@@ -1163,6 +1163,8 @@ export default class GoTrueClient {
+@@ -101,6 +101,7 @@ const DEFAULT_OPTIONS: Omit<Required<GoTrueClientOptions>, 'fetch' | 'storage' |
+   flowType: 'implicit',
+   debug: false,
+   hasCustomAuthorizationHeader: false,
++  suppressGetSessionWarning: false,
+ }
+ 
+ /** Current session will be checked for refresh at this interval. */
+@@ -206,6 +207,7 @@ export default class GoTrueClient {
+     this.detectSessionInUrl = settings.detectSessionInUrl
+     this.flowType = settings.flowType
+     this.hasCustomAuthorizationHeader = settings.hasCustomAuthorizationHeader
++    this.suppressGetSessionWarning = settings.suppressGetSessionWarning
+ 
+     if (settings.lock) {
+       this.lock = settings.lock
+@@ -1163,6 +1165,8 @@ export default class GoTrueClient {
      return result
    }
  
@@ -68,7 +125,7 @@ index 88bedadcc615bea08e673ae5e79ad848578146ff..dcf71042adbd5898dceedd3618a1fbf2
    private async _getUser(jwt?: string): Promise<UserResponse> {
      try {
        if (jwt) {
-@@ -1192,6 +1194,10 @@ export default class GoTrueClient {
+@@ -1192,6 +1196,10 @@ export default class GoTrueClient {
        })
      } catch (error) {
        if (isAuthError(error)) {
@@ -79,3 +136,21 @@ index 88bedadcc615bea08e673ae5e79ad848578146ff..dcf71042adbd5898dceedd3618a1fbf2
          return { data: { user: null }, error }
        }
  
+diff --git a/src/lib/types.ts b/src/lib/types.ts
+index 6b09dddb1cec68ca5a35b2229baf8eb6af0e6711..d0874910d44d4bc0122d8d840097d8d098e9fd06 100644
+--- a/src/lib/types.ts
++++ b/src/lib/types.ts
+@@ -85,6 +85,13 @@ export type GoTrueClientOptions = {
+    * @experimental
+    */
+   hasCustomAuthorizationHeader?: boolean
++  /**
++   * (PATCH) Suppress the warning when `getSession` is called without a previous call to `getUser`. 
++   * Only use this if you are sure that you are handling user tokens correctly.
++   * 
++   * @experimental
++   */
++  suppressGetSessionWarning?: boolean
+ }
+ 
+ export type WeakPasswordReasons = 'length' | 'characters' | 'pwned' | string

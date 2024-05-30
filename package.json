@@ -84,7 +84,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@supabase/auth-js@2.64.2": "patches/@supabase__auth-js@2.64.2.patch"
+      "@supabase/auth-js@2.64.2": "patches/@supabase__auth-js@2.64.2.patch",
+      "@supabase/supabase-js@2.43.4": "patches/@supabase__supabase-js@2.43.4.patch"
     }
   }
 }

@@ -11,6 +11,12 @@ export function createServerClient() {
   // Create a server's supabase client with newly configured cookie,
   // which could be used to maintain user's session
   return createSupabaseClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true,
+      suppressGetSessionWarning: true,
+    },
     cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value

@@ -20,6 +20,7 @@ export async function updateSession(request: NextRequest) {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
+        suppressGetSessionWarning: true,
       },
       cookies: {
         get(name: string) {
