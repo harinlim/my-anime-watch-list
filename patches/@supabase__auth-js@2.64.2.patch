@@ -1,5 +1,5 @@
 diff --git a/dist/main/GoTrueClient.js b/dist/main/GoTrueClient.js
-index 11125ff7186f75970090a44b9c8789cc61d8d95d..fa35447b8c17f091d287d134d428002e5d9928e0 100644
+index 11125ff7186f75970090a44b9c8789cc61d8d95d..fc20b4e870dd5eebd0613431a5dfc5f5d0043334 100644
 --- a/dist/main/GoTrueClient.js
 +++ b/dist/main/GoTrueClient.js
 @@ -52,7 +52,7 @@ class GoTrueClient {
@@ -11,23 +11,19 @@ index 11125ff7186f75970090a44b9c8789cc61d8d95d..fa35447b8c17f091d287d134d428002e
          this.lockAcquired = false;
          this.pendingInLock = [];
          /**
-@@ -892,6 +892,14 @@ class GoTrueClient {
+@@ -892,6 +892,10 @@ class GoTrueClient {
          }
          catch (error) {
              if ((0, errors_1.isAuthError)(error)) {
-+                // PATCH: If the token itself is invalid due to one of these reasons, remove the session 
-+                // token from the storage and return an error
-+                if (error.code === 'user_not_found' || 
-+                    error.code === 'session_not_found' || 
-+                    error.code === 'flow_state_not_found' || 
-+                    error.code === 'flow_state_expired') {
++                // PATCH: If the token holds an invalid session, remove it from storage
++                if (error.code === 'session_not_found') {
 +                    await this._removeSession()
 +                }
                  return { data: { user: null }, error };
              }
              throw error;
 diff --git a/dist/module/GoTrueClient.js b/dist/module/GoTrueClient.js
-index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..3d1b549b462c0c820bf7143387da93ca5ab450d7 100644
+index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..1dfce305895571a08db9ffbeea07e64fa1806bc9 100644
 --- a/dist/module/GoTrueClient.js
 +++ b/dist/module/GoTrueClient.js
 @@ -47,7 +47,7 @@ export default class GoTrueClient {
@@ -39,23 +35,19 @@ index 353bee130187b1cc3d03f8be0c4bd5c296c5fc0b..3d1b549b462c0c820bf7143387da93ca
          this.lockAcquired = false;
          this.pendingInLock = [];
          /**
-@@ -887,6 +887,14 @@ export default class GoTrueClient {
+@@ -887,6 +887,10 @@ export default class GoTrueClient {
          }
          catch (error) {
              if (isAuthError(error)) {
-+                // PATCH: If the token itself is invalid due to one of these reasons, remove the session 
-+                // token from the storage and return an error
-+                if (error.code === 'user_not_found' || 
-+                    error.code === 'session_not_found' || 
-+                    error.code === 'flow_state_not_found' || 
-+                    error.code === 'flow_state_expired') {
++                // PATCH: If the token holds an invalid session, remove it from storage
++                if (error.code === 'session_not_found') {
 +                    await this._removeSession()
 +                }
                  return { data: { user: null }, error };
              }
              throw error;
 diff --git a/src/GoTrueClient.ts b/src/GoTrueClient.ts
-index 88bedadcc615bea08e673ae5e79ad848578146ff..985945f0df43db13b986734f45400a42119421db 100644
+index 88bedadcc615bea08e673ae5e79ad848578146ff..dcf71042adbd5898dceedd3618a1fbf2e546818d 100644
 --- a/src/GoTrueClient.ts
 +++ b/src/GoTrueClient.ts
 @@ -156,7 +156,7 @@ export default class GoTrueClient {
@@ -76,19 +68,14 @@ index 88bedadcc615bea08e673ae5e79ad848578146ff..985945f0df43db13b986734f45400a42
    private async _getUser(jwt?: string): Promise<UserResponse> {
      try {
        if (jwt) {
-@@ -1192,6 +1194,15 @@ export default class GoTrueClient {
+@@ -1192,6 +1194,10 @@ export default class GoTrueClient {
        })
      } catch (error) {
        if (isAuthError(error)) {
-+        // PATCH: If the token itself is invalid due to one of these reasons, remove the session 
-+        // token from the storage and return an error
-+        if (error.code === 'user_not_found' || 
-+          error.code === 'session_not_found' || 
-+          error.code === 'flow_state_not_found' || 
-+          error.code === 'flow_state_expired') {
++        // PATCH: If the token holds an invalid session, remove it from storage
++        if (error.code === 'session_not_found') {
 +          await this._removeSession()
 +        }
-+
          return { data: { user: null }, error }
        }
  
