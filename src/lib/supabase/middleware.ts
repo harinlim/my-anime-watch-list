@@ -1,7 +1,7 @@
 import { createServerClient as createSupabaseClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { SERVER_AUTH_COOKIE_OPTIONS } from './cookies'
+import { AUTH_TOKEN_KEY, SERVER_AUTH_COOKIE_OPTIONS } from './cookies'
 
 import type { Database } from '@/types/generated/supabase'
 
@@ -66,7 +66,23 @@ export async function updateSession(request: NextRequest) {
   )
 
   // Refreshing the auth token if refresh token is available and valid.
-  await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  // PATCHED VIA PACKAGE: when the session doesn't exist, revoke the cookie. However, we still want downstream
+  // calls to routes to recieve the correct user for the session cookies when calling `getSession`. So, we need
+  // to set the user to null in the request cookies WITHOUT having a `Set-Cookie` header in the response.
+  if (!user) {
+    request.cookies.set({
+      name: AUTH_TOKEN_KEY,
+      value: '',
+    })
+    response = NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    })
+  }
 
   return response
 }
