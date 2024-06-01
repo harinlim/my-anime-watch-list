@@ -48,7 +48,7 @@ export function AddCollaboratorsModalContent({
   }
 
   const handleAddCollaborators = () => {
-    mutate({ usersToAdd: selectedUsers, role })
+    mutate({ users: selectedUsers, role })
     setSelectedUsers([])
   }
 

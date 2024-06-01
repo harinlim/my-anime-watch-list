@@ -11,32 +11,20 @@ export function useAddWatchlistCollaborator({ watchlistId }: { watchlistId: numb
   const userId = useCurrentUser()?.id
 
   return useMutation({
-    mutationFn: async ({
-      usersToAdd,
-      role,
-    }: {
-      usersToAdd: PublicUser[]
-      role: CollaboratorRole
-    }) =>
-      fetchWithError(
+    mutationFn: async ({ users, role }: { users: PublicUser[]; role: CollaboratorRole }) => {
+      const usersToAdd = users.map(({ id }) => ({ userId: id, role }))
+      return fetchWithError(
         `/api/watchlists/${watchlistId}/users`,
+        { method: 'POST', credentials: 'include', body: JSON.stringify(usersToAdd) },
         {
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify(
-            usersToAdd.map(({ id }) => ({
-              userId: id,
-              role,
-            }))
-          ),
-        },
-        {
-          skipResult: true, // Returns a 204 on success
+          skipResult: true, // Returns a 201 on success
           prefix: response =>
-            `(${response.status} ${response.statusText}) Failed to change collaborator role`,
+            `(${response.status} ${response.statusText}) Failed to add collaborator`,
           toMessage: response => response.clone().json() as unknown as string,
         }
-      ),
+      )
+    },
+
     // TODO: expand on error handling here
     onError: (error, variables) => console.error(error.message, variables),
 

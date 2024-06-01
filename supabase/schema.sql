@@ -136,22 +136,6 @@ CREATE OR REPLACE FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchli
 
 ALTER FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) OWNER TO "postgres";
 
-CREATE OR REPLACE FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) RETURNS boolean
-    LANGUAGE "sql" SECURITY DEFINER
-    AS $$
-SELECT EXISTS (
-  SELECT 1
-  FROM (
-      SELECT UNNEST(_user_ids) AS user_id
-    ) AS user_array
-    LEFT JOIN watchlists_users wu ON user_array.user_id = wu.user_id
-    WHERE wu.watchlist_id = _watchlist_id
-    HAVING COUNT(user_array.user_id) = ARRAY_LENGTH(_user_ids, 1)
-  );
-$$;
-
-ALTER FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) OWNER TO "postgres";
-
 CREATE OR REPLACE FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) RETURNS boolean
     LANGUAGE "sql" SECURITY DEFINER
     AS $$
@@ -768,10 +752,6 @@ GRANT ALL ON FUNCTION "public"."has_owner_access_to_watchlist"("_user_id" "uuid"
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."has_watchlist"("_user_id" "uuid", "_watchlist_id" bigint) TO "service_role";
-
-GRANT ALL ON FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) TO "anon";
-GRANT ALL ON FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) TO "authenticated";
-GRANT ALL ON FUNCTION "public"."has_watchlist_batch"("_user_ids" "uuid"[], "_watchlist_id" bigint) TO "service_role";
 
 GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "anon";
 GRANT ALL ON FUNCTION "public"."is_watchlist_viewer"("_user_id" "uuid", "_watchlist_id" bigint) TO "authenticated";
