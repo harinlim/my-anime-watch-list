@@ -35,10 +35,9 @@ export function useDeleteWatchlistCollaborator({ watchlistId }: { watchlistId: n
 
     // make sure to _return_ the Promise from the query invalidation
     // so that the mutation stays in `pending` state until the refetch is finished
-    onSettled: () => {
-      void queryClient.invalidateQueries({
+    onSettled: async () =>
+      queryClient.invalidateQueries({
         queryKey: ['collaborators', { watchlistId, userId }],
-      })
-    },
+      }),
   })
 }

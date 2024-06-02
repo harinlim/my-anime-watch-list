@@ -1,6 +1,6 @@
 import { Flex, Text, Group, LoadingOverlay, Space, Button } from '@mantine/core'
 import { IconArrowLeft, IconPlus } from '@tabler/icons-react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { useAddWatchlistCollaborator } from '@/data/use-add-watchlist-collaborator'
 
@@ -8,7 +8,7 @@ import { CollaboratorRoleDropdown } from './CollaboratorRoleDropdown'
 import { UserSearchAutocomplete } from './UserSearchAutocomplete'
 
 import type { PublicUser } from '@/types/users'
-import type { WatchlistUser } from '@/types/watchlists'
+import type { CollaboratorRole, WatchlistUser } from '@/types/watchlists'
 
 type AddCollaboratorsModalContentProps = {
   watchlistId: number
@@ -27,11 +27,11 @@ export function AddCollaboratorsModalContent({
   closeAddCollaboratorContent,
 }: AddCollaboratorsModalContentProps) {
   const [selectedUsers, setSelectedUsers] = useState<PublicUser[]>([])
-  const [role, setRole] = useState<WatchlistUser['role']>('editor')
+  const [role, setRole] = useState<Exclude<CollaboratorRole, 'owner'>>('editor')
 
   const { mutate, isPending } = useAddWatchlistCollaborator({ watchlistId })
 
-  const handleSelectedUsersChange = (selectedUser: PublicUser, action: string) => {
+  const handleSelectedUsersChange = useCallback((selectedUser: PublicUser, action: string) => {
     if (action === 'add') {
       setSelectedUsers(current =>
         current.includes(selectedUser)
@@ -41,16 +41,20 @@ export function AddCollaboratorsModalContent({
     } else {
       setSelectedUsers(current => current.filter(v => v !== selectedUser))
     }
-  }
+  }, [])
 
-  const handleRoleChange = (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => {
-    setRole(option === 'remove' ? 'editor' : option)
-  }
+  const handleRoleChange = useCallback((_: string, option: 'editor' | 'viewer' | 'remove') => {
+    // `remove` should never be passed here
+    if (option === 'remove') return
 
-  const handleAddCollaborators = () => {
-    mutate({ users: selectedUsers, role })
-    setSelectedUsers([])
-  }
+    setRole(option)
+  }, [])
+
+  // TODO: Handle mutation error
+  const handleAddCollaborators = useCallback(() => {
+    const users = selectedUsers.map(user => ({ userId: user.id, role }))
+    mutate({ users }, { onSuccess: () => setSelectedUsers([]) })
+  }, [mutate, role, selectedUsers])
 
   return (
     <>
