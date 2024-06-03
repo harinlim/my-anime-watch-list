@@ -271,13 +271,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      has_watchlist_batch: {
-        Args: {
-          _user_ids: string[]
-          _watchlist_id: number
-        }
-        Returns: boolean
-      }
       is_watchlist_viewer: {
         Args: {
           _user_id: string
