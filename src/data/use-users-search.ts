@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { useCurrentUser } from '@/context/UserContext'
+import { fetchWithError } from '@/lib/api'
 
 import type { PublicUser } from '@/types/users'
 
@@ -16,28 +17,21 @@ const fetchUsers = async ({
   limit,
   signal,
 }: { signal: AbortSignal } & UseUsersSearchParams) => {
-  let url = `/api/users?search=${search}`
+  const searchParams = new URLSearchParams({ search })
 
   if (excludeWatchlistId) {
-    url += `&excludeWatchlistId=${excludeWatchlistId}`
+    searchParams.append('excludeWatchlistId', excludeWatchlistId.toString())
   }
 
   if (limit) {
-    url += `&limit=${limit}`
+    searchParams.append('limit', limit.toString())
   }
 
-  const response = await fetch(url, {
-    method: 'GET',
-    credentials: 'include',
-    signal,
-  })
-
-  if (!response.ok) {
-    console.error('Failed to fetch users', await response.json())
-    throw new Error('Failed to fetch users')
-  }
-
-  return response.json() as Promise<PublicUser[]>
+  return fetchWithError<false, PublicUser[]>(
+    `/api/users?${searchParams.toString()}`,
+    { method: 'GET', credentials: 'include', signal },
+    { prefix: 'Failed to fetch users' }
+  )
 }
 
 export function useUsersSearch(params: UseUsersSearchParams) {
