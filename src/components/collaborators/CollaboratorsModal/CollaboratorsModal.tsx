@@ -52,8 +52,8 @@ export function CollaboratorsModal({
   ] = useDisclosure(false)
 
   const handleCloseModal = useCallback(() => {
-    closeAddCollaboratorContent()
     handleCloseRoot()
+    setTimeout(closeAddCollaboratorContent, 200) // Set a delay on this to allow transition to finish
   }, [handleCloseRoot, closeAddCollaboratorContent])
 
   return (
