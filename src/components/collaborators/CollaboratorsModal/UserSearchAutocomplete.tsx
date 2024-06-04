@@ -19,6 +19,7 @@ import { useDebouncedValue } from '@mantine/hooks'
 import { IconExclamationCircle } from '@tabler/icons-react'
 import { useCallback, useMemo, useState } from 'react'
 
+import { Avatar } from '@/components/watchlists/AvatarGroup'
 import { useUsersSearch } from '@/data/use-users-search'
 
 import type { PublicUser } from '@/types/users'
@@ -46,7 +47,7 @@ export function UserSearchAutocomplete({
   const [search, setSearch] = useState('')
   const [debouncedSearch] = useDebouncedValue(search, 500, { leading: true })
 
-  const { data: searchResults } = useUsersSearch({
+  const { data: searchResults, isFetching } = useUsersSearch({
     search: debouncedSearch,
     excludeWatchlistId: watchlistId,
     limit,
@@ -63,9 +64,8 @@ export function UserSearchAutocomplete({
       if (!selectedUser) return
 
       onSelectUser(selectedUser)
-      setSearch('')
     },
-    [onSelectUser, isDisabled, searchResults, setSearch]
+    [onSelectUser, isDisabled, searchResults]
   )
 
   const combobox = useCombobox({
@@ -83,10 +83,11 @@ export function UserSearchAutocomplete({
           active={selectedUsers.includes(user)}
           disabled={isDisabled}
         >
-          <Group gap="sm" p="sm">
+          <Group className="py-2">
             {selectedUsers.some(selectedUser => selectedUser.id === user.id) && (
               <CheckIcon size={12} />
             )}
+            <Avatar user={user} size={8} />
             <Text size="sm" component="span">
               {user.username}
             </Text>
@@ -147,7 +148,9 @@ export function UserSearchAutocomplete({
         <ComboboxDropdown>
           <ComboboxOptions mih={30} mah={200} style={{ overflowY: 'auto' }}>
             {searchResultsOptions ?? (
-              <Combobox.Empty>{search === '' ? '' : 'Nothing found...'}</Combobox.Empty>
+              <Combobox.Empty>
+                {search === '' && !isFetching ? '' : 'Nothing found...'}
+              </Combobox.Empty>
             )}
           </ComboboxOptions>
         </ComboboxDropdown>

@@ -1,10 +1,12 @@
-import { Tooltip, Image, Box } from '@mantine/core'
+import { Tooltip, Box, Image } from '@mantine/core'
 import clsx from 'clsx'
 import Link from 'next/link'
 
 import styles from './AvatarGroup.module.css'
 
+import type { PublicUser } from '@/types/users'
 import type { WatchlistUser } from '@/types/watchlists'
+import type { PropsWithChildren } from 'react'
 
 type AvatarGroupProps = {
   watchlistId: number | string
@@ -15,22 +17,50 @@ type AvatarGroupProps = {
 
 const DEFAULT_AVATARS_TO_SHOW = 3
 
-export function Avatar({ user, size = 8 }: { user: WatchlistUser; size?: number }) {
-  const a11yLabel = `${user.role}: ${user.username}`
+function AvatarWrapper({
+  asLink,
+  href,
+  className,
+  children,
+}: PropsWithChildren<{ asLink: true; href: string } | { asLink: false; href?: string }> & {
+  className?: string
+}) {
+  if (asLink) {
+    return (
+      <Link href={href} prefetch={false} className={className}>
+        {children}
+      </Link>
+    )
+  }
+
+  return <div className={className}>{children}</div>
+}
+
+export function Avatar({
+  user,
+  size = 8,
+  asLink = false,
+}: {
+  user: WatchlistUser | PublicUser
+  size?: number
+  asLink?: boolean
+}) {
+  const a11yLabel = 'role' in user ? `${user.role}: ${user.username}` : user.username
+  const key = 'user_id' in user ? user.user_id : user.id
 
   return (
     <Tooltip label={`@${user.username}`} position="top">
-      <Link href={`/profile/${user.username}`} prefetch={false} className="shrink-0">
+      <AvatarWrapper asLink={asLink} href={`/profile/${user.username}`} className="shrink-0">
         {user.avatar_url ? (
           <Image
-            key={user.user_id}
+            key={key}
             className={clsx(styles.ring, 'inline-block size-8 bg-white dark:bg-zinc-700')}
             src={user.avatar_url}
             alt={a11yLabel}
           />
         ) : (
           <svg
-            key={user.user_id}
+            key={key}
             className={clsx(
               styles.ring,
               `size-${size}`,
@@ -48,7 +78,7 @@ export function Avatar({ user, size = 8 }: { user: WatchlistUser; size?: number 
             />
           </svg>
         )}
-      </Link>
+      </AvatarWrapper>
     </Tooltip>
   )
 }
@@ -73,7 +103,7 @@ export function AvatarGroup({
   return (
     <div className="flex -space-x-2">
       {watchlistUsersOverview.map(user => (
-        <Avatar key={`${watchlistId}:avatar-${user.user_id}`} user={user} />
+        <Avatar key={`${watchlistId}:avatar-${user.user_id}`} asLink user={user} />
       ))}
       {remainingUsers > 0 && (
         <Tooltip label={remainingUsersLabel} position="top">
