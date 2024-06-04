@@ -13,19 +13,21 @@ import {
   ComboboxOption,
   ComboboxEventsTarget,
   Text,
-  LoadingOverlay,
+  Stack,
 } from '@mantine/core'
-import { useDebouncedCallback } from '@mantine/hooks'
+import { useDebouncedValue } from '@mantine/hooks'
 import { IconExclamationCircle } from '@tabler/icons-react'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { useUsersSearch } from '@/data/use-users-search'
 
 import type { PublicUser } from '@/types/users'
-import type { SetStateAction } from 'react'
+import type { ReactNode } from 'react'
 
 type UserSearchAutocompleteProps = {
-  handleSelectedUsersChange: (selectedUser: PublicUser, action: string) => void
+  onSelectUser: (selectedUser: PublicUser) => void
+  isDisabled?: boolean
+  disabledMessage?: ReactNode
   selectedUsers: PublicUser[]
   watchlistId?: number
   limit?: number
@@ -33,100 +35,84 @@ type UserSearchAutocompleteProps = {
 }
 
 export function UserSearchAutocomplete({
-  handleSelectedUsersChange,
+  onSelectUser,
+  isDisabled,
+  disabledMessage,
   selectedUsers,
   watchlistId,
   limit,
   className,
 }: UserSearchAutocompleteProps) {
+  const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500, { leading: true })
+
+  const { data: searchResults } = useUsersSearch({
+    search: debouncedSearch,
+    excludeWatchlistId: watchlistId,
+    limit,
+  })
+
+  const handleOptionSubmit = useCallback(
+    (val: string) => {
+      if (isDisabled) {
+        return
+      }
+
+      const selectedUser = searchResults?.find(user => user.id === val)
+
+      if (!selectedUser) return
+
+      onSelectUser(selectedUser)
+      setSearch('')
+    },
+    [onSelectUser, isDisabled, searchResults, setSearch]
+  )
+
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
     onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
   })
 
-  const [search, setSearch] = useState('')
-  const [searchResults, setSearchResults] = useState<PublicUser[]>([])
-  const [isMaxSelected, setIsMaxSelected] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
-  const usersSearchQuery = useUsersSearch({
-    search,
-    excludeWatchlistId: watchlistId ?? null,
-    limit: limit ?? null,
-  })
-
-  const handleSearch = useDebouncedCallback(async () => {
-    const result = await usersSearchQuery.refetch()
-
-    // if (!result.data) {
-    //   throw new Error('Failed to fetch users')
-    // }
-
-    setSearchResults(result.data ?? [])
-    setIsLoading(false)
-  }, 500)
-
-  const handleUserSelect = (val: string) => {
-    if (selectedUsers.length >= 10) {
-      setIsMaxSelected(true)
-      return
-    }
-    const selectedUser = searchResults.find(user => user.id === val)
-
-    if (!selectedUser) return
-
-    handleSelectedUsersChange(selectedUser, 'add')
-    setSearch('')
-  }
-
-  const handleUserRemove = (val?: PublicUser) => {
-    if (isMaxSelected) {
-      setIsMaxSelected(false)
-    }
-
-    if (val) {
-      handleSelectedUsersChange(val, 'remove')
-    }
-  }
-
-  const selectedUsersPills = selectedUsers.map(user => (
-    <Pill key={user.id} withRemoveButton onRemove={() => handleUserRemove(user)}>
-      @{user.username}
-    </Pill>
-  ))
-
-  const searchResultsOptions = searchResults.map((user: PublicUser) => (
-    <ComboboxOption
-      value={user.id}
-      key={user.id}
-      active={selectedUsers.includes(user)}
-      disabled={isMaxSelected}
-    >
-      <Group gap="sm">
-        {selectedUsers.some(selectedUser => selectedUser.id === user.id) ? (
-          <CheckIcon size={12} />
-        ) : null}
-        <span>{user.username}</span>
-      </Group>
-    </ComboboxOption>
-  ))
+  const searchResultsOptions = useMemo(
+    () =>
+      // TODO: Add avatars
+      searchResults?.map((user: PublicUser) => (
+        <ComboboxOption
+          value={user.id}
+          key={user.id}
+          active={selectedUsers.includes(user)}
+          disabled={isDisabled}
+        >
+          <Group gap="sm" p="sm">
+            {selectedUsers.some(selectedUser => selectedUser.id === user.id) && (
+              <CheckIcon size={12} />
+            )}
+            <Text size="sm" component="span">
+              {user.username}
+            </Text>
+          </Group>
+        </ComboboxOption>
+      )),
+    [isDisabled, searchResults, selectedUsers]
+  )
 
   return (
-    <div className="flex w-full flex-col">
-      <Combobox store={combobox} onOptionSubmit={handleUserSelect} disabled={isMaxSelected}>
+    <Stack className="w-full">
+      <Combobox store={combobox} onOptionSubmit={handleOptionSubmit} disabled={isDisabled}>
         <ComboboxDropdownTarget>
           <PillsInput
             size="md"
-            onClick={() => {
-              combobox.openDropdown()
-              handleSearch()
-            }}
+            onClick={() => combobox.openDropdown()}
             aria-label="Search users"
             multiline={false}
             className={className}
           >
             <PillGroup mah={100} style={{ overflowY: 'auto' }}>
-              {selectedUsersPills}
+              {selectedUsers.map(user => (
+                <Pill key={user.id} withRemoveButton onRemove={() => onSelectUser(user)}>
+                  @{user.username}
+                </Pill>
+              ))}
 
               <ComboboxEventsTarget>
                 <PillsInputField
@@ -135,23 +121,21 @@ export function UserSearchAutocomplete({
                   value={search}
                   className="overflow-hidden"
                   placeholder="Search users..."
-                  onChange={(event: { currentTarget: { value: SetStateAction<string> } }) => {
-                    if (isMaxSelected) {
+                  onChange={event => {
+                    if (isDisabled) {
                       return
                     }
                     combobox.updateSelectedOptionIndex()
                     setSearch(event.currentTarget.value)
-                    handleSearch()
-                    setIsLoading(true)
                   }}
-                  onKeyDown={(event: { key: string; preventDefault: () => void }) => {
+                  onKeyDown={event => {
                     if (
                       event.key === 'Backspace' &&
                       search.length === 0 &&
                       selectedUsers.length > 0
                     ) {
                       event.preventDefault()
-                      handleUserRemove(selectedUsers.at(-1))
+                      onSelectUser(selectedUsers.at(-1)!)
                     }
                   }}
                 />
@@ -161,29 +145,24 @@ export function UserSearchAutocomplete({
         </ComboboxDropdownTarget>
 
         <ComboboxDropdown>
-          <LoadingOverlay
-            visible={isLoading}
-            zIndex={1000}
-            loaderProps={{ size: 'xs' }}
-            overlayProps={{ radius: 'sm', blur: 2 }}
-          />
           <ComboboxOptions mih={30} mah={200} style={{ overflowY: 'auto' }}>
-            {searchResults.length > 0 ? (
-              searchResultsOptions
-            ) : (
+            {searchResultsOptions ?? (
               <Combobox.Empty>{search === '' ? '' : 'Nothing found...'}</Combobox.Empty>
             )}
           </ComboboxOptions>
         </ComboboxDropdown>
       </Combobox>
-      {isMaxSelected && (
+
+      {isDisabled && (
         <Group className="mt-2 items-center gap-1 px-1">
           <IconExclamationCircle size={16} className="text-red-700 dark:text-red-400" />
-          <Text size="sm" className="text-red-700 dark:text-red-400 ">
-            You can only select up to 10 users
-          </Text>
+          {disabledMessage && (
+            <Text size="sm" className="text-red-700 dark:text-red-400 ">
+              {disabledMessage}
+            </Text>
+          )}
         </Group>
       )}
-    </div>
+    </Stack>
   )
 }

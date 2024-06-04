@@ -70,7 +70,7 @@ export function CollaboratorsModal({
             {isAddCollaboratorContentOpen ? (
               <AddCollaboratorsModalContent
                 watchlistId={watchlistId}
-                closeAddCollaboratorContent={toggleAddCollaboratorContent}
+                onReturn={toggleAddCollaboratorContent}
               />
             ) : (
               <CollaboratorsModalContent

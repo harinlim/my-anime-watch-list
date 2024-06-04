@@ -7,8 +7,8 @@ import type { PublicUser } from '@/types/users'
 
 type UseUsersSearchParams = {
   search: string
-  excludeWatchlistId?: number | null
-  limit?: number | null
+  excludeWatchlistId?: number
+  limit?: number
 }
 
 const fetchUsers = async ({
@@ -41,5 +41,6 @@ export function useUsersSearch(params: UseUsersSearchParams) {
   return useQuery<PublicUser[]>({
     queryKey: ['users', userId, { ...params }],
     queryFn: async args => fetchUsers({ ...params, ...args }),
+    placeholderData: previous => previous, // Use previous data while pending
   })
 }
