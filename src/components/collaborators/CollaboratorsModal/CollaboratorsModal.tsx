@@ -12,6 +12,7 @@ import {
   Stack,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
+import { useCallback } from 'react'
 
 import { useEditCollaboratorsModal } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModalContext'
 
@@ -45,13 +46,15 @@ export function CollaboratorsModal({
     overrideExists ? { isOpen, close } : undefined
   )
 
-  const [isAddCollaboratorContentOpen, { toggle: toggleAddCollaboratorContent }] =
-    useDisclosure(false)
+  const [
+    isAddCollaboratorContentOpen,
+    { open: openAddCollaboratorContent, close: closeAddCollaboratorContent },
+  ] = useDisclosure(false)
 
-  const handleCloseModal = () => {
-    if (isAddCollaboratorContentOpen) toggleAddCollaboratorContent()
+  const handleCloseModal = useCallback(() => {
+    closeAddCollaboratorContent()
     handleCloseRoot()
-  }
+  }, [handleCloseRoot, closeAddCollaboratorContent])
 
   return (
     <ModalRoot opened={opened} onClose={handleCloseModal} size="md" yOffset="25vh">
@@ -70,7 +73,7 @@ export function CollaboratorsModal({
             {isAddCollaboratorContentOpen ? (
               <AddCollaboratorsModalContent
                 watchlistId={watchlistId}
-                onReturn={toggleAddCollaboratorContent}
+                onReturn={closeAddCollaboratorContent}
               />
             ) : (
               <CollaboratorsModalContent
@@ -85,7 +88,7 @@ export function CollaboratorsModal({
             // For now, we hold this here until add functionality is fleshed out
             <CollaboratorModalFooter
               className="shrink-0 grow-0 basis-[calc(3.75rem_*_var(--mantine-scale))] border-t-[1px] border-t-[--mantine-color-gray-3] dark:border-t-[--mantine-color-dark-4]"
-              onClickAddCollaborator={toggleAddCollaboratorContent}
+              onClickAddCollaborator={openAddCollaboratorContent}
             />
           )}
         </Stack>
