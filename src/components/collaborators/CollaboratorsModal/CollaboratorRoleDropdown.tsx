@@ -14,7 +14,7 @@ import {
 import { IconChevronDown } from '@tabler/icons-react'
 import { useCallback, useState } from 'react'
 
-import type { CollaboratorRole, WatchlistUser } from '@/types/watchlists'
+import type { CollaboratorRole } from '@/types/watchlists'
 
 type Props<
   Options extends 'owner' | 'editor' | 'viewer' | 'remove' | undefined = undefined,
@@ -43,13 +43,14 @@ type Props<
           : 'owner'
       : Options,
 > = {
-  // TODO: fix inference on `onChange` option param
-  onChange: (collaboratorId: string, option: Roles) => void
   canEdit?: CanEdit
   canDelete?: CanDelete
   isDisabled?: boolean
-  collaborator: WatchlistUser
-}
+  initialRole: CollaboratorRole
+} & ( // TODO: fix inference on `onChange` option param
+  | { onChange: (option: Roles, id: string) => void; id: string }
+  | { onChange: (option: Roles) => void; id?: never }
+)
 
 const SELECTABLE_ROLES = ['editor', 'viewer'] as const
 
@@ -85,9 +86,10 @@ export function CollaboratorRoleDropdown<
   isDisabled = false,
   canDelete = false,
   canEdit = false,
-  collaborator,
+  initialRole,
+  id,
 }: Props<Options, Dynamic, CanDelete, CanEdit, Roles>) {
-  const [role, setRole] = useState<CollaboratorRole>(collaborator.role)
+  const [role, setRole] = useState<CollaboratorRole>(initialRole)
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -122,7 +124,11 @@ export function CollaboratorRoleDropdown<
         throw new Error(`Invalid option: ${option}`)
       }
 
-      onChange(collaborator.user_id, option)
+      if (id === undefined) {
+        onChange(option)
+      } else {
+        onChange(option, id)
+      }
 
       if (SELECTABLE_ROLES.includes(option)) {
         setRole(option)
@@ -130,7 +136,7 @@ export function CollaboratorRoleDropdown<
 
       combobox.closeDropdown()
     },
-    [onChange, isOptionValid, collaborator.user_id, combobox]
+    [onChange, isOptionValid, id, combobox]
   )
 
   return (
@@ -157,10 +163,7 @@ export function CollaboratorRoleDropdown<
         <ComboboxOptions className="text-sm capitalize">
           {canEdit &&
             SELECTABLE_ROLES.map(selectableRole => (
-              <ComboboxOption
-                key={`${collaborator.username}-${selectableRole}`}
-                value={selectableRole}
-              >
+              <ComboboxOption key={`${id}-option-${selectableRole}`} value={selectableRole}>
                 {selectableRole}
               </ComboboxOption>
             ))}

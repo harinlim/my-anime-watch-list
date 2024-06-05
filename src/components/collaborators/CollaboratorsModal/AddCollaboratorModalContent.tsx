@@ -8,7 +8,7 @@ import { CollaboratorRoleDropdown } from './CollaboratorRoleDropdown'
 import { UserSearchAutocomplete } from './UserSearchAutocomplete'
 
 import type { PublicUser } from '@/types/users'
-import type { CollaboratorRole, WatchlistUser } from '@/types/watchlists'
+import type { CollaboratorRole } from '@/types/watchlists'
 
 type AddCollaboratorsModalContentProps = {
   watchlistId: number
@@ -17,12 +17,7 @@ type AddCollaboratorsModalContentProps = {
 
 const MAX_USER_SELECTION = 10
 
-const DEFAULT_ROLE_USER = {
-  user_id: '',
-  role: 'editor',
-  username: '',
-  avatar_url: null,
-} satisfies WatchlistUser
+const DEFAULT_ROLE = 'editor'
 
 export function AddCollaboratorsModalContent({
   watchlistId,
@@ -41,7 +36,7 @@ export function AddCollaboratorsModalContent({
     )
   }, [])
 
-  const handleRoleChange = useCallback((_: string, option: 'editor' | 'viewer') => {
+  const handleRoleChange = useCallback((option: 'editor' | 'viewer') => {
     setRole(option)
   }, [])
 
@@ -78,7 +73,7 @@ export function AddCollaboratorsModalContent({
           <Text size="md">Set all users as:</Text>
           <CollaboratorRoleDropdown
             onChange={handleRoleChange}
-            collaborator={DEFAULT_ROLE_USER}
+            initialRole={DEFAULT_ROLE}
             canEdit
           />
         </Flex>
