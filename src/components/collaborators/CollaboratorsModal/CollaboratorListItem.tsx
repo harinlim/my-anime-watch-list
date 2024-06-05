@@ -51,7 +51,7 @@ export const CollaboratorListItem = memo(
       </Group>
 
       {canEdit || canDelete ? (
-        <CollaboratorRoleDropdown
+        <CollaboratorRoleDropdown<'editor' | 'viewer' | 'remove', true>
           canEdit={canEdit}
           canDelete={canDelete}
           isDisabled={isPending}

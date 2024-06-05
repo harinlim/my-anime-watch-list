@@ -41,10 +41,7 @@ export function AddCollaboratorsModalContent({
     )
   }, [])
 
-  const handleRoleChange = useCallback((_: string, option: 'editor' | 'viewer' | 'remove') => {
-    // `remove` should never be passed here
-    if (option === 'remove') return
-
+  const handleRoleChange = useCallback((_: string, option: 'editor' | 'viewer') => {
     setRole(option)
   }, [])
 
