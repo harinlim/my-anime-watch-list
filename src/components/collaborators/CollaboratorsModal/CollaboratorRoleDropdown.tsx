@@ -17,15 +17,23 @@ import { useCallback, useState } from 'react'
 import type { CollaboratorRole, WatchlistUser } from '@/types/watchlists'
 
 type Props<
-  Roles extends 'owner' | 'editor' | 'viewer' | 'remove',
-  Dynamic extends boolean,
-  CanDelete extends boolean | undefined = 'remove' extends Roles ? true : false,
-  CanEdit extends boolean | undefined = 'editor' | 'viewer' extends Roles ? true : false,
-> = {
-  // TODO: fix inference on `onChange` option param
-  onChange: (
-    collaboratorId: string,
-    option: Dynamic extends false
+  Options extends 'owner' | 'editor' | 'viewer' | 'remove' | undefined = undefined,
+  Dynamic extends boolean = false,
+  CanDelete extends boolean | undefined = Dynamic extends true
+    ? boolean
+    : 'remove' extends Options
+      ? true
+      : false,
+  CanEdit extends boolean | undefined = Dynamic extends true
+    ? boolean
+    : 'editor' | 'viewer' extends Options
+      ? true
+      : false,
+  Roles extends 'owner' | 'editor' | 'viewer' | 'remove' = Dynamic extends true
+    ? Options extends undefined
+      ? 'owner' | 'editor' | 'viewer' | 'remove'
+      : Options
+    : Options extends undefined
       ? CanEdit extends true
         ? CanDelete extends true
           ? 'editor' | 'viewer' | 'remove'
@@ -33,8 +41,10 @@ type Props<
         : CanDelete extends true
           ? 'remove'
           : 'owner'
-      : Roles
-  ) => void
+      : Options,
+> = {
+  // TODO: fix inference on `onChange` option param
+  onChange: (collaboratorId: string, option: Roles) => void
   canEdit?: CanEdit
   canDelete?: CanDelete
   isDisabled?: boolean
@@ -76,7 +86,7 @@ export function CollaboratorRoleDropdown<
   canDelete = false,
   canEdit = false,
   collaborator,
-}: Props<Roles, Dynamic, CanDelete, CanEdit>) {
+}: Props<Options, Dynamic, CanDelete, CanEdit, Roles>) {
   const [role, setRole] = useState<CollaboratorRole>(collaborator.role)
 
   const combobox = useCombobox({
@@ -92,17 +102,7 @@ export function CollaboratorRoleDropdown<
 
   // Wild that this is necessary for inference
   const isOptionValid = useCallback(
-    (
-      option: string
-    ): option is Dynamic extends false
-      ? CanEdit extends true
-        ? CanDelete extends true
-          ? 'editor' | 'viewer' | 'remove'
-          : 'editor' | 'viewer'
-        : CanDelete extends true
-          ? 'remove'
-          : 'owner'
-      : Roles => {
+    (option: string): option is Roles => {
       if (canDelete && option === 'remove') {
         return true
       }
