@@ -12,80 +12,160 @@ import {
   PillsInputField,
   ComboboxOption,
   ComboboxEventsTarget,
+  Text,
+  Stack,
 } from '@mantine/core'
-import { useState } from 'react'
+import { useDebouncedValue } from '@mantine/hooks'
+import { IconExclamationCircle } from '@tabler/icons-react'
+import { useCallback, useMemo, useState } from 'react'
 
-import type { SetStateAction } from 'react'
+import { Avatar } from '@/components/watchlists/AvatarGroup'
+import { useUsersSearch } from '@/data/use-users-search'
 
-const data = ['🍎 Apples', '🍌 Bananas', '🥦 Broccoli', '🥕 Carrots', '🍫 Chocolate']
+import type { PublicUser } from '@/types/users'
+import type { ReactNode } from 'react'
 
-export function UserSearchAutocomplete() {
+type UserSearchAutocompleteProps = {
+  onSelectUser: (selectedUser: PublicUser) => void
+  isDisabled?: boolean
+  disabledMessage?: ReactNode
+  selectedUsers: PublicUser[]
+  watchlistId?: number
+  limit?: number
+  className?: string
+}
+
+export function UserSearchAutocomplete({
+  onSelectUser,
+  isDisabled,
+  disabledMessage,
+  selectedUsers,
+  watchlistId,
+  limit,
+  className,
+}: UserSearchAutocompleteProps) {
+  const [search, setSearch] = useState('')
+  const [debouncedSearch] = useDebouncedValue(search, 500, { leading: true })
+
+  const { data: searchResults, isFetching } = useUsersSearch({
+    search: debouncedSearch,
+    excludeWatchlistId: watchlistId,
+    limit,
+  })
+
+  const handleOptionSubmit = useCallback(
+    (val: string) => {
+      if (isDisabled) {
+        return
+      }
+
+      const selectedUser = searchResults?.find(user => user.id === val)
+
+      if (!selectedUser) return
+
+      onSelectUser(selectedUser)
+    },
+    [onSelectUser, isDisabled, searchResults]
+  )
+
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
     onDropdownOpen: () => combobox.updateSelectedOptionIndex('active'),
   })
 
-  const [search, setSearch] = useState('')
-  const [value, setValue] = useState<string[]>([])
-
-  const handleValueSelect = (val: string) =>
-    setValue(current =>
-      current.includes(val) ? current.filter(v => v !== val) : [...current, val]
-    )
-
-  const handleValueRemove = (val?: string) => setValue(current => current.filter(v => v !== val))
-
-  const values = value.map(item => (
-    <Pill key={item} withRemoveButton onRemove={() => handleValueRemove(item)}>
-      {item}
-    </Pill>
-  ))
-
-  const options = data
-    .filter((item: string) => item.toLowerCase().includes(search.trim().toLowerCase()))
-    .map((item: string) => (
-      <ComboboxOption value={item} key={item} active={value.includes(item)}>
-        <Group gap="sm">
-          {value.includes(item) ? <CheckIcon size={12} /> : null}
-          <span>{item}</span>
-        </Group>
-      </ComboboxOption>
-    ))
+  const searchResultsOptions = useMemo(
+    () =>
+      // TODO: Add avatars
+      searchResults?.map((user: PublicUser) => (
+        <ComboboxOption
+          value={user.id}
+          key={user.id}
+          active={selectedUsers.includes(user)}
+          disabled={isDisabled}
+        >
+          <Group className="py-2">
+            {selectedUsers.some(selectedUser => selectedUser.id === user.id) && (
+              <CheckIcon size={12} />
+            )}
+            <Avatar user={user} size={8} />
+            <Text size="sm" component="span">
+              {user.username}
+            </Text>
+          </Group>
+        </ComboboxOption>
+      )),
+    [isDisabled, searchResults, selectedUsers]
+  )
 
   return (
-    <Combobox store={combobox} onOptionSubmit={handleValueSelect}>
-      <ComboboxDropdownTarget>
-        <PillsInput onClick={() => combobox.openDropdown()}>
-          <PillGroup>
-            {values}
+    <Stack className="w-full">
+      <Combobox store={combobox} onOptionSubmit={handleOptionSubmit} disabled={isDisabled}>
+        <ComboboxDropdownTarget>
+          <PillsInput
+            size="md"
+            onClick={() => combobox.openDropdown()}
+            aria-label="Search users"
+            multiline={false}
+            className={className}
+          >
+            <PillGroup mah={100} style={{ overflowY: 'auto' }}>
+              {selectedUsers.map(user => (
+                <Pill key={user.id} withRemoveButton onRemove={() => onSelectUser(user)}>
+                  @{user.username}
+                </Pill>
+              ))}
 
-            <ComboboxEventsTarget>
-              <PillsInputField
-                onFocus={() => combobox.openDropdown()}
-                onBlur={() => combobox.closeDropdown()}
-                value={search}
-                placeholder="Search values"
-                onChange={(event: { currentTarget: { value: SetStateAction<string> } }) => {
-                  combobox.updateSelectedOptionIndex()
-                  setSearch(event.currentTarget.value)
-                }}
-                onKeyDown={(event: { key: string; preventDefault: () => void }) => {
-                  if (event.key === 'Backspace' && search.length === 0 && value.length > 0) {
-                    event.preventDefault()
-                    handleValueRemove(value.at(-1))
-                  }
-                }}
-              />
-            </ComboboxEventsTarget>
-          </PillGroup>
-        </PillsInput>
-      </ComboboxDropdownTarget>
+              <ComboboxEventsTarget>
+                <PillsInputField
+                  onFocus={() => combobox.openDropdown()}
+                  onBlur={() => combobox.closeDropdown()}
+                  value={search}
+                  className="overflow-hidden"
+                  placeholder="Search users..."
+                  onChange={event => {
+                    if (isDisabled) {
+                      return
+                    }
+                    combobox.updateSelectedOptionIndex()
+                    setSearch(event.currentTarget.value)
+                  }}
+                  onKeyDown={event => {
+                    if (
+                      event.key === 'Backspace' &&
+                      search.length === 0 &&
+                      selectedUsers.length > 0
+                    ) {
+                      event.preventDefault()
+                      onSelectUser(selectedUsers.at(-1)!)
+                    }
+                  }}
+                />
+              </ComboboxEventsTarget>
+            </PillGroup>
+          </PillsInput>
+        </ComboboxDropdownTarget>
 
-      <ComboboxDropdown>
-        <ComboboxOptions>
-          {options.length > 0 ? options : <Combobox.Empty>Nothing found...</Combobox.Empty>}
-        </ComboboxOptions>
-      </ComboboxDropdown>
-    </Combobox>
+        <ComboboxDropdown>
+          <ComboboxOptions mih={30} mah={200} style={{ overflowY: 'auto' }}>
+            {searchResultsOptions ?? (
+              <Combobox.Empty>
+                {search === '' && !isFetching ? '' : 'Nothing found...'}
+              </Combobox.Empty>
+            )}
+          </ComboboxOptions>
+        </ComboboxDropdown>
+      </Combobox>
+
+      {isDisabled && (
+        <Group className="mt-2 items-center gap-1 px-1">
+          <IconExclamationCircle size={16} className="text-red-700 dark:text-red-400" />
+          {disabledMessage && (
+            <Text size="sm" className="text-red-700 dark:text-red-400 ">
+              {disabledMessage}
+            </Text>
+          )}
+        </Group>
+      )}
+    </Stack>
   )
 }

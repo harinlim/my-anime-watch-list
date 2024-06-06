@@ -1,5 +1,11 @@
 export type Nullable<T> = { [P in keyof T]: T[P] | null }
 
+export type AllKeys<T> = T extends unknown ? keyof T : never
+
+export type Exactify<T, K extends PropertyKey = AllKeys<T>> = T extends unknown
+  ? T & Partial<Record<Exclude<K, keyof T>, never>>
+  : never
+
 /* Expand helpers for intellisense */
 
 export type Expand<T> = {

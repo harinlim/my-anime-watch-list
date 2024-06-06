@@ -34,3 +34,18 @@ export function getWatchlistRoleForUser(
     .eq('user_id', userId)
     .maybeSingle()
 }
+
+export function getUsersByIds(supabase: SupabaseClient<Database>, userIds: string[]) {
+  return supabase.from('users').select('id', { count: 'exact' }).in('id', userIds)
+}
+
+export function getCollaboratorsByUserIds(
+  supabase: SupabaseClient<Database>,
+  { watchlistId, userIds }: { watchlistId: number; userIds: string[] }
+) {
+  return supabase
+    .from('watchlists_users')
+    .select('user_id, role', { count: 'exact' })
+    .eq('watchlist_id', watchlistId)
+    .in('user_id', userIds)
+}
