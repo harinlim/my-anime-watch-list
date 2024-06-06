@@ -31,7 +31,7 @@ export function WatchlistCollaborators({ watchlistId, isList, maxAvatars }: Prop
         <ul className="flex flex-col gap-2 pt-4">
           {collaborators.map(collaborator => (
             <li key={collaborator.user_id} className="flex items-center gap-3">
-              <Avatar user={collaborator} />
+              <Avatar asLink user={collaborator} />
               <Text size="md">@{collaborator.username}</Text>
             </li>
           ))}

@@ -25,14 +25,20 @@ declare namespace Reset {
 
 declare global {
   interface ReadonlyArray<T> {
-    includes(searchElement: T | (Reset.WidenLiteral<T> & {}), fromIndex?: number): boolean
+    includes(
+      searchElement: T | (Reset.WidenLiteral<T> & {}),
+      fromIndex?: number
+    ): searchElement is T // Note this comes with pitfalls, but should be fine for use case here:: https://github.com/total-typescript/ts-reset/issues/49
     lastIndexOf(searchElement: T | (Reset.WidenLiteral<T> & {}), fromIndex?: number): number
     indexOf(searchElement: T | (Reset.WidenLiteral<T> & {}), fromIndex?: number): number
     filter(predicate: BooleanConstructor, thisArg?: any): TSReset.NonFalsy<T>[]
   }
 
   interface Array<T> {
-    includes(searchElement: T | (Reset.WidenLiteral<T> & {}), fromIndex?: number): boolean
+    includes(
+      searchElement: T | (Reset.WidenLiteral<T> & {}),
+      fromIndex?: number
+    ): searchElement is T // Note this comes with pitfalls, but should be fine for use case here: https://github.com/total-typescript/ts-reset/issues/49
     lastIndexOf(searchElement: T | (Reset.WidenLiteral<T> & {}), fromIndex?: number): number
     indexOf(searchElement: T | (Reset.WidenLiteral<T> & {}), fromIndex?: number): number
     filter(predicate: BooleanConstructor, thisArg?: any): TSReset.NonFalsy<T>[]

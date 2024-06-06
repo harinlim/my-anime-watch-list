@@ -59,6 +59,7 @@ export async function fetchWithError<
   init: RequestInit = {},
   props?: {
     skipResult?: SkipResult
+    logResponse?: boolean
     toBody?: (errorResponse: Response) => TError | Promise<TError>
     toMessage?: (errorResponse: Response) => string | undefined | Promise<string | undefined>
     prefix?: string | ((errorResponse: Response) => string | Promise<string>)
@@ -66,9 +67,15 @@ export async function fetchWithError<
 ): Promise<TData> {
   const response = await fetch(url, init)
   if (!response.ok) {
+    const errorBody = props?.toBody ? await props.toBody(response) : await response.clone().json()
+
+    if (props?.logResponse) {
+      console.error(errorBody)
+    }
+
     throw new HttpError({
       response: response.clone(),
-      body: props?.toBody ? await props.toBody(response) : await response.clone().json(),
+      body: errorBody,
       message: props?.toMessage ? await props.toMessage(response) : undefined,
       prefix: props?.prefix
         ? typeof props.prefix === 'string'

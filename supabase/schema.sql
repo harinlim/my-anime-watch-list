@@ -235,47 +235,47 @@ begin
 
   else
   
-  -- otherwise, provide user-specific result including relationships
-  return query
-  with users_excluding_watchlist as (
-    select * 
-    from users
-    where exclude_watchlist_id is null or users.id not in (
-      select user_id 
-      from watchlists_users
-      where watchlist_id = exclude_watchlist_id
+    -- otherwise, provide user-specific result including relationships
+    return query
+    with users_excluding_watchlist as (
+      select * 
+      from users
+      where exclude_watchlist_id is null or users.id not in (
+        select user_id 
+        from watchlists_users
+        where watchlist_id = exclude_watchlist_id
+      )
+    ), 
+    full_user_relationships as (
+      select
+        user1 as user_id,
+        shared_watchlist_count
+      from user_relationships
+      where user2 = self_uid
+      union
+      select
+        user2 as user_id,
+        shared_watchlist_count
+      from user_relationships
+      where user1 = self_uid
     )
-  ), 
-  full_user_relationships as (
-    select
-      user1 as user_id,
-      shared_watchlist_count
-    from user_relationships
-    where user2 = self_uid
-    union
-    select
-      user2 as user_id,
-      shared_watchlist_count
-    from user_relationships
-    where user1 = self_uid
-  )
 
-  select
-    u.id,
-    u.username,
-    u.avatar_url,
-    (case when exists_prefix 
-      then ts_rank(to_tsvector('simple', u.username), ts_prefix_query)
-      else 1.0
-     end) * (1 + COALESCE(full_user_relationships.shared_watchlist_count, 0)) AS adjusted_rank
-  from users_excluding_watchlist as u
-  left join full_user_relationships on u.id = full_user_relationships.user_id
-  where not exists_prefix or to_tsvector(u.username) @@ ts_prefix_query
-  order by
-    adjusted_rank desc,
-    length(u.username),
-    u.username
-  limit 20;
+    select
+      u.id,
+      u.username,
+      u.avatar_url,
+      (case when exists_prefix 
+        then ts_rank(to_tsvector('simple', u.username), ts_prefix_query)
+        else 1.0
+      end) * (1 + COALESCE(full_user_relationships.shared_watchlist_count, 0)) AS adjusted_rank
+    from users_excluding_watchlist as u
+    left join full_user_relationships on u.id = full_user_relationships.user_id
+    where not exists_prefix or to_tsvector(u.username) @@ ts_prefix_query
+    order by
+      adjusted_rank desc,
+      length(u.username),
+      u.username
+    limit 20;
 
   end if;
 
