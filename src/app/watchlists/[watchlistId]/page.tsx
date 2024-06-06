@@ -61,7 +61,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
         <div className="flex justify-center p-10">
           <div className="w-full items-center lg:max-w-5xl">
             <section className="flex flex-col justify-between lg:flex-row lg:items-center">
-              <Group className="flex flex-row flex-nowrap items-start justify-between ">
+              <Group className="flex flex-row flex-nowrap items-start justify-between">
                 <Title order={1} className="text-4xl">
                   {watchlist.title}
                 </Title>

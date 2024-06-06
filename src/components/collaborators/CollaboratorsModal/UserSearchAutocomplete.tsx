@@ -160,7 +160,7 @@ export function UserSearchAutocomplete({
         <Group className="mt-2 items-center gap-1 px-1">
           <IconExclamationCircle size={16} className="text-red-700 dark:text-red-400" />
           {disabledMessage && (
-            <Text size="sm" className="text-red-700 dark:text-red-400 ">
+            <Text size="sm" className="text-red-700 dark:text-red-400">
               {disabledMessage}
             </Text>
           )}

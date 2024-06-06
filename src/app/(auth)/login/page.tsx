@@ -20,7 +20,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
           id="login-form"
           className="text-foreground flex w-full flex-1 flex-col justify-center gap-2"
         >
-          <label htmlFor="email" className="block text-sm font-medium leading-6 ">
+          <label htmlFor="email" className="block text-sm font-medium leading-6">
             Email:
           </label>
           <input
@@ -32,7 +32,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
             className="mb-6 rounded-md border bg-inherit px-4 py-2"
           />
 
-          <label htmlFor="username" className="block text-sm font-medium leading-6 ">
+          <label htmlFor="username" className="block text-sm font-medium leading-6">
             Username:
           </label>
           <input
@@ -44,7 +44,7 @@ export default function Login({ searchParams }: { searchParams: { message: strin
             className="mb-6 rounded-md border bg-inherit px-4 py-2"
           />
 
-          <label htmlFor="password" className="block text-sm font-medium leading-6 ">
+          <label htmlFor="password" className="block text-sm font-medium leading-6">
             Password:
           </label>
           <input
