@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { getUserByUsername } from '@/db/users'
+import { getUserByUsername, getUserFromSession } from '@/db/users'
 import { queryWatchlistsForUser, queryWatchlistOverviews } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 
@@ -21,9 +21,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const { username } = params
   const supabase = createServerClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: user } = await getUserFromSession(supabase)
 
   // Get user associated with username
   const userResult = await getUserByUsername(supabase, username)

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { getUserFromSession } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
@@ -54,14 +55,12 @@ export async function GET(request: NextRequest) {
 
   // If no search param is provided, return the current user's information aka ME
   if (searchParamsResult.data.search === null) {
-    // Check if a user's logged in
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: user } = await getUserFromSession(supabase)
     if (!user) {
       return NextResponse.json('Failed authorization', { status: 401 })
     }
 
+    // TODO: is this even necessary?
     const userResult = await supabase
       .from('users')
       .select(`username, email, avatar_url`, { count: 'exact' })

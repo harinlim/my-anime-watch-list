@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google'
 import { Header } from '@/components/common/Header'
 import { ReactQueryClientProvider } from '@/context/ReactQueryClientContext'
 import { UserProvider } from '@/context/UserContext'
-import { getUserFromAuth } from '@/db/users'
+import { getUserFromSession } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 
 import { theme } from './theme'
@@ -30,7 +30,7 @@ export default async function RootLayout({
 }>) {
   const supabase = createServerClient()
 
-  const { data: user } = await getUserFromAuth(supabase)
+  const { data: user } = await getUserFromSession(supabase)
 
   return (
     <html lang="en">

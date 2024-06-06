@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { getAnimeByUserAssociation } from '@/db/anime'
-import { getUserByUsername } from '@/db/users'
+import { getUserByUsername, getUserFromSession } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 import { transformAnimeByUserAssociation } from '@/utils/user-anime'
@@ -27,11 +27,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const supabase = createServerClient()
 
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const { data: user } = await getUserFromSession(supabase)
   if (!user) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }

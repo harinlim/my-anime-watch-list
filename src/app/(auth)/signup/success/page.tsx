@@ -1,23 +1,17 @@
 import { Title, Text, Button } from '@mantine/core'
 import { IconArrowRight } from '@tabler/icons-react'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { fetchWithType } from '@/lib/api'
-import { withBaseURL } from '@/lib/url'
-
-import type { User } from '@/types/users'
+import { getUserFromSession } from '@/db/users'
+import { createServerClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function SignupSuccessPage() {
-  const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
-    method: 'GET',
-    credentials: 'include',
-    headers: new Headers(headers()),
-  })
+  const supabase = createServerClient()
 
+  const { data: user } = await getUserFromSession(supabase)
   if (!user?.id) {
     return redirect('/login')
   }

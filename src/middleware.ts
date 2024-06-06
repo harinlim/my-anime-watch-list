@@ -7,6 +7,8 @@ export async function middleware(request: NextRequest) {
   return updateSession(request)
 }
 
+// TODO: Consider adding CORS protection with API routes to prevent direct calls we do not want to expose.
+
 export const config = {
   matcher: [
     /*

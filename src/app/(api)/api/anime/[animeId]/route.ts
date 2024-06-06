@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
 import { getAnimeExistsById, getAnimeByUserAssociation } from '@/db/anime'
+import { getUserFromSession } from '@/db/users'
 import { getAnimeById } from '@/lib/kitsu/api'
 import { createServerClient } from '@/lib/supabase/server'
 import { safeParseRequestBody } from '@/lib/zod/api'
@@ -20,10 +21,8 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
   const { animeId } = params
 
   const supabase = createServerClient()
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+
+  const { data: user } = await getUserFromSession(supabase)
 
   // Validate records exist while getting kitsu
   const [animeExistsResult, userAnimeResult, kitsuResponse] = await Promise.all([
@@ -88,11 +87,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const { animeId } = params
 
   const supabase = createServerClient()
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
+  const { data: user } = await getUserFromSession(supabase)
   if (!user) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }
@@ -137,11 +133,8 @@ export async function DELETE(_: NextRequest, { params }: RouteParams) {
   const { animeId } = params
 
   const supabase = createServerClient()
-  // Check if a user's logged in
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
 
+  const { data: user } = await getUserFromSession(supabase)
   if (!user) {
     return NextResponse.json('Failed authorization', { status: 401 })
   }

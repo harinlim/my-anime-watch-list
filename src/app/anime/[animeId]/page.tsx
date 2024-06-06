@@ -13,11 +13,13 @@ import {
   Group,
 } from '@mantine/core'
 import clsx from 'clsx'
-import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { Review } from '@/components/anime/Review'
+import { getUserFromSession } from '@/db/users'
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
+import { createServerClient } from '@/lib/supabase/server'
 import { withBaseURL } from '@/lib/url'
 import { getAnimeRatingColor } from '@/utils/anime-colors'
 
@@ -25,25 +27,21 @@ import styles from './anime-page.module.css'
 import { WatchlistSelect } from './WatchlistSelect'
 
 import type { GetAnimeByIdResponse } from '@/api/anime/[animeId]/types'
-import type { User } from '@/types/users'
 
 export default async function AnimePage({ params }: { params: { animeId: string } }) {
   const { animeId } = params
+
+  const supabase = createServerClient()
+  const { data: user } = await getUserFromSession(supabase)
 
   const animeResponse = await fetchWithType<GetAnimeByIdResponse>(
     withBaseURL(`/api/anime/${animeId}`),
     {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: proxyRequestHeaders(),
     }
   )
-
-  const { data: user } = await fetchWithType<User>(withBaseURL('/api/users'), {
-    method: 'GET',
-    credentials: 'include',
-    headers: new Headers(headers()),
-  })
 
   // Show not found for client errors
   if (animeResponse.status >= 400 && animeResponse.status < 500) {

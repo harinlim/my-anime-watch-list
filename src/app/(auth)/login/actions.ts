@@ -82,8 +82,8 @@ export async function signup(formData: FormData) {
 
   console.info(signUpResult)
 
-  if (signUpResult.error) {
-    if (signUpResult.error.status === 422) {
+  if (!!signUpResult.error || signUpResult.data.session === null) {
+    if (signUpResult.error?.status === 422) {
       // Supabase doesn't expose this so we need to assert this
       switch (signUpResult.error.code as SupabaseAuthErrorCode) {
         case 'email_exists': {
@@ -104,6 +104,9 @@ export async function signup(formData: FormData) {
     console.error(signUpResult)
     return redirect('/login?message=Failed to sign up')
   }
+
+  // Must set session cookie to get user on redirect/revalidate
+  await supabase.auth.setSession(signUpResult.data.session)
 
   revalidatePath('/', 'layout')
   return redirect('/signup/success')

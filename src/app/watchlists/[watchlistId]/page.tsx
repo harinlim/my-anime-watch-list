@@ -1,5 +1,4 @@
 import { Title, Group } from '@mantine/core'
-import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
 import { CollaboratorsProvider } from '@/components/collaborators/CollaboratorsContext'
@@ -7,6 +6,7 @@ import { CollaboratorsModal } from '@/components/collaborators/CollaboratorsModa
 import { EditCollaboratorsModalProvider } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModalContext'
 import { WatchlistPrivacyIndicator } from '@/components/watchlists/WatchlistPrivacyIndicator'
 import { fetchWithType } from '@/lib/api'
+import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
 import { EditCollaboratorsButton } from './EditCollaboratorsButton'
@@ -21,16 +21,18 @@ import type { Watchlist, WatchlistUser } from '@/types/watchlists'
 export default async function WatchlistPage({ params }: { params: { watchlistId: string } }) {
   const { watchlistId } = params
 
+  const headersInit = proxyRequestHeaders()
+
   const [watchlistResponse, collaboratorsResponse] = await Promise.all([
     fetchWithType<Watchlist>(withBaseURL(`/api/watchlists/${watchlistId}`), {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: headersInit,
     }),
     fetchWithType<WatchlistUser[]>(withBaseURL(`/api/watchlists/${watchlistId}/users`), {
       method: 'GET',
       credentials: 'include',
-      headers: new Headers(headers()),
+      headers: headersInit,
     }),
   ])
 
