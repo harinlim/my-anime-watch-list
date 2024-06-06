@@ -47,7 +47,7 @@ export function CollaboratorsModalContent({ watchlistId, isPublicWatchlist, clas
   const deletedUserId = deleteVariables?.collaboratorId
 
   const handleEditCollaborator = useCallback(
-    (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => {
+    (option: 'editor' | 'viewer' | 'remove', collaboratorId: string) => {
       if (option === 'remove') {
         deleteCollaborator(
           { collaboratorId },

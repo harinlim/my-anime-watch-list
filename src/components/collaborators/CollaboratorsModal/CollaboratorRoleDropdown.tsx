@@ -14,29 +14,82 @@ import {
 import { IconChevronDown } from '@tabler/icons-react'
 import { useCallback, useState } from 'react'
 
-import type { CollaboratorRole, WatchlistUser } from '@/types/watchlists'
+import type { CollaboratorRole } from '@/types/watchlists'
 
-type Props = {
-  onChange: (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => void
-  canEdit?: boolean
-  canDelete?: boolean
+type Props<
+  Options extends 'owner' | 'editor' | 'viewer' | 'remove' | undefined = undefined,
+  Dynamic extends boolean = false,
+  CanDelete extends boolean | undefined = Dynamic extends true
+    ? boolean
+    : 'remove' extends Options
+      ? true
+      : false,
+  CanEdit extends boolean | undefined = Dynamic extends true
+    ? boolean
+    : 'editor' | 'viewer' extends Options
+      ? true
+      : false,
+  Roles extends 'owner' | 'editor' | 'viewer' | 'remove' = Dynamic extends true
+    ? Options extends undefined
+      ? 'owner' | 'editor' | 'viewer' | 'remove'
+      : Options
+    : Options extends undefined
+      ? CanEdit extends true
+        ? CanDelete extends true
+          ? 'editor' | 'viewer' | 'remove'
+          : 'editor' | 'viewer'
+        : CanDelete extends true
+          ? 'remove'
+          : 'owner'
+      : Options,
+> = {
+  canEdit?: CanEdit
+  canDelete?: CanDelete
   isDisabled?: boolean
-  collaborator: WatchlistUser
-}
+  initialRole: CollaboratorRole
+} & ( // TODO: fix inference on `onChange` option param
+  | { onChange: (option: Roles, id: string) => void; id: string }
+  | { onChange: (option: Roles) => void; id?: never }
+)
 
 const SELECTABLE_ROLES = ['editor', 'viewer'] as const
 
-const isOptionValid = (option: string): option is 'editor' | 'viewer' | 'remove' =>
-  option === 'editor' || option === 'viewer' || option === 'remove'
-
-export function CollaboratorRoleDropdown({
+export function CollaboratorRoleDropdown<
+  // TODO: look into why setting `Options` breaks inference
+  Options extends 'owner' | 'editor' | 'viewer' | 'remove' | undefined = undefined,
+  Dynamic extends boolean = false,
+  CanDelete extends boolean | undefined = Dynamic extends true
+    ? boolean
+    : 'remove' extends Options
+      ? true
+      : false,
+  CanEdit extends boolean | undefined = Dynamic extends true
+    ? boolean
+    : 'editor' | 'viewer' extends Options
+      ? true
+      : false,
+  Roles extends 'owner' | 'editor' | 'viewer' | 'remove' = Dynamic extends true
+    ? Options extends undefined
+      ? 'owner' | 'editor' | 'viewer' | 'remove'
+      : Options
+    : Options extends undefined
+      ? CanEdit extends true
+        ? CanDelete extends true
+          ? 'editor' | 'viewer' | 'remove'
+          : 'editor' | 'viewer'
+        : CanDelete extends true
+          ? 'remove'
+          : 'owner'
+      : Options,
+>({
   onChange,
   isDisabled = false,
   canDelete = false,
   canEdit = false,
-  collaborator,
-}: Props) {
-  const [role, setRole] = useState<CollaboratorRole>(collaborator.role)
+  initialRole,
+  id,
+}: Props<Options, Dynamic, CanDelete, CanEdit, Roles>) {
+  const [role, setRole] = useState<CollaboratorRole>(initialRole)
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -49,21 +102,41 @@ export function CollaboratorRoleDropdown({
     },
   })
 
+  // Wild that this is necessary for inference
+  const isOptionValid = useCallback(
+    (option: string): option is Roles => {
+      if (canDelete && option === 'remove') {
+        return true
+      }
+
+      if (canEdit && SELECTABLE_ROLES.includes(option)) {
+        return true
+      }
+
+      return false
+    },
+    [canDelete, canEdit]
+  )
+
   const handleChangeRole = useCallback(
     (option: string) => {
       if (!isOptionValid(option)) {
         throw new Error(`Invalid option: ${option}`)
       }
 
-      onChange(collaborator.user_id, option)
+      if (id === undefined) {
+        onChange(option)
+      } else {
+        onChange(option, id)
+      }
 
-      if (option !== 'remove') {
+      if (SELECTABLE_ROLES.includes(option)) {
         setRole(option)
       }
 
       combobox.closeDropdown()
     },
-    [onChange, collaborator.user_id, combobox]
+    [onChange, isOptionValid, id, combobox]
   )
 
   return (
@@ -90,10 +163,7 @@ export function CollaboratorRoleDropdown({
         <ComboboxOptions className="text-sm capitalize">
           {canEdit &&
             SELECTABLE_ROLES.map(selectableRole => (
-              <ComboboxOption
-                key={`${collaborator.username}-${selectableRole}`}
-                value={selectableRole}
-              >
+              <ComboboxOption key={`${id}-option-${selectableRole}`} value={selectableRole}>
                 {selectableRole}
               </ComboboxOption>
             ))}

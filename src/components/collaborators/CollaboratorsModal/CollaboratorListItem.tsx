@@ -16,7 +16,7 @@ type Props = {
   canDelete: boolean
   isSelf?: boolean
   isPending?: boolean
-  onChange: (collaboratorId: string, option: 'editor' | 'viewer' | 'remove') => void
+  onChange: (option: 'editor' | 'viewer' | 'remove', id: string) => void
   className?: string
 }
 
@@ -51,12 +51,13 @@ export const CollaboratorListItem = memo(
       </Group>
 
       {canEdit || canDelete ? (
-        <CollaboratorRoleDropdown
+        <CollaboratorRoleDropdown<'editor' | 'viewer' | 'remove', true>
           canEdit={canEdit}
           canDelete={canDelete}
           isDisabled={isPending}
           onChange={onChange}
-          collaborator={collaborator}
+          initialRole={collaborator.role}
+          id={collaborator.user_id}
         />
       ) : (
         <Text className="pl-4 pr-8 text-sm capitalize italic opacity-60">{collaborator.role}</Text>
