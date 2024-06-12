@@ -35,8 +35,8 @@ dependencies:
     specifier: ^3.5.0
     version: 3.5.0(react@18.3.1)
   '@tanstack/react-query':
-    specifier: ^5.44.0
-    version: 5.44.0(react@18.3.1)
+    specifier: ^5.45.0
+    version: 5.45.0(react@18.3.1)
   clsx:
     specifier: ^2.1.1
     version: 2.1.1
@@ -163,8 +163,8 @@ devDependencies:
     specifier: ^2.1.2
     version: 2.1.2(postcss@8.4.38)(prettier@3.3.2)
   prettier-plugin-tailwindcss:
-    specifier: ^0.6.3
-    version: 0.6.3(prettier-plugin-css-order@2.1.2)(prettier@3.3.2)
+    specifier: ^0.6.4
+    version: 0.6.4(prettier-plugin-css-order@2.1.2)(prettier@3.3.2)
   stylelint:
     specifier: ^16.6.1
     version: 16.6.1(typescript@5.4.5)
@@ -1289,16 +1289,16 @@ packages:
       - typescript
     dev: true
 
-  /@tanstack/query-core@5.44.0:
-    resolution: {integrity: sha512-Fa1J7iEEyJnjXG1N4+Fz4OXNH/INve3XSn0Htms3X4wgRsXHxMDwqBE2XtDCts7swkwSIs4izEtaFqWVFr/eLQ==}
+  /@tanstack/query-core@5.45.0:
+    resolution: {integrity: sha512-RVfIZQmFUTdjhSAAblvueimfngYyfN6HlwaJUPK71PKd7yi43Vs1S/rdimmZedPWX/WGppcq/U1HOj7O7FwYxw==}
     dev: false
 
-  /@tanstack/react-query@5.44.0(react@18.3.1):
-    resolution: {integrity: sha512-zmaD6cw8P2cBOfRHhqRmwvDsAi56gqbiwG2CDR6oQOCXSDOvRagvpP6RUStn+RrfcVUrNjKsxBmrgG6Za8p5zg==}
+  /@tanstack/react-query@5.45.0(react@18.3.1):
+    resolution: {integrity: sha512-y272cKRJp1BvehrWG4ashOBuqBj1Qm2O6fgYJ9LYSHrLdsCXl74GbSVjUQTReUdHuRIl9cEOoyPa6HYag400lw==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.44.0
+      '@tanstack/query-core': 5.45.0
       react: 18.3.1
     dev: false
 
@@ -5481,8 +5481,8 @@ packages:
       - postcss
     dev: true
 
-  /prettier-plugin-tailwindcss@0.6.3(prettier-plugin-css-order@2.1.2)(prettier@3.3.2):
-    resolution: {integrity: sha512-GeJ9bqXN4APAP0V5T2a1J/o6a50MWevEUCPWxijpdXFDQkBCoAfz4pQfv+YMXSqZ5GXLMDYio0mUOfrYL7gf4w==}
+  /prettier-plugin-tailwindcss@0.6.4(prettier-plugin-css-order@2.1.2)(prettier@3.3.2):
+    resolution: {integrity: sha512-3vhbIvlKyAWPaw9bUr2cw6M1BGx2Oy9CCLJyv+nxEiBGCTcL69WcAz2IFMGqx8IXSzQCInGSo2ujAByg9poHLQ==}
     engines: {node: '>=14.21.3'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
