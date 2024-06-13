@@ -5,16 +5,22 @@ import { fetchWithError } from '@/lib/api'
 
 import type { GetWatchlistRequestBody } from '@/app/(api)/api/watchlists/types'
 
-export function useCreateWatchlist() {
+export function useEditWatchlist() {
   const queryClient = useQueryClient()
   const userId = useCurrentUser()?.id
 
   return useMutation({
-    mutationFn: async (body: GetWatchlistRequestBody) =>
+    mutationFn: async ({
+      body,
+      watchlistId,
+    }: {
+      body: GetWatchlistRequestBody
+      watchlistId: number
+    }) =>
       fetchWithError(
-        `/api/watchlists`,
+        `/api/watchlists/${watchlistId}`,
         {
-          method: 'POST',
+          method: 'PUT',
           credentials: 'include',
           body: JSON.stringify(body),
         },
