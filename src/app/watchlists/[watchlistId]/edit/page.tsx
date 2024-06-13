@@ -36,7 +36,6 @@ export default async function EditWatchlistPage({ params }: { params: { watchlis
   return (
     <div className="lg: px-1/4 m-10 lg:flex lg:flex-col lg:items-center">
       <div className="space-y-6 lg:w-1/2">
-        referer: {referer}
         <WatchlistForm
           referer={referer ?? undefined}
           watchlistId={watchlistId}
