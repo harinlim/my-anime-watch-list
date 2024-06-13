@@ -1,4 +1,4 @@
-import { Anchor, Group, Text, Title } from '@mantine/core'
+import { Flex, Group, Text, Title } from '@mantine/core'
 import { IconArmchair2 } from '@tabler/icons-react'
 import clsx from 'clsx'
 import Link from 'next/link'
@@ -21,15 +21,9 @@ const links = [
 ]
 
 export function Header({ user }: Props) {
-  const items = links.map(link => (
-    <Link key={link.label} href={link.link} className={styles.link}>
-      {link.label}
-    </Link>
-  ))
-
   return (
-    <header className={styles.header}>
-      <div className={styles.inner}>
+    <header className={clsx(styles.header, 'h-14')}>
+      <Flex className="h-14 items-center justify-between">
         <Link className="flex flex-nowrap items-center gap-2" href="/">
           <IconArmchair2 />
           <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
@@ -37,9 +31,17 @@ export function Header({ user }: Props) {
           </Text>
         </Link>
 
-        <Group ml={30} className={clsx(styles.links, 'flex-nowrap')}>
+        <Group ml={30} className="flex-nowrap">
           <Group visibleFrom="sm" gap="5" className="flex-nowrap">
-            {items}
+            {links.map(link => (
+              <Link
+                key={link.label}
+                href={link.link}
+                className={clsx(styles.link, 'min-w-20 px-2 py-3 text-center font-medium')}
+              >
+                {link.label}
+              </Link>
+            ))}
           </Group>
 
           <Group gap={20} className="flex-nowrap">
@@ -52,12 +54,15 @@ export function Header({ user }: Props) {
               <UserMenuDropdown />
             </UserMenu>
           ) : (
-            <Anchor component={Link} href="/login" className={clsx(styles.link, 'shrink-0')}>
+            <Link
+              href="/login"
+              className={clsx(styles.link, 'min-w-20 shrink-0 px-3 py-3 text-center font-medium')}
+            >
               Sign in
-            </Anchor>
+            </Link>
           )}
         </Group>
-      </div>
+      </Flex>
     </header>
   )
 }
