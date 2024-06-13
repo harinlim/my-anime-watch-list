@@ -30,9 +30,11 @@ export function UserMenu({ user, children }: Props) {
       <MenuTarget>
         <UnstyledButton
           type="button"
-          className={clsx(styles.user, 'min-w-20 px-2 py-3 font-medium', {
-            [styles.userActive]: userMenuOpened,
-          })}
+          className={clsx(
+            styles.user,
+            'min-w-20 px-2 py-3 font-medium',
+            userMenuOpened && styles.userActive
+          )}
         >
           <Group gap={7} className="flex-nowrap">
             <Text fw={500} size="sm" lh={1} mr={3}>
