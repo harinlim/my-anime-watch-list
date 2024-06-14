@@ -5,11 +5,12 @@ import { getUserFromSession } from '@/db/users'
 import { getWatchlistExistsById } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
 import { parseRequestBody } from '@/lib/zod/api'
+import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 import { transformAnimeByWatchlist } from '@/utils/watchlist-anime'
 
-import { addWatchlistAnimeRequestBodySchema } from './schemas'
+import { addWatchlistAnimeRequestBodySchema, getWatchlistAnimeQueryParamsSchema } from './schemas'
 
-import type { AnimeByWatchlist } from '@/types/anime'
+import type { GetWatchlistAnimeResponse } from './types'
 import type { NextRequest } from 'next/server'
 
 type RouteParams = { params: { watchlistId: string } }
@@ -17,30 +18,73 @@ type RouteParams = { params: { watchlistId: string } }
 /**
  * Get a watchlist anime list
  *
- * TODO: add pagination and sort
+ * TODO: add sort
  */
-export async function GET(_: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, { params }: RouteParams) {
   const watchlistId = Number(params.watchlistId)
   if (Number.isNaN(watchlistId) || watchlistId <= 0) {
     return NextResponse.json('Invalid watchlist ID', { status: 400 })
   }
 
+  const { searchParams } = request.nextUrl
+
+  const queryParamsResult = getWatchlistAnimeQueryParamsSchema.safeParse({
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string */
+    // sort: searchParams.get('sort') || 'updated_at',
+    // direction: searchParams.get('direction') || 'asc',
+    page: searchParams.get('page') || 1, // yay magic numbers
+    limit: searchParams.get('limit') || 10,
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+  })
+
+  if (!queryParamsResult.success) {
+    return NextResponse.json(transformZodValidationErrorToResponse(queryParamsResult.error), {
+      status: 400,
+    })
+  }
+
+  const queryParams = queryParamsResult.data
+
   const supabase = createServerClient()
 
   const { data: user } = await getUserFromSession(supabase)
 
-  const watchlistResult = await getAnimeByWatchlist(supabase, { userId: user?.id, watchlistId })
+  const currentOffset = (queryParams.page - 1) * queryParams.limit
+  const nextOffset = currentOffset + queryParams.limit
 
-  if (watchlistResult.error) {
-    console.error(watchlistResult)
-    return NextResponse.json('Failed to fetch watchlist', { status: 500 })
+  const searchResult = await getAnimeByWatchlist(supabase, {
+    userId: user?.id,
+    watchlistId,
+  }).range(currentOffset, nextOffset - 1)
+
+  if (searchResult.error) {
+    console.error(searchResult)
+    return NextResponse.json<GetWatchlistAnimeResponse>(
+      {
+        ok: false,
+        data: null,
+        error: searchResult.error,
+        status: searchResult.status,
+        message: 'Failed to fetch watchlist anime',
+      },
+      { status: searchResult.status }
+    )
   }
 
-  if (!watchlistResult.data) {
-    return NextResponse.json('Watchlist not found', { status: 404 })
-  }
+  const total = searchResult.count ?? searchResult.data.length
 
-  return NextResponse.json<AnimeByWatchlist[]>(watchlistResult.data.map(transformAnimeByWatchlist))
+  return NextResponse.json<GetWatchlistAnimeResponse>({
+    data: searchResult.data.map(transformAnimeByWatchlist),
+    ok: true,
+    status: 200,
+    meta: {
+      total,
+      limit: queryParams.limit,
+      self: queryParams.page,
+      prev: queryParams.page > 1 ? queryParams.page - 1 : undefined,
+      next: nextOffset < total ? queryParams.page + 1 : undefined,
+    },
+  })
 }
 
 /**
