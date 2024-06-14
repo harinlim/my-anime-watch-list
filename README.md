@@ -54,7 +54,7 @@ This also includes a RESTful CRUD API for the following resources:
   - [x] `DELETE`: (_protected_) Remove a collaborator from the watchlist
 - [x] `/api/watchlists/:watchlistId/anime`
   - [x] `GET`: Get anime associated with the watchlist
-    - [ ] TODO: Add pagination, sort, filter?
+    - [ ] TODO: Add sort, filter?
   - [x] `POST`: (_protected_) Add an anime to the watchlist
 - [x] `/api/watchlists/:watchlistId/anime/:animeId`
   - [x] `DELETE`: (_protected_) Remove the anime from the watchlist
