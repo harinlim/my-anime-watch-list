@@ -7,7 +7,7 @@ export const searchWatchlistsQueryParamsSchema = z.object({
   search: z.string().nullish(),
   sort: z.enum(SEARCH_WATCHLISTS_SORT_TYPES),
   direction: z.enum(['asc', 'desc']),
-  page: z.coerce.number().int().nonnegative(),
+  page: z.coerce.number().int().positive(),
   limit: z.coerce.number().int().nonnegative().max(MAX_WATCHLIST_QUERY_LIMIT),
 })
 

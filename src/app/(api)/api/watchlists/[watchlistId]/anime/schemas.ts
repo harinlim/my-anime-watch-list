@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { MAX_WATCHLIST_ANIME_QUERY_LIMIT } from './constants'
 
 export const getWatchlistAnimeQueryParamsSchema = z.object({
-  page: z.coerce.number().int().nonnegative(),
+  page: z.coerce.number().int().positive(),
   limit: z.coerce.number().int().nonnegative().max(MAX_WATCHLIST_ANIME_QUERY_LIMIT),
 })
 
