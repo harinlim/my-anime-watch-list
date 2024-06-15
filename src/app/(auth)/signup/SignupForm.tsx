@@ -42,15 +42,14 @@ export function SignupForm() {
     setIsSubmitting(true)
     const result = await signup(values)
 
-    setIsSubmitting(false)
-
     if (result.success) {
       setError('')
 
       router.push('/signup/success')
-      setIsSubmitting(false)
       return
     }
+
+    setIsSubmitting(false)
 
     if (result.fieldErrors) {
       setError('')

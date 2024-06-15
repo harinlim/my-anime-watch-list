@@ -30,15 +30,14 @@ export function LoginForm() {
     setIsSubmitting(true)
     const result = await login(values)
 
-    setIsSubmitting(false)
-
     if (result.success) {
       setError('')
 
       router.push('/profile')
-      setIsSubmitting(false)
       return
     }
+
+    setIsSubmitting(false)
 
     if (result.fieldErrors) {
       setError('')
