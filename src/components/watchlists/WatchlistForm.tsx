@@ -2,6 +2,7 @@
 
 import {
   TextInput,
+  Text,
   Textarea,
   Group,
   Switch,
@@ -9,29 +10,37 @@ import {
   Title,
   Card,
   LoadingOverlay,
+  ActionIcon,
+  Tooltip,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
+import { IconQuestionMark } from '@tabler/icons-react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { watchlistRequestBodySchema } from '@/app/(api)/api/watchlists/schemas'
-import { useCreateWatchlist } from '@/data/use-create-watchlist'
-import { useEditWatchlist } from '@/data/use-edit-watchlist'
 import revalidate from '@/utils/revalidate'
 
+import type { WatchlistRequestBody } from '@/app/(api)/api/watchlists/types'
+import type { UseMutateFunction } from '@tanstack/react-query'
+
 type Props = {
-  referer?: string
+  nextUrl: string
   watchlistId?: number
   title?: string
   description?: string | null
   isPublic?: boolean
+  mutate: UseMutateFunction<undefined, Error, WatchlistRequestBody, unknown>
+  isPending: boolean
 }
 
 export default function WatchlistForm({
-  referer,
+  nextUrl,
   watchlistId,
   title,
   description,
   isPublic,
+  mutate,
+  isPending,
 }: Props) {
   const isEdit = !!watchlistId
   const router = useRouter()
@@ -48,43 +57,14 @@ export default function WatchlistForm({
     validate: zodResolver(watchlistRequestBodySchema),
   })
 
-  const {
-    mutate: createWatchlist,
-    // variables: updateVariables,
-    isPending: isCreatePending,
-  } = useCreateWatchlist()
-
-  const {
-    mutate: editWatchlist,
-    // variables: updateVariables,
-    isPending: isEditPending,
-  } = useEditWatchlist()
-
   const onSubmit = form.onSubmit(values => {
-    if (isEdit) {
-      editWatchlist(
-        { body: values, watchlistId },
-        {
-          onSuccess: () => {
-            revalidate(`/watchlists/${watchlistId}`)
-            revalidate(currentPath)
-            if (referer) {
-              if (referer.includes('localhost')) router.replace(referer)
-            } else router.replace(`/watchlists/${watchlistId}`)
-          },
-        }
-      )
-    } else {
-      createWatchlist(values, {
-        onSettled: () => {
-          if (referer) {
-            if (referer.includes('localhost') && !referer.endsWith('watchlists/create')) {
-              router.push(referer)
-            }
-          } else router.push('/watchlists')
-        },
-      })
-    }
+    mutate(values, {
+      onSuccess: () => {
+        revalidate(`/watchlists/${watchlistId}`)
+        revalidate(currentPath)
+        router.push(nextUrl)
+      },
+    })
   })
 
   return (
@@ -92,14 +72,14 @@ export default function WatchlistForm({
       <Title order={1} className="font-semibold">
         {isEdit ? 'Edit' : 'Create'} watchlist
       </Title>
-      <form onSubmit={onSubmit} className="space-y-3">
+      <form onSubmit={onSubmit} className="mt-5 space-y-4">
         <TextInput
           withAsterisk
           label="Title"
           variant="filled"
           placeholder="My favorite watchlist..."
           key={form.key('title')}
-          disabled={isCreatePending || isEditPending}
+          disabled={isPending}
           {...form.getInputProps('title')}
           className="space-y-2"
         />
@@ -110,23 +90,46 @@ export default function WatchlistForm({
           placeholder="This is the description of my favorite watchlist..."
           autosize
           minRows={4}
+          maxRows={8}
+          resize="vertical"
           key={form.key('description')}
-          disabled={isCreatePending || isEditPending}
+          disabled={isPending}
           {...form.getInputProps('description')}
           className="space-y-2"
         />
 
-        <Group mt="lg" className="items-center justify-between">
-          <Switch
-            color="green"
-            mb="lg"
-            label="Public"
-            description="Make watchlist viewable to everyone"
-            key={form.key('isPublic')}
-            {...form.getInputProps('isPublic', { type: 'checkbox' })}
-          />
+        <Group mt="xl" className="items-center justify-between">
+          <Group>
+            <Switch
+              color="blue"
+              mb="lg"
+              label={
+                <Group className="items-center gap-2">
+                  <Text>Public</Text>
+                  <Tooltip
+                    label="Make watchlist viewable to everyone"
+                    id="public-description"
+                    events={{ hover: true, focus: true, touch: true }}
+                    withArrow
+                  >
+                    <ActionIcon
+                      size="xs"
+                      variant="outline"
+                      radius="xl"
+                      aria-describedby="public-description"
+                    >
+                      <IconQuestionMark size="sm" />
+                    </ActionIcon>
+                  </Tooltip>
+                </Group>
+              }
+              key={form.key('isPublic')}
+              {...form.getInputProps('isPublic', { type: 'checkbox' })}
+            />
+          </Group>
+
           <Button type="submit" color="pink" size="md">
-            <LoadingOverlay visible={isCreatePending || isEditPending} />
+            <LoadingOverlay visible={isPending} />
             {isEdit ? 'Save' : 'Create'}
           </Button>
         </Group>

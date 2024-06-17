@@ -1,18 +1,27 @@
-import { headers } from 'next/headers'
+import { Button } from '@mantine/core'
+import { IconArrowLeft } from '@tabler/icons-react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import WatchlistForm from '@/components/watchlists/WatchlistForm'
 import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
-import { withBaseURL } from '@/lib/url'
+import { isSameOrigin, isSamePath, withBaseURL } from '@/lib/url'
+
+import EditWatchlistWrapper from './EditWatchlistWrapper'
 
 import type { Watchlist } from '@/types/watchlists'
 
 export default async function EditWatchlistPage({ params }: { params: { watchlistId: number } }) {
-  const headersInit = proxyRequestHeaders()
   const { watchlistId } = params
-  const headersList = headers()
-  const referer = headersList.get('referer')
+  // TODO: parse watchlistId for validity and type safety
+
+  const headersInit = proxyRequestHeaders()
+  const referer = headersInit.get('referer')
+  const currentPath = `/watchlists/${watchlistId}/edit` // Note: currently there is no good way for getting pathnames in RSCs
+  const returnUrl =
+    referer && isSameOrigin(referer, headersInit) && !isSamePath(referer, currentPath)
+      ? referer
+      : `/watchlists/${watchlistId}`
 
   const watchlistResponse = await fetchWithType<Watchlist>(
     withBaseURL(`/api/watchlists/${watchlistId}`),
@@ -34,14 +43,23 @@ export default async function EditWatchlistPage({ params }: { params: { watchlis
   const { title, description, is_public } = watchlistResponse.data
 
   return (
-    <div className="lg: px-1/4 m-10 lg:flex lg:flex-col lg:items-center">
-      <div className="space-y-6 lg:w-1/2">
-        <WatchlistForm
-          referer={referer ?? undefined}
+    <div className="px-1/4 m-10 md:flex md:flex-col md:items-center">
+      <div className="space-y-6 md:w-2/3 md:max-w-2xl">
+        <Button
+          component={Link}
+          href={returnUrl}
+          variant="transparent"
+          size="md"
+          leftSection={<IconArrowLeft size="20" />}
+        >
+          Back
+        </Button>
+        <EditWatchlistWrapper
+          returnUrl={returnUrl}
           watchlistId={watchlistId}
           title={title}
           description={description}
-          isPublic={is_public}
+          is_public={is_public}
         />
       </div>
     </div>

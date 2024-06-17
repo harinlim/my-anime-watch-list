@@ -1,12 +1,12 @@
 import { Tooltip, Box, Image } from '@mantine/core'
 import clsx from 'clsx'
 import Link from 'next/link'
+import { forwardRef, type PropsWithChildren } from 'react'
 
 import styles from './AvatarGroup.module.css'
 
 import type { PublicUser } from '@/types/users'
 import type { WatchlistUser } from '@/types/watchlists'
-import type { PropsWithChildren } from 'react'
 
 type AvatarGroupProps = {
   watchlistId: number | string
@@ -17,24 +17,27 @@ type AvatarGroupProps = {
 
 const DEFAULT_AVATARS_TO_SHOW = 3
 
-function AvatarWrapper({
-  asLink,
-  href,
-  className,
-  children,
-}: PropsWithChildren<{ asLink: true; href: string } | { asLink: false; href?: string }> & {
-  className?: string
-}) {
+const AvatarWrapper = forwardRef<
+  // TODO: narrow this better
+  HTMLAnchorElement & HTMLDivElement,
+  PropsWithChildren<{ asLink: true; href: string } | { asLink: false; href?: string }> & {
+    className?: string
+  }
+>(({ asLink, href, className, children }, ref) => {
   if (asLink) {
     return (
-      <Link href={href} prefetch={false} className={className}>
+      <Link ref={ref} href={href} prefetch={false} className={className}>
         {children}
       </Link>
     )
   }
 
-  return <div className={className}>{children}</div>
-}
+  return (
+    <div ref={ref} className={className}>
+      {children}
+    </div>
+  )
+})
 
 export function Avatar({
   user,
