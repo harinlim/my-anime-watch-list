@@ -28,6 +28,8 @@ module.exports = {
 
     'import/no-empty-named-blocks': 'error',
     'import/prefer-default-export': 'off',
+    'import/no-default-export': 'warn',
+
     'import/order': [
       'warn',
       {
@@ -88,6 +90,24 @@ module.exports = {
   },
 
   overrides: [
+    {
+      /* --- Next.js files --- */
+      files: [
+        'src/app/**/middleware.ts',
+        'src/app/**/page.tsx',
+        'src/app/**/error.tsx',
+        'src/app/**/layout.tsx',
+        'src/app/**/loading.tsx',
+        'src/app/**/global-error.tsx',
+        'src/app/**/template.tsx',
+        'src/app/**/not-found.tsx',
+      ],
+      rules: {
+        // Require default exports for pages (Next.js requirement)
+        'import/prefer-default-export': 'error',
+        'import/no-default-export': 'off',
+      },
+    },
     {
       /* --- ESM config files --- */
       files: ['**/*.config.ts', '**/*.mjs'],
