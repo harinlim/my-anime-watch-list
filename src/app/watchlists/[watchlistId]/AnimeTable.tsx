@@ -18,7 +18,7 @@ export async function AnimeTable({ watchlistId }: { watchlistId: string }) {
 
   return (
     <pre className="whitespace-pre-wrap text-wrap break-words text-left">
-      {JSON.stringify(animeResponse, null, 2)}
+      {JSON.stringify(animeResponse.data, null, 2)}
     </pre>
   )
 }

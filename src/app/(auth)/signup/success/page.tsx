@@ -1,5 +1,6 @@
 import { Title, Text, Button } from '@mantine/core'
 import { IconArrowRight } from '@tabler/icons-react'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { getUserFromSession } from '@/db/users'
@@ -15,28 +16,29 @@ export default async function SignupSuccessPage() {
   if (!user?.id) {
     return redirect('/login')
   }
+
   const welcomeText = user.username ? `Welcome, @${user.username} :)` : 'Welcome'
 
   return (
     <div className="flex min-h-[calc(100vh-150px)] flex-col items-center justify-center space-y-6 px-10">
-      <Title order={1} className="sm:text-center">
+      <Title order={1} className="text-center">
         {welcomeText}
       </Title>
-      <Text className="sm:text-center">
+      <Text className="text-center">
         You&apos;ve successfully created an account! Now you&apos;re ready to make your first
         watchlist.
       </Text>
-      <a href="/profile">
-        <Button
-          variant="filled"
-          color="teal"
-          size="lg"
-          radius="md"
-          rightSection={<IconArrowRight size={14} />}
-        >
-          Go to your profile
-        </Button>
-      </a>
+
+      <Button
+        component={Link}
+        href="/profile"
+        variant="filled"
+        size="lg"
+        radius="md"
+        rightSection={<IconArrowRight size={14} />}
+      >
+        Go to your profile
+      </Button>
     </div>
   )
 }

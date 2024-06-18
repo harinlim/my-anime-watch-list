@@ -17,10 +17,8 @@ import type { WatchlistOverview } from '@/types/watchlists'
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl
 
-  const supabase = createServerClient()
-
   const queryParamsResult = searchWatchlistsQueryParamsSchema.safeParse({
-    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string  */
     search: searchParams.get('search'),
     sort: searchParams.get('sort') || 'updated_at',
     direction: searchParams.get('direction') || 'asc',
@@ -36,6 +34,8 @@ export async function GET(request: NextRequest) {
   }
 
   const queryParams = queryParamsResult.data
+
+  const supabase = createServerClient()
 
   // Note: RLS will filter out any watchlists that the user doesn't have access to, but will include any
   // private watchlists the user DOES have access to.
@@ -55,24 +55,24 @@ export async function GET(request: NextRequest) {
     .order(queryParams.sort, { ascending: queryParams.direction === 'asc' })
     .range(currentOffset, nextOffset - 1)
 
-  const { data, count, status, error } = await query.returns<WatchlistOverview[]>()
-  if (error) {
+  const searchResult = await query.returns<WatchlistOverview[]>()
+  if (searchResult.error) {
     return NextResponse.json<SearchWatchlistsResponse>(
       {
         ok: false,
         data: null,
-        error,
-        status,
+        error: searchResult.error,
+        status: searchResult.status,
         message: 'Failed to fetch watchlists',
       },
-      { status }
+      { status: searchResult.status }
     )
   }
 
-  const total = count ?? data.length
+  const total = searchResult.count ?? searchResult.data.length
 
   return NextResponse.json<SearchWatchlistsResponse>({
-    data,
+    data: searchResult.data,
     ok: true,
     status: 200,
     meta: {

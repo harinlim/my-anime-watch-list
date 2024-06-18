@@ -55,7 +55,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const { searchParams } = request.nextUrl
 
   const queryParamsResult = getAnimeByUserQueryParamsSchema.safeParse({
-    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string */
     status: searchParams.get('status') || null,
     rating: searchParams.get('rating') || null,
     sort: searchParams.get('sort') || 'status',

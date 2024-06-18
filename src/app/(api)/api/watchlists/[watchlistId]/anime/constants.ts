@@ -1,0 +1,1 @@
+export const MAX_WATCHLIST_ANIME_QUERY_LIMIT = 20
