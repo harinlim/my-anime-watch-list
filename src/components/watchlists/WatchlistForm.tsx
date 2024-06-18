@@ -89,13 +89,16 @@ export default function WatchlistForm({
           variant="filled"
           placeholder="This is the description of my favorite watchlist..."
           autosize
-          minRows={4}
+          minRows={3}
           maxRows={8}
           resize="vertical"
           key={form.key('description')}
           disabled={isPending}
           {...form.getInputProps('description')}
           className="space-y-2"
+          classNames={{
+            input: 'min-h-20',
+          }}
         />
 
         <Group mt="xl" className="items-center justify-between">
