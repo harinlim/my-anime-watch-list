@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 
 import WatchlistForm from '@/components/watchlists/WatchlistForm'
 import { useEditWatchlist } from '@/data/use-edit-watchlist'
-import revalidate from '@/utils/revalidate'
+import { revalidate } from '@/lib/next/revalidate'
 
 type Props = {
   returnUrl: string

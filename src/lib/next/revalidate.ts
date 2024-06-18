@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
-const revalidate = (path: string) => {
+export const revalidate = (path: string) => {
   try {
     if (path) {
       revalidatePath(path)
@@ -11,5 +11,3 @@ const revalidate = (path: string) => {
     console.error('revalidate=>', error)
   }
 }
-
-export default revalidate
