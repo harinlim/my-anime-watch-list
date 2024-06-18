@@ -10,7 +10,11 @@ import { isSameOrigin, isSamePath } from '@/lib/url'
 
 import { CreateWatchlistForm } from './CreateWatchlistForm'
 
-export default async function CreateWatchlistPage() {
+export default async function CreateWatchlistPage({
+  searchParams,
+}: {
+  searchParams: Record<'returnURL', string>
+}) {
   const supabase = createServerClient()
   const { data: user } = await getUserFromSession(supabase)
   if (!user) {
@@ -18,12 +22,17 @@ export default async function CreateWatchlistPage() {
   }
 
   const headersInit = headers()
-  const referer = headersInit.get('referer')
-  // TODO: USE RETURNURL INSTEAD OF REFERER ON SUCCESSFUL CREATE
   const currentPath = `/watchlists/create` // Note: currently there is no good way for getting pathnames in RSCs
-  const returnUrl =
+
+  const referer = headersInit.get('referer')
+  const backURL =
     referer && isSameOrigin(referer, headersInit) && !isSamePath(referer, currentPath)
       ? referer
+      : `/watchlists/`
+
+  const returnUrl =
+    searchParams.returnURL && !(searchParams.returnURL === currentPath)
+      ? searchParams.returnURL
       : null
 
   return (
@@ -31,7 +40,7 @@ export default async function CreateWatchlistPage() {
       <div className="space-y-2 md:w-2/3 md:max-w-2xl">
         <Button
           component={Link}
-          href={returnUrl ?? '/watchlists'}
+          href={backURL}
           variant="transparent"
           size="md"
           leftSection={<IconArrowLeft size="20" />}

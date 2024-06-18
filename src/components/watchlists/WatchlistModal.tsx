@@ -16,7 +16,7 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { IconPlus } from '@tabler/icons-react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useMemo } from 'react'
 
 import { WatchlistCheckbox } from './WatchlistCheckbox'
@@ -36,6 +36,7 @@ export function WatchlistModal({
 }: WatchlistModalProps) {
   const [isOpen, { open, close }] = useDisclosure(false)
   const router = useRouter()
+  const currentPath = usePathname()
 
   const content = useMemo(
     () =>
@@ -77,7 +78,7 @@ export function WatchlistModal({
             </ModalBody>
             <section className="flex w-full border-t-[1px] border-t-[--mantine-color-gray-3] bg-[--mantine-color-white] px-1 py-1 align-middle dark:border-t-[--mantine-color-dark-4] dark:bg-[--mantine-color-dark-7]">
               <UnstyledButton
-                onClick={() => router.push('/watchlists/create')}
+                onClick={() => router.push(`/watchlists/create?returnURL=${currentPath}`)}
                 className="w-full rounded-sm px-4 py-3 hover:bg-[--mantine-color-gray-2] dark:hover:bg-[--mantine-color-dark-4]"
               >
                 <Group component="span" className="flex-nowrap gap-1">
