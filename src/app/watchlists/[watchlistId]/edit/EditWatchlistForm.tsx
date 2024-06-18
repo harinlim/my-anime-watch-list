@@ -2,46 +2,36 @@
 
 import { useRouter } from 'next/navigation'
 
-import WatchlistForm from '@/components/watchlists/WatchlistForm'
+import { WatchlistForm } from '@/components/watchlists/WatchlistForm'
 import { useEditWatchlist } from '@/data/use-edit-watchlist'
 import { revalidate } from '@/lib/next/revalidate'
 
+import type { Watchlist } from '@/types/watchlists'
+
 type Props = {
   returnUrl: string
-  watchlistId: number
-  title: string
-  description: string | null
-  isPublic: boolean
+  // TODO: eventually use Watchlist type with camelCase keys
+  watchlist: Pick<Watchlist, 'id' | 'title' | 'description' | 'is_public'>
 }
 
-export default function EditWatchlistForm({
-  returnUrl,
-  watchlistId,
-  title,
-  description,
-  isPublic,
-}: Props) {
-  const { mutate, isPending } = useEditWatchlist(watchlistId)
+export function EditWatchlistForm({ returnUrl, watchlist }: Props) {
+  const { mutate, isPending } = useEditWatchlist(watchlist.id)
   const router = useRouter()
 
   const onSuccess = () => {
     revalidate(returnUrl)
-    revalidate(`/watchlists/${watchlistId}`)
+    revalidate(`/watchlists/${watchlist.id}`)
 
     if (returnUrl) {
       router.push(returnUrl)
     } else {
-      router.push(`/watchlists/${watchlistId}`)
+      router.push(`/watchlists/${watchlist.id}`)
     }
   }
 
   return (
     <WatchlistForm
-      nextUrl={returnUrl}
-      watchlistId={watchlistId}
-      title={title}
-      description={description}
-      isPublic={isPublic}
+      watchlist={watchlist}
       mutate={mutate}
       onSuccess={onSuccess}
       isPending={isPending}

@@ -1,5 +1,3 @@
-'use client'
-
 import {
   TextInput,
   Textarea,
@@ -8,68 +6,45 @@ import {
   Button,
   Title,
   Card,
-  LoadingOverlay,
   ActionIcon,
   Tooltip,
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { IconQuestionMark } from '@tabler/icons-react'
-import { useRouter } from 'next/navigation'
 
 import { watchlistRequestBodySchema } from '@/api/watchlists/schemas'
 
-import type { CreateWatchlistResponse } from '@/types/watchlists'
 import type { WatchlistRequestBody } from '@/api/watchlists/types'
+import type { Watchlist } from '@/types/watchlists'
 import type { UseMutateFunction } from '@tanstack/react-query'
 
-type Props = {
-  nextUrl: string | null
-  watchlistId?: number
-  title?: string
-  description?: string | null
-  isPublic?: boolean
-  mutate: UseMutateFunction<
-    CreateWatchlistResponse | undefined,
-    Error,
-    WatchlistRequestBody,
-    unknown
-  >
-  onSuccess: (data?: CreateWatchlistResponse) => void
+type Props<TData> = {
+  // TODO: eventually use Watchlist type with camelCase keys
+  watchlist?: Pick<Watchlist, 'title' | 'description' | 'is_public'>
+  mutate: UseMutateFunction<TData, Error, WatchlistRequestBody, unknown>
+  onSuccess: (data?: TData) => void
   isPending: boolean
 }
 
-export default function WatchlistForm({
-  nextUrl,
-  watchlistId,
-  title,
-  description,
-  isPublic,
-  mutate,
-  onSuccess,
-  isPending,
-}: Props) {
-  const isEdit = !!watchlistId
-  const router = useRouter()
+export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isPending }: Props<TData>) {
+  const isEdit = !!watchlist
 
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      title: title ?? '',
-      description: description ?? '',
-      isPublic: isPublic ?? false,
-    },
+      title: watchlist?.title ?? '',
+      description: watchlist?.description ?? '',
+      isPublic: watchlist?.is_public ?? false,
+    } satisfies WatchlistRequestBody,
 
     validate: zodResolver(watchlistRequestBodySchema),
   })
 
-  const onSubmit = form.onSubmit(values => {
-    if (form.isDirty()) {
-      mutate(values, {
-        onSuccess,
-      })
-    } else {
-      router.push(nextUrl ?? isEdit ? `/watchlists/${watchlistId}` : '/watchlists')
-    }
+  const handleSubmit = form.onSubmit(values => {
+    mutate(values, {
+      onSuccess,
+    })
+  })
   })
 
   return (
@@ -77,7 +52,7 @@ export default function WatchlistForm({
       <Title order={1} className="font-semibold">
         {isEdit ? 'Edit' : 'Create'} watchlist
       </Title>
-      <form onSubmit={onSubmit} className="mt-5 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-5 space-y-4">
         <TextInput
           withAsterisk
           label="Title"

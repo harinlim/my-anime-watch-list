@@ -2,13 +2,13 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 
-import WatchlistForm from '@/components/watchlists/WatchlistForm'
+import { WatchlistForm } from '@/components/watchlists/WatchlistForm'
 import { useCreateWatchlist } from '@/data/use-create-watchlist'
 import { revalidate } from '@/lib/next/revalidate'
 
 import type { CreateWatchlistResponse } from '@/api/watchlists/types'
 
-export default function CreateWatchlistForm({ nextUrl }: { nextUrl: string | null }) {
+export function CreateWatchlistForm({ nextUrl }: { nextUrl: string | null }) {
   const { mutate, isPending } = useCreateWatchlist()
   const currentPath = usePathname()
   const router = useRouter()
@@ -22,7 +22,5 @@ export default function CreateWatchlistForm({ nextUrl }: { nextUrl: string | nul
     }
   }
 
-  return (
-    <WatchlistForm nextUrl={nextUrl} mutate={mutate} onSuccess={onSuccess} isPending={isPending} />
-  )
+  return <WatchlistForm mutate={mutate} onSuccess={onSuccess} isPending={isPending} />
 }
