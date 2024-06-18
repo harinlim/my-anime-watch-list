@@ -107,17 +107,23 @@ export async function POST(request: NextRequest) {
 
   const { title, description, isPublic } = body.data
 
-  const result = await supabase.from('watchlists').insert({
-    title,
-    description,
-    is_public: isPublic,
-    user_id: user.id,
-  })
+  const result = await supabase
+    .from('watchlists')
+    .insert({
+      title,
+      description,
+      is_public: isPublic,
+      user_id: user.id,
+    })
+    .select('id')
 
   if (result.error) {
     console.error(result)
     return NextResponse.json('Failed to create watchlist', { status: result.status })
   }
 
-  return NextResponse.json({ title, description, isPublic, userId: user.id }, { status: 201 })
+  return NextResponse.json(
+    { title, description, isPublic, userId: user.id, watchlistId: result.data[0].id },
+    { status: 201 }
+  )
 }

@@ -4,6 +4,7 @@ import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
 
 import type { WatchlistRequestBody } from '@/app/(api)/api/watchlists/types'
+import type { CreateWatchlistResponse } from '@/types/watchlists'
 
 export function useCreateWatchlist() {
   const queryClient = useQueryClient()
@@ -11,7 +12,7 @@ export function useCreateWatchlist() {
 
   return useMutation({
     mutationFn: async (body: WatchlistRequestBody) =>
-      fetchWithError(
+      fetchWithError<false, CreateWatchlistResponse>(
         `/api/watchlists`,
         {
           method: 'POST',
@@ -19,7 +20,7 @@ export function useCreateWatchlist() {
           body: JSON.stringify(body),
         },
         {
-          skipResult: true, // Returns a 201 on success
+          skipResult: false, // Returns a 201 on success
           prefix: response =>
             `(${response.status} ${response.statusText}) Failed to create watchlist`,
           toMessage: response => response.clone().json() as unknown as string,

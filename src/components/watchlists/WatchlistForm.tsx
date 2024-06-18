@@ -2,7 +2,6 @@
 
 import {
   TextInput,
-  Text,
   Textarea,
   Group,
   Switch,
@@ -15,21 +14,27 @@ import {
 } from '@mantine/core'
 import { useForm, zodResolver } from '@mantine/form'
 import { IconQuestionMark } from '@tabler/icons-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { watchlistRequestBodySchema } from '@/app/(api)/api/watchlists/schemas'
-import revalidate from '@/utils/revalidate'
 
 import type { WatchlistRequestBody } from '@/app/(api)/api/watchlists/types'
+import type { CreateWatchlistResponse } from '@/types/watchlists'
 import type { UseMutateFunction } from '@tanstack/react-query'
 
 type Props = {
-  nextUrl: string
+  nextUrl: string | null
   watchlistId?: number
   title?: string
   description?: string | null
   isPublic?: boolean
-  mutate: UseMutateFunction<undefined, Error, WatchlistRequestBody, unknown>
+  mutate: UseMutateFunction<
+    CreateWatchlistResponse | undefined,
+    Error,
+    WatchlistRequestBody,
+    unknown
+  >
+  onSuccess: (data?: CreateWatchlistResponse) => void
   isPending: boolean
 }
 
@@ -40,11 +45,11 @@ export default function WatchlistForm({
   description,
   isPublic,
   mutate,
+  onSuccess,
   isPending,
 }: Props) {
   const isEdit = !!watchlistId
   const router = useRouter()
-  const currentPath = usePathname()
 
   const form = useForm({
     mode: 'uncontrolled',
@@ -58,17 +63,17 @@ export default function WatchlistForm({
   })
 
   const onSubmit = form.onSubmit(values => {
-    mutate(values, {
-      onSuccess: () => {
-        revalidate(`/watchlists/${watchlistId}`)
-        revalidate(currentPath)
-        router.push(nextUrl)
-      },
-    })
+    if (form.isDirty()) {
+      mutate(values, {
+        onSuccess,
+      })
+    } else {
+      router.push(nextUrl ?? isEdit ? `/watchlists/${watchlistId}` : '/watchlists')
+    }
   })
 
   return (
-    <Card padding="xl">
+    <Card className="p-6 lg:p-8">
       <Title order={1} className="font-semibold">
         {isEdit ? 'Edit' : 'Create'} watchlist
       </Title>
@@ -102,33 +107,28 @@ export default function WatchlistForm({
         />
 
         <Group mt="xl" className="items-center justify-between">
-          <Group>
+          <Group className="items-center gap-2">
             <Switch
               color="blue"
-              mb="lg"
-              label={
-                <Group className="items-center gap-2">
-                  <Text>Public</Text>
-                  <Tooltip
-                    label="Make watchlist viewable to everyone"
-                    id="public-description"
-                    events={{ hover: true, focus: true, touch: true }}
-                    withArrow
-                  >
-                    <ActionIcon
-                      size="xs"
-                      variant="outline"
-                      radius="xl"
-                      aria-describedby="public-description"
-                    >
-                      <IconQuestionMark size="sm" />
-                    </ActionIcon>
-                  </Tooltip>
-                </Group>
-              }
+              label="Public"
               key={form.key('isPublic')}
               {...form.getInputProps('isPublic', { type: 'checkbox' })}
             />
+            <Tooltip
+              label="Make watchlist viewable to everyone"
+              id="public-description"
+              events={{ hover: true, focus: true, touch: true }}
+              withArrow
+            >
+              <ActionIcon
+                size="xs"
+                variant="outline"
+                radius="xl"
+                aria-describedby="public-description"
+              >
+                <IconQuestionMark size="sm" />
+              </ActionIcon>
+            </Tooltip>
           </Group>
 
           <Button type="submit" color="pink" size="md">

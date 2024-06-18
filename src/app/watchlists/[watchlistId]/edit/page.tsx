@@ -1,19 +1,28 @@
 import { Button } from '@mantine/core'
 import { IconArrowLeft } from '@tabler/icons-react'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 
+import { getUserFromSession } from '@/db/users'
 import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
+import { createServerClient } from '@/lib/supabase/server'
 import { isSameOrigin, isSamePath, withBaseURL } from '@/lib/url'
 
-import EditWatchlistWrapper from './EditWatchlistWrapper'
+import EditWatchlistForm from './EditWatchlistForm'
 
 import type { Watchlist } from '@/types/watchlists'
 
 export default async function EditWatchlistPage({ params }: { params: { watchlistId: number } }) {
   const { watchlistId } = params
   // TODO: parse watchlistId for validity and type safety
+
+  const supabase = createServerClient()
+  const { data: user } = await getUserFromSession(supabase)
+
+  if (!user) {
+    redirect('/login')
+  }
 
   const headersInit = proxyRequestHeaders()
   const referer = headersInit.get('referer')
@@ -40,10 +49,10 @@ export default async function EditWatchlistPage({ params }: { params: { watchlis
     throw new Error('Failed to fetch watchlist')
   }
 
-  const { title, description, is_public } = watchlistResponse.data
+  const { title, description, is_public: isPublic } = watchlistResponse.data
 
   return (
-    <div className="px-1/4 m-10 md:flex md:flex-col md:items-center">
+    <div className="px-1/4 m-5 md:flex md:flex-col md:items-center lg:m-10">
       <div className="space-y-6 md:w-2/3 md:max-w-2xl">
         <Button
           component={Link}
@@ -54,12 +63,12 @@ export default async function EditWatchlistPage({ params }: { params: { watchlis
         >
           Back
         </Button>
-        <EditWatchlistWrapper
+        <EditWatchlistForm
           returnUrl={returnUrl}
           watchlistId={watchlistId}
           title={title}
           description={description}
-          is_public={is_public}
+          isPublic={isPublic}
         />
       </div>
     </div>
