@@ -3,14 +3,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
 
-import type { GetWatchlistCollaboratorsRequestBody } from '@/api/watchlists/[watchlistId]/users/types'
+import type { WatchlistCollaboratorsRequestBody } from '@/api/watchlists/[watchlistId]/users/types'
 
 export function useAddWatchlistCollaborator({ watchlistId }: { watchlistId: number }) {
   const queryClient = useQueryClient()
   const userId = useCurrentUser()?.id
 
   return useMutation({
-    mutationFn: async (body: GetWatchlistCollaboratorsRequestBody) =>
+    mutationFn: async (body: WatchlistCollaboratorsRequestBody) =>
       fetchWithError(
         `/api/watchlists/${watchlistId}/users`,
         {

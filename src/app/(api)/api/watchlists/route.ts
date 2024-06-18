@@ -8,7 +8,7 @@ import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
 import { searchWatchlistsQueryParamsSchema, watchlistRequestBodySchema } from './schemas'
 
-import type { SearchWatchlistsResponse } from './types'
+import type { SearchWatchlistsResponse, CreateWatchlistResponse } from './types'
 import type { WatchlistOverview } from '@/types/watchlists'
 
 /**
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json('Failed to create watchlist', { status: result.status })
   }
 
-  return NextResponse.json(
+  return NextResponse.json<CreateWatchlistResponse>(
     { title, description, isPublic, userId: user.id, watchlistId: result.data[0].id },
     { status: 201 }
   )

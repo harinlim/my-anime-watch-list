@@ -3,8 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
 
-import type { WatchlistRequestBody } from '@/app/(api)/api/watchlists/types'
-import type { CreateWatchlistResponse } from '@/types/watchlists'
+import type { WatchlistRequestBody, CreateWatchlistResponse } from '@/api/watchlists/types'
 
 export function useCreateWatchlist() {
   const queryClient = useQueryClient()

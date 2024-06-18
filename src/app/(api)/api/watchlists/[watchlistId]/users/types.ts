@@ -9,6 +9,6 @@ export type GetWatchlistCollaboratorsResponse = Pick<
   'role' | 'user_id' | 'username' | 'avatar_url'
 >[]
 
-export type GetWatchlistCollaboratorsRequestBody = Expand<
+export type WatchlistCollaboratorsRequestBody = Expand<
   Exactify<z.infer<typeof watchlistCollaboratorRequestBodySchema>>
 >

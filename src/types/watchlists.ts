@@ -23,10 +23,3 @@ export type WatchlistOverview = ExpandDeep<
     watchlists_users: Pick<WatchlistUser, 'role' | 'user_id' | 'username' | 'avatar_url'>[]
   }
 >
-
-export type CreateWatchlistResponse = Pick<
-  Database['public']['Tables']['watchlists']['Row'],
-  'title' | 'description'
-> & { userId: Database['public']['Tables']['watchlists']['Row']['user_id'] } & {
-  isPublic: Database['public']['Tables']['watchlists']['Row']['is_public']
-} & { watchlistId: Database['public']['Tables']['watchlists']['Row']['id'] }

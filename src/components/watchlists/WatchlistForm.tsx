@@ -16,10 +16,10 @@ import { useForm, zodResolver } from '@mantine/form'
 import { IconQuestionMark } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
 
-import { watchlistRequestBodySchema } from '@/app/(api)/api/watchlists/schemas'
+import { watchlistRequestBodySchema } from '@/api/watchlists/schemas'
 
-import type { WatchlistRequestBody } from '@/app/(api)/api/watchlists/types'
 import type { CreateWatchlistResponse } from '@/types/watchlists'
+import type { WatchlistRequestBody } from '@/api/watchlists/types'
 import type { UseMutateFunction } from '@tanstack/react-query'
 
 type Props = {
