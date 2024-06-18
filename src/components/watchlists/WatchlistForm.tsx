@@ -13,6 +13,7 @@ import { useForm, zodResolver } from '@mantine/form'
 import { IconQuestionMark } from '@tabler/icons-react'
 
 import { watchlistRequestBodySchema } from '@/api/watchlists/schemas'
+import { useWatchFormState } from '@/lib/mantine-form/use-watch-form-state'
 
 import type { WatchlistRequestBody } from '@/api/watchlists/types'
 import type { Watchlist } from '@/types/watchlists'
@@ -23,10 +24,10 @@ type Props<TData> = {
   watchlist?: Pick<Watchlist, 'title' | 'description' | 'is_public'>
   mutate: UseMutateFunction<TData, Error, WatchlistRequestBody, unknown>
   onSuccess: (data?: TData) => void
-  isPending: boolean
+  isSubmitting: boolean
 }
 
-export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isPending }: Props<TData>) {
+export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isSubmitting }: Props<TData>) {
   const isEdit = !!watchlist
 
   const form = useForm({
@@ -45,6 +46,10 @@ export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isPending }
       onSuccess,
     })
   })
+
+  const isDirty = useWatchFormState(form, {
+    initialValue: false,
+    setState: () => form.isDirty(),
   })
 
   return (
@@ -59,7 +64,7 @@ export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isPending }
           variant="filled"
           placeholder="My favorite watchlist..."
           key={form.key('title')}
-          disabled={isPending}
+          disabled={isSubmitting}
           {...form.getInputProps('title')}
           className="space-y-2"
         />
@@ -73,7 +78,7 @@ export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isPending }
           maxRows={8}
           resize="vertical"
           key={form.key('description')}
-          disabled={isPending}
+          disabled={isSubmitting}
           {...form.getInputProps('description')}
           className="space-y-2"
           classNames={{
@@ -106,8 +111,7 @@ export function WatchlistForm<TData>({ watchlist, mutate, onSuccess, isPending }
             </Tooltip>
           </Group>
 
-          <Button type="submit" color="pink" size="md">
-            <LoadingOverlay visible={isPending} />
+          <Button type="submit" color="pink" size="md" disabled={!isDirty || isSubmitting}>
             {isEdit ? 'Save' : 'Create'}
           </Button>
         </Group>

@@ -9,7 +9,7 @@ import { revalidate } from '@/lib/next/revalidate'
 import type { CreateWatchlistResponse } from '@/api/watchlists/types'
 
 export function CreateWatchlistForm({ nextUrl }: { nextUrl: string | null }) {
-  const { mutate, isPending } = useCreateWatchlist()
+  const { isPending, mutate, isSuccess } = useCreateWatchlist()
   const currentPath = usePathname()
   const router = useRouter()
 
@@ -22,5 +22,7 @@ export function CreateWatchlistForm({ nextUrl }: { nextUrl: string | null }) {
     }
   }
 
-  return <WatchlistForm mutate={mutate} onSuccess={onSuccess} isPending={isPending} />
+  const isSubmitting = isPending || isSuccess
+
+  return <WatchlistForm mutate={mutate} onSuccess={onSuccess} isSubmitting={isSubmitting} />
 }

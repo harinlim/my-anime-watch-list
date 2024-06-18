@@ -15,7 +15,7 @@ type Props = {
 }
 
 export function EditWatchlistForm({ returnUrl, watchlist }: Props) {
-  const { mutate, isPending } = useEditWatchlist(watchlist.id)
+  const { mutate, isPending, isSuccess } = useEditWatchlist(watchlist.id)
   const router = useRouter()
 
   const onSuccess = () => {
@@ -29,12 +29,14 @@ export function EditWatchlistForm({ returnUrl, watchlist }: Props) {
     }
   }
 
+  const isSubmitting = isPending || isSuccess
+
   return (
     <WatchlistForm
       watchlist={watchlist}
       mutate={mutate}
       onSuccess={onSuccess}
-      isPending={isPending}
+      isSubmitting={isSubmitting}
     />
   )
 }
