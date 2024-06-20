@@ -19,7 +19,8 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@/api/*": ["./src/app/(api)/api/*"]
+      "@/api/*": ["./src/app/(api)/api/*"],
+      "@/auth/*": ["./src/app/(auth)/*"]
     }
   },
   "include": [

@@ -1,8 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
-import { getUserByUsername } from '@/db/users'
+import { getUserByUsername, getUserFromSession } from '@/db/users'
 import { createServerClient } from '@/lib/supabase/server'
 
 import { loginSchema, signupSchema } from './schemas'
@@ -115,4 +116,18 @@ export async function signup(formData: SignupSchema) {
 
   revalidatePath('/', 'layout')
   return { success: true }
+}
+
+export async function signout() {
+  const supabase = createServerClient()
+
+  // Check if a user's logged in
+  const { data: user } = await getUserFromSession(supabase)
+  if (user) {
+    // Logs out the user across all sessions and clears the cookies from the browser
+    await supabase.auth.signOut()
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/')
 }

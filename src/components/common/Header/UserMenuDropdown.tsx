@@ -2,6 +2,8 @@ import { MenuDropdown, MenuItem, MenuLabel, rem } from '@mantine/core'
 import { IconHeart, IconUser, IconBooks, IconLogout, IconSettings } from '@tabler/icons-react'
 import Link from 'next/link'
 
+import { signout } from '@/auth/actions'
+
 export function UserMenuDropdown() {
   return (
     <MenuDropdown>
@@ -49,7 +51,7 @@ export function UserMenuDropdown() {
         Account Settings
       </MenuItem>
 
-      <form action="/auth/signout" method="POST">
+      <form action={signout}>
         <MenuItem
           type="submit"
           leftSection={<IconLogout style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
