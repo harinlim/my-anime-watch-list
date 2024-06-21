@@ -4,12 +4,13 @@ import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
 
 import type { WatchlistRequestBody, CreateWatchlistResponse } from '@/api/watchlists/types'
+import type { HttpError } from '@/lib/api'
 
 export function useCreateWatchlist() {
   const queryClient = useQueryClient()
   const userId = useCurrentUser()?.id
 
-  return useMutation({
+  return useMutation<CreateWatchlistResponse, HttpError, WatchlistRequestBody>({
     mutationFn: async (body: WatchlistRequestBody) =>
       fetchWithError<false, CreateWatchlistResponse>(
         `/api/watchlists`,
@@ -27,7 +28,7 @@ export function useCreateWatchlist() {
       ),
 
     // TODO: expand on error handling here
-    onError: (error, variables) => console.error(error.message, variables),
+    onError: (error: HttpError, variables) => console.error(error.message, variables),
 
     // make sure to _return_ the Promise from the query invalidation
     // so that the mutation stays in `pending` state until the refetch is finished

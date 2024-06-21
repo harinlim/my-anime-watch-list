@@ -8,7 +8,7 @@ import { useCreateWatchlist } from '@/data/use-create-watchlist'
 import type { CreateWatchlistResponse } from '@/api/watchlists/types'
 
 export function CreateWatchlistForm({ nextUrl }: { nextUrl: string | null }) {
-  const { isPending, mutate, isSuccess } = useCreateWatchlist()
+  const { isPending, mutate, isSuccess, error } = useCreateWatchlist()
   const router = useRouter()
 
   const onSuccess = (data?: CreateWatchlistResponse) => {
@@ -21,5 +21,12 @@ export function CreateWatchlistForm({ nextUrl }: { nextUrl: string | null }) {
 
   const isSubmitting = isPending || isSuccess
 
-  return <WatchlistForm mutate={mutate} onSuccess={onSuccess} isSubmitting={isSubmitting} />
+  return (
+    <WatchlistForm
+      mutate={mutate}
+      onSuccess={onSuccess}
+      error={error}
+      isSubmitting={isSubmitting}
+    />
+  )
 }

@@ -4,12 +4,13 @@ import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
 
 import type { WatchlistRequestBody } from '@/api/watchlists/types'
+import type { HttpError } from '@/lib/api'
 
 export function useEditWatchlist(watchlistId: number) {
   const queryClient = useQueryClient()
   const userId = useCurrentUser()?.id
 
-  return useMutation({
+  return useMutation<unknown, HttpError, WatchlistRequestBody>({
     mutationFn: async (body: WatchlistRequestBody) =>
       fetchWithError(
         `/api/watchlists/${watchlistId}`,
