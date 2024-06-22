@@ -27,8 +27,6 @@ const STATUS_COLOR = {
   dropped: 'text-red-600',
 } as const satisfies Record<WatchStatus, `text-${string}-${number}`>
 
-const RATING_SCALE = 2 // TODO: rename this
-
 async function updateStatus(animeId: string, status: WatchStatus) {
   return fetch(`/api/anime/${animeId}`, {
     method: 'PATCH',
@@ -89,7 +87,7 @@ export function Review({ animeId, status = null, rating = null }: Props) {
   const handleChangeRating = useCallback(
     (val: number) => {
       setRatingValue(val)
-      void updateRating(animeId, val * RATING_SCALE)
+      void updateRating(animeId, val)
     },
     [animeId]
   )
@@ -122,7 +120,7 @@ export function Review({ animeId, status = null, rating = null }: Props) {
       <Text mt="10" className={styles.label}>
         {ratingValue === 0 && 'Add '}Your Rating:
       </Text>
-      <Rating fractions={RATING_SCALE} value={ratingValue} onChange={handleChangeRating} />
+      <Rating fractions={2} value={ratingValue} onChange={handleChangeRating} />
     </div>
   )
 }
