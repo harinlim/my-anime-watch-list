@@ -12,7 +12,11 @@ export const searchWatchlistsQueryParamsSchema = z.object({
 })
 
 export const watchlistRequestBodySchema = z.object({
-  title: z.string().min(1).max(100),
-  description: z.string().max(4000),
+  title: z
+    .string()
+    .trim()
+    .min(1, { message: 'Title is required' })
+    .max(50, { message: 'Title can be at most 50 characters' }),
+  description: z.string().trim().max(500, { message: 'Description can be at most 500 characters' }),
   isPublic: z.boolean(),
 })

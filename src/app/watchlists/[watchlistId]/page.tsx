@@ -81,7 +81,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
                 <WatchlistPrivacyIndicator isPublicWatchlist={watchlist.is_public} />
 
                 <Group className="gap-2">
-                  <EditWatchlistButton />
+                  <EditWatchlistButton watchlistId={watchlist.id} />
                   <EditCollaboratorsButton />
                 </Group>
               </div>

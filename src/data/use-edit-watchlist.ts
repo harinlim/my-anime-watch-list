@@ -3,25 +3,26 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
 
-import type { WatchlistCollaboratorsRequestBody } from '@/api/watchlists/[watchlistId]/users/types'
+import type { WatchlistRequestBody } from '@/api/watchlists/types'
+import type { HttpError } from '@/lib/api'
 
-export function useAddWatchlistCollaborator({ watchlistId }: { watchlistId: number }) {
+export function useEditWatchlist(watchlistId: number) {
   const queryClient = useQueryClient()
   const userId = useCurrentUser()?.id
 
-  return useMutation({
-    mutationFn: async (body: WatchlistCollaboratorsRequestBody) =>
+  return useMutation<unknown, HttpError, WatchlistRequestBody>({
+    mutationFn: async (body: WatchlistRequestBody) =>
       fetchWithError(
-        `/api/watchlists/${watchlistId}/users`,
+        `/api/watchlists/${watchlistId}`,
         {
-          method: 'POST',
+          method: 'PUT',
           credentials: 'include',
           body: JSON.stringify(body),
         },
         {
           skipResult: true, // Returns a 201 on success
           prefix: response =>
-            `(${response.status} ${response.statusText}) Failed to add collaborator`,
+            `(${response.status} ${response.statusText}) Failed to create watchlist`,
           toMessage: response => response.clone().json() as unknown as string,
         }
       ),
@@ -31,10 +32,6 @@ export function useAddWatchlistCollaborator({ watchlistId }: { watchlistId: numb
 
     // make sure to _return_ the Promise from the query invalidation
     // so that the mutation stays in `pending` state until the refetch is finished
-    onSettled: async () =>
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['collaborators', { watchlistId, userId }] }),
-        queryClient.invalidateQueries({ queryKey: ['users', userId] }),
-      ]),
+    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
   })
 }

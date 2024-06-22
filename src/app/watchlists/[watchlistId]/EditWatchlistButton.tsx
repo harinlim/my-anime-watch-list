@@ -2,11 +2,13 @@
 
 import { ActionIcon as ActionIconButton } from '@mantine/core'
 import { IconEdit } from '@tabler/icons-react'
+import { useRouter } from 'next/navigation'
 
 import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
 
-export function EditWatchlistButton() {
+export function EditWatchlistButton({ watchlistId }: { watchlistId: number }) {
   const { currentUserCollaborator } = useCollaboratorsData()
+  const router = useRouter()
 
   const hasEditAccess =
     currentUserCollaborator?.role === 'owner' || currentUserCollaborator?.role === 'editor'
@@ -21,6 +23,9 @@ export function EditWatchlistButton() {
       radius="xl"
       aria-label="edit watchlist"
       className="p-1 opacity-80"
+      onClick={() => {
+        void router.push(`/watchlists/${watchlistId}/edit`)
+      }}
     >
       <IconEdit size={32} />
     </ActionIconButton>
