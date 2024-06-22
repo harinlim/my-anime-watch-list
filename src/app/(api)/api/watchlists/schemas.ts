@@ -16,10 +16,7 @@ export const watchlistRequestBodySchema = z.object({
     .string()
     .trim()
     .min(1, { message: 'Title is required' })
-    .max(100, { message: 'Title must be at most 100 characters' }),
-  description: z
-    .string()
-    .trim()
-    .max(4000, { message: 'Description must be at most 4000 characters' }),
-  isPublic: z.boolean({ message: 'isPublic must be a boolean' }),
+    .max(50, { message: 'Title can be at most 50 characters' }),
+  description: z.string().trim().max(500, { message: 'Description can be at most 500 characters' }),
+  isPublic: z.boolean(),
 })

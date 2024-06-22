@@ -19,14 +19,12 @@ export function EditWatchlistForm({ returnUrl, watchlist }: Props) {
   const router = useRouter()
 
   const onSuccess = () => {
-    revalidate(returnUrl)
-    revalidate(`/watchlists/${watchlist.id}`)
-
+    // TODO: check if this is necessary
     if (returnUrl) {
-      router.push(returnUrl)
-    } else {
-      router.push(`/watchlists/${watchlist.id}`)
+      revalidate(returnUrl)
     }
+
+    router.push(returnUrl ?? `/watchlists/${watchlist.id}`)
   }
 
   const isSubmitting = isPending || isSuccess

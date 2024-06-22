@@ -30,28 +30,22 @@ type Props<TData> = {
   isSubmitting: boolean
 }
 
-const errorMessage = (error: HttpError, isEdit: boolean) => {
+const errorMessage = (error: HttpError) => {
   switch (error.response.status) {
-    case 400: {
-      return 'Invalid request. Please try again'
-    }
     case 401: {
-      return 'Unauthorized. Please log in and try again'
+      return 'Please log in and try again'
     }
     case 403: {
-      return 'Forbidden. Please check you have access to the watchlist and try again'
-    }
-    case 404: {
-      return 'Watchlist not found.'
-    }
-    case 422: {
-      return 'Invalid input. Please check your input and try again'
+      return 'Please check you have access to the watchlist and try again'
     }
     case 500: {
-      return error.response.statusText ?? 'Failed to process request. Please try again later'
+      return (
+        error.response.statusText ??
+        'We were unable to process your request. Please try again later'
+      )
     }
     default: {
-      return `${isEdit ? 'Failed to update' : 'Failed to create'} watchlist`
+      return null
     }
   }
 }
@@ -82,9 +76,9 @@ export function WatchlistForm<TData>({
     })
   })
 
-  const isDirty = useWatchFormState(form, {
-    initialValue: false,
-    setState: () => form.isDirty(),
+  const { isDirty, isValid } = useWatchFormState(form, {
+    initialValue: { isDirty: false, isValid: false },
+    setState: () => ({ isDirty: form.isDirty(), isValid: form.isValid() }),
   })
 
   return (
@@ -97,10 +91,10 @@ export function WatchlistForm<TData>({
           variant="light"
           color="red"
           mt="lg"
-          title={`Error ${JSON.stringify(error.response.status)}`}
+          title={`${isEdit ? 'Failed to update' : 'Failed to create'} watchlist`}
           icon={<IconAlertCircle />}
         >
-          {errorMessage(error, isEdit)}
+          {errorMessage(error)}
         </Alert>
       )}
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
@@ -162,7 +156,7 @@ export function WatchlistForm<TData>({
             color="pink"
             variant="outline"
             size="md"
-            disabled={!isDirty || isSubmitting}
+            disabled={!isDirty || !isValid || isSubmitting}
           >
             {isEdit ? 'Save' : 'Create'}
           </Button>
