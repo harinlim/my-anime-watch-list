@@ -50,7 +50,7 @@ export function DeleteWatchlistModalContent({
   }
 
   const handleDelete = () => {
-    void mutate(null, { onSuccess })
+    void mutate(undefined, { onSuccess })
   }
   return (
     <>

@@ -10,8 +10,8 @@ export function useDeleteWatchlist(watchlistId: number) {
 
   const userId = useCurrentUser()?.id
 
-  return useMutation<unknown, HttpError, null>({
-    mutationFn: async (_: null) =>
+  return useMutation<unknown, HttpError>({
+    mutationFn: async () =>
       fetchWithError(
         `/api/watchlists/${watchlistId}`,
         { method: 'DELETE', credentials: 'include' },
