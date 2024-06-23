@@ -9,6 +9,7 @@ import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
+import { DeleteWatchlist } from './DeleteWatchlist'
 import { EditCollaboratorsButton } from './EditCollaboratorsButton'
 import { EditWatchlistButton } from './EditWatchlistButton'
 import { WatchlistAccordion } from './WatchlistAccordion'
@@ -58,11 +59,11 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
       <EditCollaboratorsModalProvider>
         <CollaboratorsModal watchlistId={watchlist.id} isPublicWatchlist={watchlist.is_public} />
 
-        <div className="flex justify-center p-10">
+        <div className="flex justify-center p-7 sm:p-10">
           <div className="w-full items-center lg:max-w-5xl">
             <section className="flex flex-col justify-between lg:flex-row lg:items-center">
               <Group className="flex flex-row flex-nowrap items-start justify-between">
-                <Title order={1} className="text-4xl">
+                <Title order={1} className="overflow-hidden text-ellipsis text-4xl">
                   {watchlist.title}
                 </Title>
 
@@ -83,6 +84,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
                 <Group className="gap-2">
                   <EditWatchlistButton watchlistId={watchlist.id} />
                   <EditCollaboratorsButton />
+                  <DeleteWatchlist watchlistId={watchlist.id} watchlistTitle={watchlist.title} />
                 </Group>
               </div>
 
