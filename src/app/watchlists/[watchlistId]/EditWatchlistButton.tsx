@@ -24,6 +24,7 @@ export function EditWatchlistButton({ watchlistId }: { watchlistId: number }) {
       aria-label="edit watchlist"
       className="p-1 opacity-80"
       onClick={() => {
+        // TODO: use intercepting route to eventually render a modal here
         void router.push(`/watchlists/${watchlistId}/edit`)
       }}
     >

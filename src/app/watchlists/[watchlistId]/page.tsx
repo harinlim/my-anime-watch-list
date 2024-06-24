@@ -20,6 +20,17 @@ import { WatchlistSidebar, WatchlistSidebarButton } from './WatchlistSidebar'
 import { WatchlistSidebarProvider } from './WatchlistSidebarContext'
 
 import type { Watchlist, WatchlistUser } from '@/types/watchlists'
+import type { ReactNode } from 'react'
+
+function ClientProviders({ children }: { children: ReactNode }) {
+  return (
+    <EditCollaboratorsModalProvider>
+      <DeleteWatchlistModalProvider>
+        <WatchlistSidebarProvider>{children}</WatchlistSidebarProvider>
+      </DeleteWatchlistModalProvider>
+    </EditCollaboratorsModalProvider>
+  )
+}
 
 export default async function WatchlistPage({ params }: { params: { watchlistId: string } }) {
   const { watchlistId } = params
@@ -58,56 +69,52 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
 
   return (
     <CollaboratorsProvider initialData={collaborators} watchlistId={watchlist.id}>
-      <EditCollaboratorsModalProvider>
-        <DeleteWatchlistModalProvider>
-          <CollaboratorsModal watchlistId={watchlist.id} isPublicWatchlist={watchlist.is_public} />
-          <DeleteWatchlistModal watchlistId={watchlist.id} watchlistTitle={watchlist.title} />
+      <ClientProviders>
+        <CollaboratorsModal watchlistId={watchlist.id} isPublicWatchlist={watchlist.is_public} />
+        <DeleteWatchlistModal watchlistId={watchlist.id} watchlistTitle={watchlist.title} />
 
-          <div className="flex justify-center p-7 sm:p-10">
-            <div className="w-full items-center lg:max-w-5xl">
-              <section className="flex flex-col justify-between lg:flex-row lg:items-center">
-                <Group className="flex flex-row flex-nowrap items-start justify-between">
-                  <Title order={1} className="overflow-hidden text-ellipsis text-4xl">
-                    {watchlist.title}
-                  </Title>
+        <div className="flex justify-center p-7 sm:p-10">
+          <div className="w-full items-center lg:max-w-5xl">
+            <section className="flex flex-col justify-between lg:flex-row lg:items-center">
+              <Group className="flex flex-row flex-nowrap items-start justify-between">
+                <Title order={1} className="overflow-hidden text-ellipsis text-4xl">
+                  {watchlist.title}
+                </Title>
 
-                  <Group className="flex flex-nowrap gap-2 lg:hidden">
-                    <WatchlistSidebarProvider>
-                      <WatchlistSidebarButton className="lg:hidden" />
+                <Group className="flex flex-nowrap gap-2 lg:hidden">
+                  <WatchlistSidebarButton className="lg:hidden" />
 
-                      <WatchlistSidebar className="block lg:hidden">
-                        <WatchlistDetails watchlist={watchlist} />
-                      </WatchlistSidebar>
-                    </WatchlistSidebarProvider>
-                  </Group>
+                  <WatchlistSidebar className="block lg:hidden">
+                    <WatchlistDetails watchlist={watchlist} />
+                  </WatchlistSidebar>
                 </Group>
+              </Group>
 
-                <div className="flex flex-col gap-4 pt-2 lg:flex-row lg:items-center lg:pt-0">
-                  <WatchlistPrivacyIndicator isPublicWatchlist={watchlist.is_public} />
+              <div className="flex flex-col gap-4 pt-2 lg:flex-row lg:items-center lg:pt-0">
+                <WatchlistPrivacyIndicator isPublicWatchlist={watchlist.is_public} />
 
-                  <Group className="gap-2">
-                    <EditWatchlistButton watchlistId={watchlist.id} />
-                    <EditCollaboratorsButton />
-                    <DeleteWatchlistButton />
-                  </Group>
-                </div>
-
-                <WatchlistAccordion watchlist={watchlist} className="block sm:hidden">
-                  <WatchlistDetails watchlist={watchlist} />
-                </WatchlistAccordion>
-              </section>
-
-              <div className="flex w-full flex-col flex-wrap items-center space-y-6 py-8 md:flex-row md:flex-nowrap md:items-start md:space-y-0">
-                <section className="min-w-lg h-[80vh] w-full bg-slate-700">Table</section>
-
-                <section className="w-xs hidden h-full max-w-xs md:pl-10 lg:block">
-                  <WatchlistDetails watchlist={watchlist} />
-                </section>
+                <Group className="gap-2">
+                  <EditWatchlistButton watchlistId={watchlist.id} />
+                  <EditCollaboratorsButton />
+                  <DeleteWatchlistButton />
+                </Group>
               </div>
+
+              <WatchlistAccordion watchlist={watchlist} className="block sm:hidden">
+                <WatchlistDetails watchlist={watchlist} />
+              </WatchlistAccordion>
+            </section>
+
+            <div className="flex w-full flex-col flex-wrap items-center space-y-6 py-8 md:flex-row md:flex-nowrap md:items-start md:space-y-0">
+              <section className="min-w-lg h-[80vh] w-full bg-slate-700">Table</section>
+
+              <section className="w-xs hidden h-full max-w-xs md:pl-10 lg:block">
+                <WatchlistDetails watchlist={watchlist} />
+              </section>
             </div>
           </div>
-        </DeleteWatchlistModalProvider>
-      </EditCollaboratorsModalProvider>
+        </div>
+      </ClientProviders>
     </CollaboratorsProvider>
   )
 }

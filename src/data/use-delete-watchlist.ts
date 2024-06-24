@@ -16,7 +16,7 @@ export function useDeleteWatchlist(watchlistId: number) {
         `/api/watchlists/${watchlistId}`,
         { method: 'DELETE', credentials: 'include' },
         {
-          skipResult: false, // Returns a 204 on success
+          skipResult: true, // Returns a 204 on success
           prefix: response =>
             `(${response.status} ${response.statusText}) Failed to delete watchlist`,
           toMessage: response => response.clone().json() as unknown as string,
