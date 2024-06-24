@@ -4,11 +4,14 @@ import { notFound } from 'next/navigation'
 import { CollaboratorsProvider } from '@/components/collaborators/CollaboratorsContext'
 import { CollaboratorsModal } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModal'
 import { EditCollaboratorsModalProvider } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModalContext'
+import { DeleteWatchlistModal } from '@/components/watchlists/DeleteWatchlistModal'
 import { WatchlistPrivacyIndicator } from '@/components/watchlists/WatchlistPrivacyIndicator'
 import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
+import { DeleteWatchlistButton } from './DeleteWatchlistButton'
+import { DeleteWatchlistModalProvider } from './DeleteWatchlistModalContext'
 import { EditCollaboratorsButton } from './EditCollaboratorsButton'
 import { EditWatchlistButton } from './EditWatchlistButton'
 import { WatchlistAccordion } from './WatchlistAccordion'
@@ -17,6 +20,17 @@ import { WatchlistSidebar, WatchlistSidebarButton } from './WatchlistSidebar'
 import { WatchlistSidebarProvider } from './WatchlistSidebarContext'
 
 import type { Watchlist, WatchlistUser } from '@/types/watchlists'
+import type { ReactNode } from 'react'
+
+function ClientProviders({ children }: { children: ReactNode }) {
+  return (
+    <EditCollaboratorsModalProvider>
+      <DeleteWatchlistModalProvider>
+        <WatchlistSidebarProvider>{children}</WatchlistSidebarProvider>
+      </DeleteWatchlistModalProvider>
+    </EditCollaboratorsModalProvider>
+  )
+}
 
 export default async function WatchlistPage({ params }: { params: { watchlistId: string } }) {
   const { watchlistId } = params
@@ -55,25 +69,24 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
 
   return (
     <CollaboratorsProvider initialData={collaborators} watchlistId={watchlist.id}>
-      <EditCollaboratorsModalProvider>
+      <ClientProviders>
         <CollaboratorsModal watchlistId={watchlist.id} isPublicWatchlist={watchlist.is_public} />
+        <DeleteWatchlistModal watchlistId={watchlist.id} watchlistTitle={watchlist.title} />
 
-        <div className="flex justify-center p-10">
+        <div className="flex justify-center p-7 sm:p-10">
           <div className="w-full items-center lg:max-w-5xl">
             <section className="flex flex-col justify-between lg:flex-row lg:items-center">
               <Group className="flex flex-row flex-nowrap items-start justify-between">
-                <Title order={1} className="text-4xl">
+                <Title order={1} className="overflow-hidden text-ellipsis text-4xl">
                   {watchlist.title}
                 </Title>
 
                 <Group className="flex flex-nowrap gap-2 lg:hidden">
-                  <WatchlistSidebarProvider>
-                    <WatchlistSidebarButton className="lg:hidden" />
+                  <WatchlistSidebarButton className="lg:hidden" />
 
-                    <WatchlistSidebar className="block lg:hidden">
-                      <WatchlistDetails watchlist={watchlist} />
-                    </WatchlistSidebar>
-                  </WatchlistSidebarProvider>
+                  <WatchlistSidebar className="block lg:hidden">
+                    <WatchlistDetails watchlist={watchlist} />
+                  </WatchlistSidebar>
                 </Group>
               </Group>
 
@@ -83,6 +96,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
                 <Group className="gap-2">
                   <EditWatchlistButton watchlistId={watchlist.id} />
                   <EditCollaboratorsButton />
+                  <DeleteWatchlistButton />
                 </Group>
               </div>
 
@@ -100,7 +114,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
             </div>
           </div>
         </div>
-      </EditCollaboratorsModalProvider>
+      </ClientProviders>
     </CollaboratorsProvider>
   )
 }
