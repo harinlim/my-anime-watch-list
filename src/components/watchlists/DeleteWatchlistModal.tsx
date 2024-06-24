@@ -12,21 +12,17 @@ import {
   Stack,
 } from '@mantine/core'
 
+import { useDeleteWatchlistModal } from '@/app/watchlists/[watchlistId]/DeleteWatchlistModalContext'
+
 import { DeleteWatchlistModalContent } from './DeleteWatchlistModalContent'
 
 type EditCollaboratorsModalProps = {
-  opened: boolean
-  close: () => void
   watchlistId: number
   watchlistTitle: string
 }
 
-export function DeleteWatchlistModal({
-  opened,
-  close,
-  watchlistId,
-  watchlistTitle,
-}: EditCollaboratorsModalProps) {
+export function DeleteWatchlistModal({ watchlistId, watchlistTitle }: EditCollaboratorsModalProps) {
+  const [opened, { close }] = useDeleteWatchlistModal()
   return (
     <ModalRoot opened={opened} onClose={close} size="md" yOffset="25vh">
       <ModalOverlay />

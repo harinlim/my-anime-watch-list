@@ -1,11 +1,8 @@
-'use client'
-
 import { Text, Alert, Code, Group, Button, LoadingOverlay } from '@mantine/core'
 import { IconAlertCircle } from '@tabler/icons-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { useDeleteWatchlist } from '@/data/use-delete-watchlist'
-import { revalidate } from '@/lib/next/revalidate'
 
 import type { HttpError } from '@/lib/api'
 
@@ -41,11 +38,10 @@ export function DeleteWatchlistModalContent({
   close,
 }: DeleteWatchlistModalContentProps) {
   const { mutate, isPending, error } = useDeleteWatchlist(watchlistId)
-  const currentPath = usePathname()
   const router = useRouter()
 
   const onSuccess = () => {
-    revalidate(currentPath)
+    // revalidate(currentPath)
     void router.push('/watchlists')
   }
 

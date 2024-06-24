@@ -5,7 +5,10 @@ import { IconTrash } from '@tabler/icons-react'
 
 import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
 
-export function DeleteWatchlistButton({ open }: { open: () => void }) {
+import { useDeleteWatchlistModal } from './DeleteWatchlistModalContext'
+
+export function DeleteWatchlistButton() {
+  const [, { open }] = useDeleteWatchlistModal()
   const { currentUserCollaborator } = useCollaboratorsData()
 
   const hasDeleteAccess = currentUserCollaborator?.role === 'owner'
