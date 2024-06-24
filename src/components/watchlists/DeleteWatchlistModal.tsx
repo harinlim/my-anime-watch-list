@@ -16,12 +16,12 @@ import { useDeleteWatchlistModal } from '@/app/watchlists/[watchlistId]/DeleteWa
 
 import { DeleteWatchlistModalContent } from './DeleteWatchlistModalContent'
 
-type EditCollaboratorsModalProps = {
+type Props = {
   watchlistId: number
   watchlistTitle: string
 }
 
-export function DeleteWatchlistModal({ watchlistId, watchlistTitle }: EditCollaboratorsModalProps) {
+export function DeleteWatchlistModal({ watchlistId, watchlistTitle }: Props) {
   const [opened, { close }] = useDeleteWatchlistModal()
   return (
     <ModalRoot opened={opened} onClose={close} size="md" yOffset="25vh">

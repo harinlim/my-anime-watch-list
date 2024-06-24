@@ -6,7 +6,7 @@ import { useDeleteWatchlist } from '@/data/use-delete-watchlist'
 
 import type { HttpError } from '@/lib/api'
 
-type DeleteWatchlistModalContentProps = {
+type Props = {
   watchlistId: number
   watchlistTitle: string
   close: () => void
@@ -32,22 +32,17 @@ const errorMessage = (error: HttpError) => {
   }
 }
 
-export function DeleteWatchlistModalContent({
-  watchlistId,
-  watchlistTitle,
-  close,
-}: DeleteWatchlistModalContentProps) {
+export function DeleteWatchlistModalContent({ watchlistId, watchlistTitle, close }: Props) {
   const { mutate, isPending, error } = useDeleteWatchlist(watchlistId)
+
   const router = useRouter()
 
-  const onSuccess = () => {
-    // revalidate(currentPath)
-    void router.push('/watchlists')
+  const handleDelete = () => {
+    void mutate(undefined, {
+      onSuccess: () => router.push('/watchlists'),
+    })
   }
 
-  const handleDelete = () => {
-    void mutate(undefined, { onSuccess })
-  }
   return (
     <>
       {error && (
