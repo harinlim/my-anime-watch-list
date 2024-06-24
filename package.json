@@ -69,6 +69,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-extended": "^4.0.2",
+    "nolyfill": "^1.0.31",
     "postcss": "^8.4.38",
     "postcss-load-config": "^6.0.1",
     "postcss-preset-mantine": "^1.15.0",
@@ -86,6 +87,28 @@
     "patchedDependencies": {
       "@supabase/auth-js@2.64.2": "patches/@supabase__auth-js@2.64.2.patch",
       "@supabase/supabase-js@2.43.5": "patches/@supabase__supabase-js@2.43.5.patch"
+    },
+    "overrides": {
+      "abab": "npm:@nolyfill/abab@latest",
+      "array-includes": "npm:@nolyfill/array-includes@latest",
+      "array.prototype.findlast": "npm:@nolyfill/array.prototype.findlast@latest",
+      "array.prototype.findlastindex": "npm:@nolyfill/array.prototype.findlastindex@latest",
+      "array.prototype.flat": "npm:@nolyfill/array.prototype.flat@latest",
+      "array.prototype.flatmap": "npm:@nolyfill/array.prototype.flatmap@latest",
+      "array.prototype.toreversed": "npm:@nolyfill/array.prototype.toreversed@latest",
+      "array.prototype.tosorted": "npm:@nolyfill/array.prototype.tosorted@latest",
+      "deep-equal": "npm:@nolyfill/deep-equal@latest",
+      "es-iterator-helpers": "npm:@nolyfill/es-iterator-helpers@latest",
+      "hasown": "npm:@nolyfill/hasown@latest",
+      "object.assign": "npm:@nolyfill/object.assign@latest",
+      "object.entries": "npm:@nolyfill/object.entries@latest",
+      "object.fromentries": "npm:@nolyfill/object.fromentries@latest",
+      "object.groupby": "npm:@nolyfill/object.groupby@latest",
+      "object.hasown": "npm:@nolyfill/object.hasown@latest",
+      "object.values": "npm:@nolyfill/object.values@latest",
+      "safe-regex-test": "npm:@nolyfill/safe-regex-test@latest",
+      "string.prototype.includes": "npm:@nolyfill/string.prototype.includes@latest",
+      "string.prototype.matchall": "npm:@nolyfill/string.prototype.matchall@latest"
     }
   }
 }
