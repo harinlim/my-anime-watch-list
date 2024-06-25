@@ -95,7 +95,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
               <div className="flex flex-col gap-4 pt-2 lg:flex-row lg:items-center lg:pt-0">
                 <WatchlistPrivacyIndicator isPublicWatchlist={watchlist.is_public} />
 
-                <Group className="gap-2">
+                <Group className="flex flex-nowrap gap-2">
                   <EditWatchlistButton watchlistId={watchlist.id} />
                   <EditCollaboratorsButton />
                   <DeleteWatchlistButton />
