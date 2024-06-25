@@ -1,5 +1,6 @@
 import { Title, Group } from '@mantine/core'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { CollaboratorsProvider } from '@/components/collaborators/CollaboratorsContext'
 import { CollaboratorsModal } from '@/components/collaborators/CollaboratorsModal/CollaboratorsModal'
@@ -10,6 +11,7 @@ import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
+import { AnimeTableSkeleton, WatchlistAnimeTable } from './components/AnimeTable'
 import { DeleteWatchlistButton } from './DeleteWatchlistButton'
 import { DeleteWatchlistModalProvider } from './DeleteWatchlistModalContext'
 import { EditCollaboratorsButton } from './EditCollaboratorsButton'
@@ -21,6 +23,8 @@ import { WatchlistSidebarProvider } from './WatchlistSidebarContext'
 
 import type { Watchlist, WatchlistUser } from '@/types/watchlists'
 import type { ReactNode } from 'react'
+
+const ANIME_PAGE_LIMIT = 5
 
 function ClientProviders({ children }: { children: ReactNode }) {
   return (
@@ -65,15 +69,13 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
   const watchlist = watchlistResponse.data
   const collaborators = collaboratorsResponse.data
 
-  // TODO: Add watchlist owner
-
   return (
     <CollaboratorsProvider initialData={collaborators} watchlistId={watchlist.id}>
       <ClientProviders>
         <CollaboratorsModal watchlistId={watchlist.id} isPublicWatchlist={watchlist.is_public} />
         <DeleteWatchlistModal watchlistId={watchlist.id} watchlistTitle={watchlist.title} />
 
-        <div className="flex justify-center p-7 sm:p-10">
+        <div className="flex justify-center px-8 py-8 sm:px-10">
           <div className="w-full items-center lg:max-w-5xl">
             <section className="flex flex-col justify-between lg:flex-row lg:items-center">
               <Group className="flex flex-row flex-nowrap items-start justify-between">
@@ -105,10 +107,14 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
               </WatchlistAccordion>
             </section>
 
-            <div className="flex w-full flex-col flex-wrap items-center space-y-6 py-8 md:flex-row md:flex-nowrap md:items-start md:space-y-0">
-              <section className="min-w-lg h-[80vh] w-full bg-slate-700">Table</section>
+            <div className="flex w-full flex-col flex-wrap items-center space-y-6 pt-6 md:flex-row md:flex-nowrap md:items-start md:space-y-0">
+              <section className="min-w-lg w-full">
+                <Suspense fallback={<AnimeTableSkeleton limit={ANIME_PAGE_LIMIT} />}>
+                  <WatchlistAnimeTable watchlistId={watchlist.id} limit={ANIME_PAGE_LIMIT} />
+                </Suspense>
+              </section>
 
-              <section className="w-xs hidden h-full max-w-xs md:pl-10 lg:block">
+              <section className="w-s hidden h-full md:pl-10 lg:block">
                 <WatchlistDetails watchlist={watchlist} />
               </section>
             </div>
