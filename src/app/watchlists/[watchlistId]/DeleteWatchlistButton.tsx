@@ -21,7 +21,7 @@ export function DeleteWatchlistButton() {
       variant="default"
       size="xl"
       radius="xl"
-      aria-label="edit watchlist"
+      aria-label="delete watchlist"
       className="p-1 opacity-80"
       onClick={open}
     >

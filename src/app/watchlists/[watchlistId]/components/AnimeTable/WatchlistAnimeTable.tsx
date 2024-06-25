@@ -21,14 +21,9 @@ export async function WatchlistAnimeTable({ watchlistId, limit }: Props) {
     }
   )
 
-  // TODO: elaborate on errors
-  if (!animeResponse.ok || !animeResponse.data.ok) {
-    return null
-  }
-
   return (
     <WatchlistAnimeDataTable
-      initialData={animeResponse.data}
+      initialData={animeResponse.data?.ok ? animeResponse.data : null}
       watchlistId={watchlistId}
       limit={limit}
     />

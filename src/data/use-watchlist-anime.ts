@@ -36,7 +36,7 @@ const fetchWatchlistAnime = async ({
 }
 
 export function useWatchlistAnime(
-  initialData: GetWatchlistAnimeResponse,
+  initialData: GetWatchlistAnimeResponse | null,
   params: UseWatchlistAnimeParams
 ) {
   const userId = useCurrentUser()?.id
@@ -44,7 +44,8 @@ export function useWatchlistAnime(
   return useQuery({
     queryKey: ['watchlists', userId, params.watchlistId, params.page, { ...params }],
     queryFn: async ({ signal }) => fetchWatchlistAnime({ ...params, signal }),
-    initialData: params.page === 1 ? initialData : undefined,
+    initialData: params.page === 1 && initialData ? initialData : undefined,
+    retry: 5,
     placeholderData: keepPreviousData,
   })
 }

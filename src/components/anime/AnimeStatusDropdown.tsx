@@ -13,6 +13,8 @@ import { useCallback, useState } from 'react'
 import { useUpdateAnimeStatus } from '@/data/use-patch-anime-review'
 
 import type { WatchStatus } from '@/types/enums'
+import type { InputBaseProps } from '@mantine/core'
+import type { AriaAttributes } from 'react'
 
 // TODO: Consider making these badges instead of colored text
 
@@ -20,9 +22,10 @@ type Props = {
   animeId: string
   status?: WatchStatus | null
   onChange?: (status: WatchStatus) => void
-  defaultColor?: `text-${string}-${number}`
+  defaultColor?: `text-${string}-${number} dark:text-${string}-${number}`
   defaultText?: string
-}
+} & InputBaseProps &
+  AriaAttributes
 
 const STATUS_TEXT = {
   planned: 'Plan to Watch',
@@ -32,18 +35,19 @@ const STATUS_TEXT = {
 } as const satisfies Record<WatchStatus, string>
 
 const STATUS_COLOR = {
-  planned: 'text-blue-600',
-  watching: 'text-yellow-600',
-  completed: 'text-emerald-600',
-  dropped: 'text-red-600',
-} as const satisfies Record<WatchStatus, `text-${string}-${number}`>
+  planned: 'text-blue-600 dark:text-blue-400',
+  watching: 'text-yellow-700 dark:text-yellow-500',
+  completed: 'text-emerald-700 dark:text-emerald-500',
+  dropped: 'text-red-600 dark:text-red-400',
+} as const satisfies Record<WatchStatus, `text-${string}-${number} dark:text-${string}-${number}`>
 
 export function AnimeStatusDropdown({
   animeId,
   status = null,
   onChange,
   defaultText = 'Add status',
-  defaultColor = 'text-gray-600',
+  defaultColor = 'text-gray-600 dark:text-gray-400',
+  ...rest
 }: Props) {
   const [statusValue, setStatusValue] = useState<WatchStatus | null>(status)
 
@@ -89,6 +93,7 @@ export function AnimeStatusDropdown({
           rightSection={<ComboboxChevron />}
           rightSectionPointerEvents="none"
           onClick={() => combobox.toggleDropdown()}
+          {...rest}
         >
           <Text className={statusValue ? STATUS_COLOR[statusValue] : defaultColor}>
             {statusValue ? STATUS_TEXT[statusValue] : defaultText}
@@ -97,7 +102,15 @@ export function AnimeStatusDropdown({
       </ComboboxTarget>
 
       <ComboboxDropdown>
-        <ComboboxOptions>{options}</ComboboxOptions>
+        <ComboboxOptions
+          {...{
+            'aria-labelledby': rest['aria-labelledby'],
+            'aria-describedby': rest['aria-describedby'],
+            'aria-label': rest['aria-label'],
+          }}
+        >
+          {options}
+        </ComboboxOptions>
       </ComboboxDropdown>
     </Combobox>
   )

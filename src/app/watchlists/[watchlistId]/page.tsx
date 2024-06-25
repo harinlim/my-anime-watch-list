@@ -103,7 +103,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
               </div>
 
               <WatchlistAccordion watchlist={watchlist} className="block sm:hidden">
-                <WatchlistDetails watchlist={watchlist} />
+                <WatchlistDetails watchlist={watchlist} className="sm:hidden" />
               </WatchlistAccordion>
             </section>
 

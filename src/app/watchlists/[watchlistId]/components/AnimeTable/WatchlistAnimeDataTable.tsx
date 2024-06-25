@@ -18,13 +18,15 @@ import {
   MenuItem,
   MenuDropdown,
   MenuTarget,
+  Alert,
 } from '@mantine/core'
-import { IconDots, IconFileDescription, IconTrash } from '@tabler/icons-react'
+import { IconAlertCircle, IconDots, IconFileDescription, IconTrash } from '@tabler/icons-react'
 import Link from 'next/link'
 import { memo, useState } from 'react'
 
 import { AnimeStatusDropdown } from '@/components/anime/AnimeStatusDropdown'
 import { AnimeDescriptionPopover } from '@/components/anime/table/AnimeDescriptionPopover'
+import { AnimeTableSkeleton } from '@/components/anime/table/AnimeTableSkeleton'
 import { useTotalPages } from '@/components/anime/table/use-total-pages'
 import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
 import { useCurrentUser } from '@/context/UserContext'
@@ -35,7 +37,7 @@ import type { GetWatchlistAnimeResponse } from '@/api/watchlists/[watchlistId]/a
 import type { AnimeByWatchlist } from '@/types/anime'
 
 type Props = {
-  initialData: Extract<GetWatchlistAnimeResponse, { ok: true }>
+  initialData: Extract<GetWatchlistAnimeResponse, { ok: true }> | null
   watchlistId: number
   limit: number
 }
@@ -73,7 +75,7 @@ const AnimeRow = memo(
                 <Image
                   className="h-24 rounded-sm"
                   src={anime.poster_image?.small}
-                  alt={anime.title}
+                  alt={`${anime.title} (opens in a new tab)`}
                 />
               </AnimeDescriptionPopover>
             )}
@@ -98,6 +100,7 @@ const AnimeRow = memo(
           <>
             <TableTd width={180} pr={20}>
               <AnimeStatusDropdown
+                aria-label="Select a status"
                 animeId={anime.kitsu_id}
                 status={anime.review?.status}
                 defaultText="Not watched"
@@ -116,7 +119,7 @@ const AnimeRow = memo(
                 withinPortal
               >
                 <MenuTarget>
-                  <ActionIcon variant="default">
+                  <ActionIcon variant="default" aria-label="Menu">
                     <IconDots className="h-4 w-4" stroke={1.5} />
                   </ActionIcon>
                 </MenuTarget>
@@ -163,13 +166,25 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
 
   const isLoggedIn = !!useCurrentUser()
 
-  const { data, isFetching, isPlaceholderData, refetch } = useWatchlistAnime(initialData, {
+  // TODO: expand on error handling
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isPlaceholderData,
+    refetch,
+    isError: isQueryError,
+  } = useWatchlistAnime(initialData, {
     watchlistId,
     page: activePage,
     limit,
   })
 
-  const { mutate: removeFromWatchlist, isPending: isDeletePending } = useRemoveWatchlistAnime()
+  const {
+    mutate: removeFromWatchlist,
+    isPending: isDeletePending,
+    isError: isDeleteError,
+  } = useRemoveWatchlistAnime()
 
   const totalPages = useTotalPages(initialData, data)
 
@@ -179,8 +194,29 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
   const currentUserRole = useCollaboratorsData().currentUserCollaborator?.role
   const canEditAnime = currentUserRole === 'owner' || currentUserRole === 'editor'
 
+  if (initialData === null && isLoading) {
+    return <AnimeTableSkeleton limit={limit} />
+  }
+
   return (
     <>
+      {isQueryError && (
+        <Alert
+          variant="light"
+          color="red"
+          title="Failed to retrieve watchlist anime"
+          icon={<IconAlertCircle />}
+        />
+      )}
+      {isDeleteError && (
+        <Alert
+          variant="light"
+          color="red"
+          title="Failed to remove anime from watchlist"
+          icon={<IconAlertCircle />}
+        />
+      )}
+
       <TableScrollContainer minWidth={720}>
         <LoadingOverlay
           visible={
@@ -216,7 +252,20 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
         </Table>
       </TableScrollContainer>
       <Group className="mt-2 justify-end">
-        <Pagination total={totalPages} value={activePage} onChange={setActivePage} />
+        <Pagination
+          total={totalPages}
+          value={activePage}
+          onChange={setActivePage}
+          withEdges={totalPages > 3}
+          getControlProps={control => {
+            // Required because mantine doesn't add default accessibility labels
+            if (control === 'first') return { 'aria-label': 'First page' }
+            if (control === 'previous') return { 'aria-label': 'Previous page' }
+            if (control === 'next') return { 'aria-label': 'Next page' }
+            if (control === 'last') return { 'aria-label': 'Last page' }
+            return {}
+          }}
+        />
       </Group>
     </>
   )
