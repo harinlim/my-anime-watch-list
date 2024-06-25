@@ -43,6 +43,7 @@ module.exports = {
     ],
 
     'jsx-a11y/label-has-associated-control': ['warn', { assert: 'either' }],
+    'jsx-a11y/alt-text': ['error', { img: ['Image', 'img'] }],
 
     'react/jsx-max-depth': ['warn', { max: 9 }],
     'react/jsx-curly-newline': ['error', 'consistent'],

@@ -17,10 +17,7 @@ export function AnimeCard({ title, poster, rating }: Props) {
       maw={220}
       mih={300}
     >
-      {/* <AspectRatio ratio={720 / 1080} maw={300} mx="auto">
-        <Image src={poster} alt="Panda" />
-      </AspectRatio> */}
-      <Image src={poster} radius="md" width="w-full" />
+      <Image src={poster} radius="md" width="w-full" alt={title} />
       <Group className="min-w-100 min-h-70 custom pt-5">
         <div>
           <Text className={styles.category} size="xs">
