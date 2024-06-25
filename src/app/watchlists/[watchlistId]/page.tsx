@@ -118,7 +118,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
                 </Suspense>
               </section>
 
-              <section className="hidden h-full w-auto min-w-64 max-w-96 md:pl-10 lg:block">
+              <section className="hidden h-full w-auto min-w-56 max-w-72 md:pl-10 lg:block">
                 <WatchlistDetails watchlist={watchlist} />
               </section>
             </div>
