@@ -33,6 +33,8 @@ import { useCurrentUser } from '@/context/UserContext'
 import { useRemoveWatchlistAnime } from '@/data/use-remove-watchlist-anime'
 import { useWatchlistAnime } from '@/data/use-watchlist-anime'
 
+import { WatchlistAnimeTableEmptyState } from './WatchlistAnimeTableEmptyState'
+
 import type { GetWatchlistAnimeResponse } from '@/api/watchlists/[watchlistId]/anime/types'
 import type { AnimeByWatchlist } from '@/types/anime'
 
@@ -40,6 +42,7 @@ type Props = {
   initialData: Extract<GetWatchlistAnimeResponse, { ok: true }> | null
   watchlistId: number
   limit: number
+  minWidth?: number
 }
 
 type AnimeRowProps = {
@@ -161,7 +164,7 @@ const AnimeRow = memo(
 
 // TODO: reconsider mobile view for table
 
-export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Props) {
+export function WatchlistAnimeDataTable({ initialData, watchlistId, limit, minWidth }: Props) {
   const [activePage, setActivePage] = useState<number>(1)
 
   const isLoggedIn = !!useCurrentUser()
@@ -198,6 +201,8 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
     return <AnimeTableSkeleton limit={limit} />
   }
 
+  const isEmpty = data?.data?.length === 0
+
   return (
     <>
       {isQueryError && (
@@ -217,7 +222,7 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
         />
       )}
 
-      <TableScrollContainer minWidth={720}>
+      <TableScrollContainer minWidth={minWidth ?? 640}>
         <LoadingOverlay
           visible={
             // Check if we're actively fetching NEW data, or if delete is in progress
@@ -227,7 +232,7 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
 
         <Table verticalSpacing="sm">
           <TableThead>
-            <TableTr className="text-base">
+            <TableTr className="text-lg">
               <TableTh>Title</TableTh>
 
               {isLoggedIn && (
@@ -240,6 +245,19 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
             </TableTr>
           </TableThead>
           <TableTbody>
+            {isEmpty && (
+              <TableTr>
+                <TableTd />
+                {isLoggedIn && (
+                  <>
+                    <TableTd width={180} pr={20} />
+                    <TableTd width={80} />
+                    <TableTd width={40} />
+                  </>
+                )}
+              </TableTr>
+            )}
+
             {data?.data?.map(item => (
               <AnimeRow
                 key={item.kitsu_id}
@@ -251,12 +269,15 @@ export function WatchlistAnimeDataTable({ initialData, watchlistId, limit }: Pro
           </TableTbody>
         </Table>
       </TableScrollContainer>
+
+      {isEmpty && <WatchlistAnimeTableEmptyState canEditAnime={canEditAnime} className="mt-2" />}
+
       <Group className="mt-2 justify-end">
         <Pagination
           total={totalPages}
           value={activePage}
           onChange={setActivePage}
-          withEdges={totalPages > 3}
+          withEdges={totalPages > 8}
           getControlProps={control => {
             // Required because mantine doesn't add default accessibility labels
             if (control === 'first') return { 'aria-label': 'First page' }

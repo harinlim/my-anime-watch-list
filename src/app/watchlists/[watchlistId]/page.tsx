@@ -95,7 +95,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
               <div className="flex flex-col gap-4 pt-2 lg:flex-row lg:items-center lg:pt-0">
                 <WatchlistPrivacyIndicator isPublicWatchlist={watchlist.is_public} />
 
-                <Group className="flex flex-nowrap gap-2">
+                <Group className="flex-nowrap gap-2">
                   <EditWatchlistButton watchlistId={watchlist.id} />
                   <EditCollaboratorsButton />
                   <DeleteWatchlistButton />
@@ -109,12 +109,16 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
 
             <div className="flex w-full flex-col flex-wrap items-center space-y-6 pt-6 md:flex-row md:flex-nowrap md:items-start md:space-y-0">
               <section className="min-w-lg w-full">
-                <Suspense fallback={<AnimeTableSkeleton limit={ANIME_PAGE_LIMIT} />}>
-                  <WatchlistAnimeTable watchlistId={watchlist.id} limit={ANIME_PAGE_LIMIT} />
+                <Suspense fallback={<AnimeTableSkeleton limit={ANIME_PAGE_LIMIT} minWidth={560} />}>
+                  <WatchlistAnimeTable
+                    watchlistId={watchlist.id}
+                    limit={ANIME_PAGE_LIMIT}
+                    minWidth={560}
+                  />
                 </Suspense>
               </section>
 
-              <section className="w-s hidden h-full md:pl-10 lg:block">
+              <section className="hidden h-full w-auto min-w-64 max-w-96 md:pl-10 lg:block">
                 <WatchlistDetails watchlist={watchlist} />
               </section>
             </div>

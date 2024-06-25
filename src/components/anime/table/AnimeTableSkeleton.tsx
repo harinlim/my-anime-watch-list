@@ -17,7 +17,12 @@ import {
 
 import { useCurrentUser } from '@/context/UserContext'
 
-export function AnimeTableSkeleton({ limit }: { limit: number }) {
+type Props = {
+  limit: number
+  minWidth?: number
+}
+
+export function AnimeTableSkeleton({ limit, minWidth }: Props) {
   const isLoggedIn = !!useCurrentUser()
 
   const rows = Array.from({ length: limit })?.map((_, i) => (
@@ -49,10 +54,10 @@ export function AnimeTableSkeleton({ limit }: { limit: number }) {
 
   return (
     <>
-      <TableScrollContainer minWidth={720}>
+      <TableScrollContainer minWidth={minWidth ?? 640}>
         <Table verticalSpacing="sm">
           <TableThead>
-            <TableTr className="text-base">
+            <TableTr className="text-lg">
               <TableTh>Title</TableTh>
 
               {isLoggedIn && (

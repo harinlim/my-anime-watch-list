@@ -9,9 +9,10 @@ import type { GetWatchlistAnimeResponse } from '@/api/watchlists/[watchlistId]/a
 type Props = {
   watchlistId: number
   limit: number
+  minWidth?: number
 }
 
-export async function WatchlistAnimeTable({ watchlistId, limit }: Props) {
+export async function WatchlistAnimeTable({ minWidth, watchlistId, limit }: Props) {
   const animeResponse = await fetchWithType<GetWatchlistAnimeResponse>(
     withBaseURL(`/api/watchlists/${watchlistId}/anime?limit=${limit}`),
     {
@@ -26,6 +27,7 @@ export async function WatchlistAnimeTable({ watchlistId, limit }: Props) {
       initialData={animeResponse.data?.ok ? animeResponse.data : null}
       watchlistId={watchlistId}
       limit={limit}
+      minWidth={minWidth}
     />
   )
 }
