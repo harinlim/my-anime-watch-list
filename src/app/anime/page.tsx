@@ -1,7 +1,9 @@
-import { Title } from '@mantine/core'
+import { Group, Title } from '@mantine/core'
 
 import { AnimeList } from '@/components/anime/AnimeList'
 import { SearchBar } from '@/components/common/Header/SearchBar'
+
+import { SortAnime } from './SortAnime'
 
 export default function AnimePage() {
   return (
@@ -14,8 +16,12 @@ export default function AnimePage() {
           overrideType="/anime"
           includeSearchParams
           includeSubmit
-          className="mb-10 w-4/5 md:w-3/5"
+          className="w-4/5 md:w-3/5"
         />
+        <Group className="my-5 w-4/5 justify-center sm:justify-end">
+          Sort by:
+          <SortAnime />
+        </Group>
         <AnimeList />
       </div>
     </div>

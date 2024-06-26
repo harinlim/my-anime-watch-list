@@ -65,8 +65,9 @@ export function SearchBar({
   const handleSubmit = form.onSubmit(values => {
     setIsLoading(true)
     const search = values.search.trim()
-    const route = search ? `${values.type}?search=${search}` : values.type
-    router.push(route)
+    router.push(
+      `${values.type}?search=${search}${searchParams.get('sort') ? `&sort=${searchParams.get('sort')}` : ''}`
+    )
     setIsLoading(false)
   })
 
