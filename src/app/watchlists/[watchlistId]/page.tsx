@@ -11,7 +11,7 @@ import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
-import { AnimeTableSkeleton, WatchlistAnimeTable } from './components/AnimeTable'
+import { AnimeTableSkeleton, WatchlistAnimeTableContainer } from './components/WatchlistAnimeTable'
 import { DeleteWatchlistButton } from './DeleteWatchlistButton'
 import { DeleteWatchlistModalProvider } from './DeleteWatchlistModalContext'
 import { EditCollaboratorsButton } from './EditCollaboratorsButton'
@@ -110,7 +110,7 @@ export default async function WatchlistPage({ params }: { params: { watchlistId:
             <div className="flex w-full flex-col flex-wrap items-center space-y-6 pt-6 md:flex-row md:flex-nowrap md:items-start md:space-y-0">
               <section className="min-w-lg w-full">
                 <Suspense fallback={<AnimeTableSkeleton limit={ANIME_PAGE_LIMIT} minWidth={560} />}>
-                  <WatchlistAnimeTable
+                  <WatchlistAnimeTableContainer
                     watchlistId={watchlist.id}
                     limit={ANIME_PAGE_LIMIT}
                     minWidth={560}
