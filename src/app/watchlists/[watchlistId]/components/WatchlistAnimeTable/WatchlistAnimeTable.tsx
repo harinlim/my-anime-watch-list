@@ -4,7 +4,6 @@ import {
   Table,
   Group,
   TableScrollContainer,
-  Pagination,
   LoadingOverlay,
   TableTbody,
   TableTd,
@@ -18,6 +17,7 @@ import { useState } from 'react'
 
 import { AnimeTableSkeleton } from '@/components/anime/table/AnimeTableSkeleton'
 import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
+import { Pagination } from '@/components/common/Pagination'
 import { useCurrentUser } from '@/context/UserContext'
 import { useRemoveWatchlistAnime } from '@/data/use-remove-watchlist-anime'
 import { useWatchlistAnime } from '@/data/use-watchlist-anime'
@@ -25,6 +25,7 @@ import { useTotalPages } from '@/hooks/use-total-pages'
 
 import { WatchlistAnimeRow } from './WatchlistAnimeRow'
 import { WatchlistAnimeTableEmptyState } from './WatchlistAnimeTableEmptyState'
+import { WatchlistAnimeTableErrorState } from './WatchlistAnimeTableErrorState'
 
 import type { GetWatchlistAnimeResponse } from '@/api/watchlists/[watchlistId]/anime/types'
 
@@ -47,7 +48,6 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
     data,
     isLoading,
     isFetching,
-    isPlaceholderData,
     refetch,
     isError: isQueryError,
   } = useWatchlistAnime(initialData, {
@@ -70,22 +70,14 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
   const currentUserRole = useCollaboratorsData().currentUserCollaborator?.role
   const canEditAnime = currentUserRole === 'owner' || currentUserRole === 'editor'
 
-  if (initialData === null && isLoading) {
-    return <AnimeTableSkeleton limit={limit} />
+  if ((initialData === null && isLoading) || isFetching) {
+    return <AnimeTableSkeleton limit={limit} activePage={activePage} totalPages={totalPages} />
   }
 
   const isEmpty = data?.data?.length === 0
 
   return (
     <>
-      {isQueryError && (
-        <Alert
-          variant="light"
-          color="red"
-          title="Failed to retrieve watchlist anime"
-          icon={<IconAlertCircle />}
-        />
-      )}
       {isDeleteError && (
         <Alert
           variant="light"
@@ -96,12 +88,7 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
       )}
 
       <TableScrollContainer minWidth={minWidth ?? 640}>
-        <LoadingOverlay
-          visible={
-            // Check if we're actively fetching NEW data, or if delete is in progress
-            (isFetching && isPlaceholderData) || isDeletePending
-          }
-        />
+        <LoadingOverlay visible={isDeletePending} />
 
         <Table verticalSpacing="sm">
           <TableThead>
@@ -118,14 +105,15 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
             </TableTr>
           </TableThead>
           <TableTbody>
-            {isEmpty && (
+            {(isEmpty || isQueryError) && (
+              // This is to keep spacing in headers consistent
               <TableTr>
                 <TableTd />
                 {isLoggedIn && (
                   <>
                     <TableTd width={180} pr={20} />
                     <TableTd width={80} />
-                    <TableTd width={40} />
+                    <TableTd width={48} />
                   </>
                 )}
               </TableTr>
@@ -143,23 +131,19 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
         </Table>
       </TableScrollContainer>
 
-      {isEmpty && <WatchlistAnimeTableEmptyState canEditAnime={canEditAnime} className="mt-2" />}
+      {isQueryError && (
+        <WatchlistAnimeTableErrorState
+          isLoading={isFetching}
+          retry={refetch}
+          className="h-[580.5px] pb-40"
+        />
+      )}
+      {isEmpty && (
+        <WatchlistAnimeTableEmptyState canEditAnime={canEditAnime} className="h-[580.5px] pb-40" />
+      )}
 
       <Group className="mt-2 justify-end">
-        <Pagination
-          total={totalPages}
-          value={activePage}
-          onChange={setActivePage}
-          withEdges={totalPages > 8}
-          getControlProps={control => {
-            // Required because mantine doesn't add default accessibility labels
-            if (control === 'first') return { 'aria-label': 'First page' }
-            if (control === 'previous') return { 'aria-label': 'Previous page' }
-            if (control === 'next') return { 'aria-label': 'Next page' }
-            if (control === 'last') return { 'aria-label': 'Last page' }
-            return {}
-          }}
-        />
+        <Pagination total={totalPages} value={activePage} onChange={setActivePage} />
       </Group>
     </>
   )

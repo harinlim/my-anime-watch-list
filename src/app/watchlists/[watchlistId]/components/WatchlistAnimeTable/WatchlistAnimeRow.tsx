@@ -96,7 +96,7 @@ export const WatchlistAnimeRow = memo(({ anime, canRemove, onRemove }: Props) =>
             {/* Honestly, there's not really a good way to do ratings here unless we do a straight up dropdown like MAL */}
             {anime.review?.rating ? `${anime.review.rating} / 10 ` : 'Not yet rated'}
           </TableTd>
-          <TableTd width={40}>
+          <TableTd width={48}>
             <Menu
               withArrow
               width={120}
@@ -105,7 +105,7 @@ export const WatchlistAnimeRow = memo(({ anime, canRemove, onRemove }: Props) =>
               withinPortal
             >
               <MenuTarget>
-                <ActionIcon variant="default" aria-label="Menu">
+                <ActionIcon variant="subtle" color="gray.8" aria-label="Menu">
                   <IconDots className="h-4 w-4" stroke={1.5} />
                 </ActionIcon>
               </MenuTarget>

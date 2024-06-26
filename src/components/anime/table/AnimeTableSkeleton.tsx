@@ -7,7 +7,6 @@ import {
   Stack,
   Box,
   Group,
-  Pagination,
   TableTbody,
   TableTd,
   TableTh,
@@ -15,14 +14,17 @@ import {
   TableTr,
 } from '@mantine/core'
 
+import { Pagination } from '@/components/common/Pagination'
 import { useCurrentUser } from '@/context/UserContext'
 
 type Props = {
   limit: number
   minWidth?: number
+  activePage?: number
+  totalPages?: number
 }
 
-export function AnimeTableSkeleton({ limit, minWidth }: Props) {
+export function AnimeTableSkeleton({ limit, minWidth, activePage = 1, totalPages = 1 }: Props) {
   const isLoggedIn = !!useCurrentUser()
 
   const rows = Array.from({ length: limit })?.map((_, i) => (
@@ -46,7 +48,7 @@ export function AnimeTableSkeleton({ limit, minWidth }: Props) {
           <TableTd width={80}>
             <Skeleton className="h-6 w-full" />
           </TableTd>
-          <TableTd width={40} />
+          <TableTd width={48} />
         </>
       )}
     </TableTr>
@@ -73,7 +75,7 @@ export function AnimeTableSkeleton({ limit, minWidth }: Props) {
         </Table>
       </TableScrollContainer>
       <Group className="mt-2 justify-end">
-        <Pagination total={1} />
+        <Pagination disabled value={activePage} total={totalPages} />
       </Group>
     </>
   )

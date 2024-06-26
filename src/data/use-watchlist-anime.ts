@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import { useCurrentUser } from '@/context/UserContext'
 import { fetchWithError } from '@/lib/api'
@@ -45,7 +45,9 @@ export function useWatchlistAnime(
     queryKey: ['watchlists', userId, params.watchlistId, params.page, { ...params }],
     queryFn: async ({ signal }) => fetchWatchlistAnime({ ...params, signal }),
     initialData: params.page === 1 && initialData ? initialData : undefined,
-    retry: 5,
-    placeholderData: keepPreviousData,
+    retry: false,
+    // TODO: look into placeholder data error states. Currently it returns the previous success state even if the current state is an error,
+    // causing temporary flashing of invalid previous data.
+    // placeholderData: keepPreviousData,
   })
 }
