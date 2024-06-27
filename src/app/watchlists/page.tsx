@@ -3,7 +3,7 @@ import { Group, Title } from '@mantine/core'
 import { SearchBar } from '@/components/common/Header/SearchBar'
 import { WatchlistsList } from '@/components/watchlists/WatchlistsList'
 
-import { CreateWatchlistButton } from './CreateWatchlistButton'
+import { CreateWatchlistButtonFixed } from './CreateWatchlistButtonFixed'
 import { SortWatchlistsDropdown } from './SortWatchlistsDropdown'
 
 export default function WatchlistsPage() {
@@ -20,7 +20,7 @@ export default function WatchlistsPage() {
           className="w-4/5 md:w-3/5"
         />
         <Group className="my-5 w-5/6 justify-center sm:justify-end md:w-3/4">
-          <CreateWatchlistButton />
+          <CreateWatchlistButtonFixed />
           <Group>
             Sort by:
             <SortWatchlistsDropdown />

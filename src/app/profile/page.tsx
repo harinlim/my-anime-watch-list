@@ -1,8 +1,10 @@
-import { Title, Text } from '@mantine/core'
+import { Title } from '@mantine/core'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+import { ProfileContent } from '@/components/profile/ProfileContent'
 import { ArticlesCardsGrid } from '@/components/watchlists/ArticleCardsGrid'
+import { CreateWatchlistButton } from '@/components/watchlists/CreateWatchlistButton'
 import { WatchlistCard } from '@/components/watchlists/WatchlistCard'
 import { getUserFromAuth } from '@/db/users'
 import { fetchWithType } from '@/lib/api'
@@ -41,16 +43,26 @@ export default async function SelfProfilePage() {
   )
 
   return (
-    <div className="flex min-h-full flex-col items-center justify-center space-y-6 p-8">
-      <Title order={1}>
-        <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
-          @{user.username}
-        </Text>
-        &apos;s Watchlists
-      </Title>
-      <pre className="text-wrap text-left">{JSON.stringify(watchlists, null, 2)}</pre>
-      <WatchlistCard />
-      <ArticlesCardsGrid />
+    <div className="flex justify-center">
+      <div className="flex min-h-full w-full flex-col space-y-6 p-8 lg:max-w-5xl">
+        <ProfileContent user={user}>
+          <div className="flex items-center justify-between pb-5 pt-10">
+            <Title order={2} className="text-4xl">
+              Watchlists
+            </Title>
+            <CreateWatchlistButton />
+          </div>
+
+          <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" />
+          <Title order={2} className="pb-5 pt-10 text-4xl">
+            Anime
+          </Title>
+          <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" />
+        </ProfileContent>
+        {/* <pre className="text-wrap text-left">{JSON.stringify(watchlists, null, 2)}</pre> */}
+        <WatchlistCard />
+        <ArticlesCardsGrid />
+      </div>
     </div>
   )
 }

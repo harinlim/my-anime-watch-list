@@ -41,11 +41,11 @@ const AvatarWrapper = forwardRef<
 
 export function Avatar({
   user,
-  size = 8,
+  className,
   asLink = false,
 }: {
   user: WatchlistUser | PublicUser
-  size?: number
+  className?: string
   asLink?: boolean
 }) {
   const a11yLabel = 'role' in user ? `${user.role}: ${user.username}` : user.username
@@ -57,7 +57,7 @@ export function Avatar({
         {user.avatar_url ? (
           <Image
             key={key}
-            className={clsx(styles.ring, 'inline-block size-8 bg-white dark:bg-zinc-700')}
+            className={clsx(styles.ring, 'inline-block bg-white dark:bg-zinc-700', className)}
             src={user.avatar_url}
             alt={a11yLabel}
           />
@@ -66,8 +66,8 @@ export function Avatar({
             key={key}
             className={clsx(
               styles.ring,
-              `size-${size}`,
-              'inline-block size-8 bg-zinc-300 text-gray-400 dark:bg-zinc-500'
+              'inline-block size-8 bg-zinc-300 text-gray-400 dark:bg-zinc-500',
+              className
             )}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -106,7 +106,12 @@ export function AvatarGroup({
   return (
     <div className="flex -space-x-2">
       {watchlistUsersOverview.map(user => (
-        <Avatar key={`${watchlistId}:avatar-${user.user_id}`} asLink user={user} />
+        <Avatar
+          key={`${watchlistId}:avatar-${user.user_id}`}
+          asLink
+          user={user}
+          className="size-8"
+        />
       ))}
       {remainingUsers > 0 && (
         <Tooltip label={remainingUsersLabel} position="top">
