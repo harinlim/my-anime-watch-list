@@ -3,7 +3,7 @@ import { Group, Title } from '@mantine/core'
 import { AnimeList } from '@/components/anime/AnimeList'
 import { SearchBar } from '@/components/common/Header/SearchBar'
 
-import { SortAnime } from './SortAnime'
+import { SortAnimeDropdown } from './SortAnimeDropdown'
 
 export default function AnimePage() {
   return (
@@ -20,7 +20,7 @@ export default function AnimePage() {
         />
         <Group className="my-5 w-4/5 justify-center sm:justify-end">
           Sort by:
-          <SortAnime />
+          <SortAnimeDropdown />
         </Group>
         <AnimeList />
       </div>
