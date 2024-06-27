@@ -64,9 +64,14 @@ export function SearchBar({
 
   const handleSubmit = form.onSubmit(values => {
     setIsLoading(true)
+    const params = new URLSearchParams(searchParams)
+
     const search = values.search.trim()
-    const route = search ? `${values.type}?search=${search}` : values.type
-    router.push(route)
+    if (search) {
+      params.set('search', search)
+    }
+
+    router.replace(`${values.type}?${params.toString()}`)
     setIsLoading(false)
   })
 
@@ -116,7 +121,7 @@ export function SearchBar({
         <Button
           type="submit"
           disabled={isLoading}
-          variant="gradient"
+          color="indigo"
           size={size}
           className="right-0 top-0 rounded-l-none"
         >
