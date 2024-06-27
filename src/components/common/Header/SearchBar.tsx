@@ -121,7 +121,7 @@ export function SearchBar({
         <Button
           type="submit"
           disabled={isLoading}
-          variant="gradient"
+          color="indigo"
           size={size}
           className="right-0 top-0 rounded-l-none"
         >
