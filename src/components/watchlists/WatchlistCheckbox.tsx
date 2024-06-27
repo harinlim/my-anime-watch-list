@@ -1,7 +1,8 @@
-'use client'
-
 import { Checkbox } from '@mantine/core'
 import { useCallback } from 'react'
+
+import { useAddWatchlistAnime } from '@/data/use-add-watchlist-anime'
+import { useRemoveWatchlistAnime } from '@/data/use-remove-watchlist-anime'
 
 import type { ChangeEventHandler } from 'react'
 
@@ -12,30 +13,20 @@ type Props = {
   defaultChecked?: boolean
 }
 
-async function addToWatchlist(animeId: string, watchlistId: number) {
-  return fetch(`/api/watchlists/${watchlistId}/anime`, {
-    method: 'POST',
-    body: JSON.stringify({ animeId }),
-  })
-}
-
-async function removeFromWatchlist(animeId: string, watchlistId: number) {
-  return fetch(`/api/watchlists/${watchlistId}/anime/${animeId}`, {
-    method: 'DELETE',
-  })
-}
-
 export function WatchlistCheckbox({ id, animeId, watchlistId, defaultChecked = false }: Props) {
+  const { mutate: addToWatchlist } = useAddWatchlistAnime()
+  const { mutate: removeFromWatchlist } = useRemoveWatchlistAnime()
+
   const handleToggle = useCallback<ChangeEventHandler<HTMLInputElement>>(
     event => {
       // TODO: handle debounce and internal state (useOptimistic?)
       if (event.currentTarget.checked) {
-        void addToWatchlist(animeId, watchlistId)
+        void addToWatchlist({ watchlistId, animeId })
       } else {
-        void removeFromWatchlist(animeId, watchlistId)
+        void removeFromWatchlist({ watchlistId, animeId })
       }
     },
-    [animeId, watchlistId]
+    [animeId, watchlistId, addToWatchlist, removeFromWatchlist]
   )
 
   return (

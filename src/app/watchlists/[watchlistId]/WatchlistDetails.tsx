@@ -4,11 +4,12 @@ import type { Watchlist } from '@/types/watchlists'
 
 type WatchlistDescriptionProps = {
   watchlist: Watchlist
+  className?: string
 }
 
-export function WatchlistDetails({ watchlist }: WatchlistDescriptionProps) {
+export function WatchlistDetails({ watchlist, className }: WatchlistDescriptionProps) {
   return (
-    <dl>
+    <dl className={className}>
       <dt className="pb-2 text-sm font-bold sm:text-lg">Description</dt>
       <dd className="pb-4 text-sm">{watchlist.description}</dd>
 

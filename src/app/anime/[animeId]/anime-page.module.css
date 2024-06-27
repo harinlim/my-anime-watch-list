@@ -19,9 +19,3 @@
   height: rem(20px);
   color: var(--mantine-color-red-6);
 }
-
-.label {
-  font-weight: 700;
-  font-size: var(--mantine-font-size-md);
-  text-transform: uppercase;
-}

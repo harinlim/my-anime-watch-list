@@ -1,9 +1,0 @@
-.label {
-  font-weight: 700;
-  font-size: var(--mantine-font-size-md);
-  text-transform: uppercase;
-}
-
-.inputbase button {
-  background-color: var(--mantine-color-red-6);
-}
