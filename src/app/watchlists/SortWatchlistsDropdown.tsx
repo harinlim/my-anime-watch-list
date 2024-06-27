@@ -28,7 +28,10 @@ const SORT_TYPES = [
   { value: 'asc_updated_at', label: 'Oldest Update' },
 ] as const satisfies { value: SORT_MAPPING_KEY; label: string }[]
 
-const getDefaultSortValue = (sort: string, direction: string) => {
+const getSelectValue = (params: URLSearchParams) => {
+  const sort = params.get('sort')
+  const direction = params.get('direction')
+
   const defaultSortKey = Object.keys(SORT_MAPPING).find(
     key => SORT_MAPPING[key].sort === sort && SORT_MAPPING[key].direction === direction
   )
@@ -53,11 +56,9 @@ export function SortWatchlistsDropdown() {
       aria-label="Sort by"
       placeholder="Sort by"
       onOptionSubmit={handleChange}
-      className="w-40"
-      defaultValue={getDefaultSortValue(
-        searchParams.get('sort') ?? 'updated_at',
-        searchParams.get('direction') ?? 'desc'
-      )}
+      className="w-44"
+      defaultValue={getSelectValue(searchParams)}
+      size="md"
       rightSection={<IconChevronDown size={16} className="stroke-black dark:stroke-white" />}
       data={SORT_TYPES}
     />
