@@ -1,6 +1,7 @@
 import { Title } from '@mantine/core'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { CreateWatchlistButton } from '@/components/watchlists/CreateWatchlistButton'
 import { getUserFromAuth } from '@/db/users'
@@ -10,11 +11,14 @@ import { createServerClient } from '@/lib/supabase/server'
 import { withBaseURL } from '@/lib/url'
 
 import { ProfileHeader } from './components/ProfileHeader'
+import { AnimeTableSkeleton, UserAnimeTableContainer } from './components/UserAnimeTable'
 
 import type { WatchlistOverview } from '@/types/watchlists'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+
+const ANIME_PER_PAGE = 5
 
 /** Private profile page, accessible only to the user with cookies */
 export default async function SelfProfilePage() {
@@ -62,7 +66,10 @@ export default async function SelfProfilePage() {
             Anime
           </Title>
         </div>
-        <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" />
+        <Suspense fallback={<AnimeTableSkeleton limit={ANIME_PER_PAGE} />}>
+          <UserAnimeTableContainer username={user.username} limit={ANIME_PER_PAGE} />
+        </Suspense>
+        {/* <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" /> */}
       </section>
       {/* <pre className="text-wrap text-left">{JSON.stringify(watchlists, null, 2)}</pre> */}
       {/* <WatchlistCard />
