@@ -8,7 +8,7 @@ import type { WatchStatus } from '@/types/enums'
 
 export function useUpdateAnimeStatus(animeId: string) {
   const queryClient = useQueryClient()
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation<unknown, HttpError, WatchStatus>({
     mutationFn: async (status: WatchStatus) =>
@@ -31,13 +31,17 @@ export function useUpdateAnimeStatus(animeId: string) {
     onError: (error, variables) => console.error(error.message, variables),
 
     // Naive way to invalidate all potential watchlists affected
-    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
+    onSuccess: async () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
+      ]),
   })
 }
 
 export function useUpdateAnimeRating(animeId: string) {
   const queryClient = useQueryClient()
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation<unknown, HttpError, number>({
     mutationFn: async (rating: number) =>
@@ -65,8 +69,8 @@ export function useUpdateAnimeRating(animeId: string) {
     onSuccess: async () =>
       Promise.all([
         // Naive way to invalidate all potential watchlists affected
-        queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
-        queryClient.invalidateQueries({ queryKey: ['anime', userId, animeId] }),
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
       ]),
   })
 }

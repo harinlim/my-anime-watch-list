@@ -9,7 +9,7 @@ export function useDeleteWatchlistCollaborator({ watchlistId }: { watchlistId: n
   const userId = useCurrentUser()?.id
 
   return useMutation({
-    mutationFn: async ({ collaboratorId }: { collaboratorId: string }) =>
+    mutationFn: async ({ collaboratorId }: { collaboratorId: string; username: string }) =>
       fetchWithError(
         `/api/watchlists/${watchlistId}/users/${collaboratorId}`,
         { method: 'DELETE', credentials: 'include' },
@@ -24,13 +24,14 @@ export function useDeleteWatchlistCollaborator({ watchlistId }: { watchlistId: n
     // TODO: expand on error handling here
     onError: (error, variables) => console.error(error.message, variables),
 
-    onSuccess: (_, { collaboratorId }) => {
+    onSuccess: async (_, { collaboratorId, username }) => {
       if (collaboratorId === userId) {
         // Invalidate the watchlist query if the current user is removed
-        void queryClient.invalidateQueries({
+        return queryClient.invalidateQueries({
           queryKey: ['watchlists', userId],
         })
       }
+      return queryClient.invalidateQueries({ queryKey: ['watchlists', userId, username] })
     },
 
     // make sure to _return_ the Promise from the query invalidation

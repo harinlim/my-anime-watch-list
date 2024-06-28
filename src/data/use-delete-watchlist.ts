@@ -8,7 +8,7 @@ import type { HttpError } from '@/lib/api'
 export function useDeleteWatchlist(watchlistId: number) {
   const queryClient = useQueryClient()
 
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation<unknown, HttpError>({
     mutationFn: async () =>
@@ -25,6 +25,10 @@ export function useDeleteWatchlist(watchlistId: number) {
 
     onError: (error: HttpError, variables) => console.error(error.message, variables),
 
-    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
+    onSuccess: async () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
+      ]),
   })
 }

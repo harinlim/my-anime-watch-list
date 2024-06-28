@@ -73,9 +73,14 @@ export function AnimeStatusDropdown({
   const handleChangeStatus = useCallback(
     (val: string) => {
       const newStatus = val as WatchStatus
-      setStatusValue(newStatus)
-      onChange?.(newStatus)
-      void updateStatus(newStatus)
+      setStatusValue(oldStatus => {
+        if (oldStatus === newStatus) {
+          return oldStatus
+        }
+        onChange?.(newStatus)
+        void updateStatus(newStatus)
+        return newStatus
+      })
       combobox.closeDropdown()
     },
     [updateStatus, onChange, combobox]

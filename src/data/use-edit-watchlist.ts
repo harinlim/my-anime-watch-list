@@ -8,7 +8,7 @@ import type { HttpError } from '@/lib/api'
 
 export function useEditWatchlist(watchlistId: number) {
   const queryClient = useQueryClient()
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation<unknown, HttpError, WatchlistRequestBody>({
     mutationFn: async (body: WatchlistRequestBody) =>
@@ -32,6 +32,10 @@ export function useEditWatchlist(watchlistId: number) {
 
     // make sure to _return_ the Promise from the query invalidation
     // so that the mutation stays in `pending` state until the refetch is finished
-    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
+    onSuccess: async () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
+      ]),
   })
 }

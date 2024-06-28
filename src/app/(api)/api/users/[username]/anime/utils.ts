@@ -1,7 +1,7 @@
 import { WATCH_STATUS } from '@/types/enums'
 
-import type { GetAnimeByUserAssociationQueryParams } from './types'
-import type { WatchStatus } from '@/types/enums'
+import type { GetUserAnimeQueryParams } from './types'
+import type { AnimeByUser } from '@/types/anime'
 
 /** TEMPORARY SORTER UNTIL WE ESTABLISH VIEW/RPC FOR THE USER ANIMES */
 export const SORT_ANIME_COMPARATORS = {
@@ -17,13 +17,16 @@ export const SORT_ANIME_COMPARATORS = {
       (b.review?.status ? WATCH_STATUS.indexOf(b.review.status) + 1 : 0) -
       (a.review?.status ? WATCH_STATUS.indexOf(a.review.status) + 1 : 0),
   },
+  updated_at: {
+    asc: (a, b) =>
+      new Date(a.review?.updated_at ?? 0).valueOf() - new Date(b.review?.updated_at ?? 0).valueOf(),
+    desc: (a, b) =>
+      new Date(b.review?.updated_at ?? 0).valueOf() - new Date(a.review?.updated_at ?? 0).valueOf(),
+  },
 } as const satisfies Record<
-  GetAnimeByUserAssociationQueryParams['sort'],
+  GetUserAnimeQueryParams['sort'],
   Record<
-    GetAnimeByUserAssociationQueryParams['direction'],
-    (
-      a: { review: { rating?: number | null; status: WatchStatus | null } | null },
-      b: { review: { rating?: number | null; status: WatchStatus | null } | null }
-    ) => number
+    GetUserAnimeQueryParams['direction'],
+    (a: { review: AnimeByUser['review'] }, b: { review: AnimeByUser['review'] }) => number
   >
 >

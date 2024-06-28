@@ -1,9 +1,15 @@
 import { Group, Text } from '@mantine/core'
 import { IconEye, IconLock } from '@tabler/icons-react'
+import clsx from 'clsx'
 
-export function WatchlistPrivacyIndicator({ isPublicWatchlist }: { isPublicWatchlist: boolean }) {
+type Props = {
+  isPublicWatchlist: boolean
+  className?: string
+}
+
+export function WatchlistPrivacyIndicator({ isPublicWatchlist, className }: Props) {
   return (
-    <Group className="flex-nowrap items-center gap-1.5">
+    <Group className={clsx('flex-nowrap items-center gap-1.5', className)}>
       {isPublicWatchlist ? (
         <>
           <IconEye className="text-green-700 dark:text-green-400" stroke="2" size="20" />

@@ -16,7 +16,7 @@ type Props = {
 }
 
 export function Review({ animeId, status = null, rating = null }: Props) {
-  const [ratingValue, setRatingValue] = useState(rating ?? 0)
+  const [ratingValue, setRatingValue] = useState(rating ? rating / 2 : 0)
   const [statusValue, setStatusValue] = useState<WatchStatus | null>(status)
 
   const { mutate: updateRating } = useUpdateAnimeRating(animeId)
@@ -24,7 +24,7 @@ export function Review({ animeId, status = null, rating = null }: Props) {
   const handleChangeRating = useCallback(
     (val: number) => {
       setRatingValue(val)
-      void updateRating(val)
+      void updateRating(val * 2)
     },
     [updateRating]
   )

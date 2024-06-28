@@ -3,9 +3,10 @@ import { IconPlus } from '@tabler/icons-react'
 
 import type { WatchlistOverview } from '@/types/watchlists'
 
-type WatchlistCardProps = {
+type Props = {
   watchlist: WatchlistOverview
   hasPlus?: boolean
+  className?: string
 }
 
 type AnimeOverview = WatchlistOverview['anime'][number]
@@ -17,13 +18,13 @@ const COLORS = [
   'bg-sky-100 dark:bg-zinc-600',
 ]
 
-export function WatchlistCoverPhoto({ watchlist, hasPlus = false }: WatchlistCardProps) {
+export function WatchlistCoverPhoto({ watchlist, hasPlus = false, className }: Props) {
   const topAnime = watchlist.anime
     .map((anime: AnimeOverview) => ({ imageUrl: anime.poster_image.tiny, title: anime.title }))
     .filter(anime => anime.imageUrl !== undefined)
 
   return (
-    <Grid gutter="0">
+    <Grid gutter="0" className={className}>
       {COLORS.map((color, i) => (
         // eslint-disable-next-line react/no-array-index-key -- use the color index
         <GridCol key={`${watchlist.id}-cover-${i}`} span={6}>

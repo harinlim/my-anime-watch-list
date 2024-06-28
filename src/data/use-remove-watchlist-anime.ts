@@ -6,7 +6,7 @@ import { fetchWithError } from '@/lib/api'
 export function useRemoveWatchlistAnime() {
   const queryClient = useQueryClient()
 
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation({
     mutationFn: async ({ watchlistId, animeId }: { watchlistId: number; animeId: string }) =>
@@ -25,10 +25,10 @@ export function useRemoveWatchlistAnime() {
     onError: (error, variables) => console.error(error.message, variables),
 
     // TODO: use query client and separate query for user-specific anime reviews
-    onSuccess: async (_, { watchlistId, animeId }) =>
+    onSuccess: async (_, { watchlistId }) =>
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['watchlists', userId, watchlistId] }),
-        queryClient.invalidateQueries({ queryKey: ['anime', userId, animeId] }),
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id, watchlistId] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
       ]),
   })
 }

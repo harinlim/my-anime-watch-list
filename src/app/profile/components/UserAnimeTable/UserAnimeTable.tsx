@@ -4,71 +4,55 @@ import {
   Table,
   Group,
   TableScrollContainer,
-  LoadingOverlay,
   TableTbody,
   TableTd,
   TableTh,
   TableThead,
   TableTr,
-  Alert,
 } from '@mantine/core'
-import { IconAlertCircle } from '@tabler/icons-react'
 import { useState } from 'react'
 
 import { AnimeTableSkeleton } from '@/components/anime/table/AnimeTableSkeleton'
-import { useCollaboratorsData } from '@/components/collaborators/CollaboratorsContext'
 import { Pagination } from '@/components/common/Pagination'
 import { useCurrentUser } from '@/context/UserContext'
-import { useRemoveWatchlistAnime } from '@/data/use-remove-watchlist-anime'
-import { useWatchlistAnime } from '@/data/use-watchlist-anime'
+import { useUsersAnime } from '@/data/use-users-anime'
 import { useTotalPages } from '@/hooks/use-total-pages'
 
-import { WatchlistAnimeRow } from './WatchlistAnimeRow'
-import { WatchlistAnimeTableEmptyState } from './WatchlistAnimeTableEmptyState'
-import { WatchlistAnimeTableErrorState } from './WatchlistAnimeTableErrorState'
+import { UserAnimeRow } from './UserAnimeRow'
+import { UserAnimeTableEmptyState } from './UserAnimeTableEmptyState'
+import { UserAnimeTableErrorState } from './UserAnimeTableErrorState'
 
-import type { GetWatchlistAnimeResponse } from '@/api/watchlists/[watchlistId]/anime/types'
+import type { GetUserAnimeResponse } from '@/app/(api)/api/users/[username]/anime/types'
 
 type Props = {
-  initialData: Extract<GetWatchlistAnimeResponse, { ok: true }> | null
-  watchlistId: number
+  initialData: Extract<GetUserAnimeResponse, { ok: true }> | null
+  username: string
   limit: number
   minWidth?: number
 }
 
 // TODO: reconsider mobile view for table
 
-export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth }: Props) {
+export function UserAnimeTable({ initialData, username, limit, minWidth }: Props) {
   const [activePage, setActivePage] = useState<number>(1)
 
   const isLoggedIn = !!useCurrentUser()
 
   // TODO: expand on error handling
+  // TODO: expand on sort/filter options
   const {
     data,
     isLoading,
     isFetching,
     refetch,
     isError: isQueryError,
-  } = useWatchlistAnime(initialData, {
-    watchlistId,
+  } = useUsersAnime(initialData, {
+    username,
     page: activePage,
     limit,
   })
 
-  const {
-    mutate: removeFromWatchlist,
-    isPending: isDeletePending,
-    isError: isDeleteError,
-  } = useRemoveWatchlistAnime()
-
   const totalPages = useTotalPages(initialData, data)
-
-  const handleRemoveAnime = (animeId: string) => () =>
-    removeFromWatchlist({ watchlistId, animeId }, { onSettled: refetch })
-
-  const currentUserRole = useCollaboratorsData().currentUserCollaborator?.role
-  const canEditAnime = currentUserRole === 'owner' || currentUserRole === 'editor'
 
   if ((initialData === null && isLoading) || isFetching) {
     return (
@@ -85,17 +69,8 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
 
   return (
     <>
-      {isDeleteError && (
-        <Alert
-          variant="light"
-          color="red"
-          title="Failed to remove anime from watchlist"
-          icon={<IconAlertCircle />}
-        />
-      )}
-
       <TableScrollContainer minWidth={minWidth ?? 640}>
-        <LoadingOverlay visible={isDeletePending} />
+        {/* <LoadingOverlay visible={isDeletePending} /> */}
 
         <Table verticalSpacing="sm">
           <TableThead>
@@ -126,28 +101,19 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
               </TableTr>
             )}
 
-            {data?.data?.map(item => (
-              <WatchlistAnimeRow
-                key={item.kitsu_id}
-                anime={item}
-                canRemove={canEditAnime}
-                onRemove={handleRemoveAnime(item.kitsu_id)}
-              />
-            ))}
+            {data?.data?.map(item => <UserAnimeRow key={item.kitsu_id} anime={item} />)}
           </TableTbody>
         </Table>
       </TableScrollContainer>
 
       {isQueryError && (
-        <WatchlistAnimeTableErrorState
+        <UserAnimeTableErrorState
           isLoading={isFetching}
           retry={refetch}
           className="h-[580.5px] pb-40"
         />
       )}
-      {isEmpty && (
-        <WatchlistAnimeTableEmptyState canEditAnime={canEditAnime} className="h-[580.5px] pb-40" />
-      )}
+      {isEmpty && <UserAnimeTableEmptyState className="h-[580.5px] pb-40" />}
 
       <Group className="mt-2 justify-end">
         <Pagination total={totalPages} value={activePage} onChange={setActivePage} />

@@ -31,7 +31,7 @@ const fetchWatchlistAnime = async ({
     // @ts-expect-error -- we know what we're doing
     `/api/watchlists/${watchlistId}/anime?${new URLSearchParams(searchParams).toString()}`,
     { method: 'GET', credentials: 'include', signal },
-    { prefix: 'Failed to fetch users' }
+    { prefix: 'Failed to fetch watchlist anime' }
   )
 }
 

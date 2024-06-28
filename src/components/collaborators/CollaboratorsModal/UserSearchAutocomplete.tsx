@@ -87,7 +87,7 @@ export function UserSearchAutocomplete({
             {selectedUsers.some(selectedUser => selectedUser.id === user.id) && (
               <CheckIcon size={12} />
             )}
-            <Avatar user={user} size={8} />
+            <Avatar user={user} className="size-8" />
             <Text size="sm" component="span">
               {user.username}
             </Text>
