@@ -69,6 +69,8 @@ export function SearchBar({
     const search = values.search.trim()
     if (search) {
       params.set('search', search)
+    } else {
+      params.delete('search')
     }
 
     router.replace(`${values.type}?${params.toString()}`)
