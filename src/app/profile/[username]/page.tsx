@@ -6,11 +6,11 @@ import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
+import type { GetUserWatchlistOverviewsResponse } from '@/api/users/[username]/watchlists/types'
 import type { PublicUser } from '@/types/users'
-import type { WatchlistOverview } from '@/types/watchlists'
 
 async function fetchWatchlistOverviews(username: string, init?: Omit<RequestInit, 'method'>) {
-  return fetchWithType<WatchlistOverview[]>(
+  return fetchWithType<GetUserWatchlistOverviewsResponse>(
     withBaseURL(`/api/users/${username}/watchlists?overview=true&editable=true`),
     {
       method: 'GET',

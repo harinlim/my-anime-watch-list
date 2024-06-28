@@ -40,11 +40,28 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const isLoggedInUser = user?.id === userResult.data.id
 
-  // Only users should only be able to see their own watchlists with viewer roles
-  const shouldReturnOnlyEditable =
-    !isLoggedInUser || request.nextUrl.searchParams.get('editable') === 'true'
+  const { searchParams } = request.nextUrl
 
-  const shouldReturnOverviews = request.nextUrl.searchParams.get('overview') === 'true'
+  const queryParamsResult = getUserWatchlistQueryParamsSchema.safeParse({
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string */
+    overview: searchParams.get('overview'),
+    editable: searchParams.get('editable'),
+    page: searchParams.get('page') || 1, // yay magic numbers
+    limit: searchParams.get('limit') || 10,
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+  })
+  if (!queryParamsResult.success) {
+    return NextResponse.json(transformZodValidationErrorToResponse(queryParamsResult.error), {
+      status: 400,
+    })
+  }
+
+  const queryParams = queryParamsResult.data
+
+  // Only users should only be able to see their own watchlists with viewer roles
+  const shouldReturnOnlyEditable = !isLoggedInUser || queryParams.editable
+
+  const shouldReturnOverviews = queryParams.overview
   if (!shouldReturnOverviews) {
     // Note RLS will handle any private watchlists
     const watchlistsResult = await queryWatchlistsForUser(supabase, {
@@ -59,22 +76,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json<Watchlist[]>(watchlistsResult.data)
   }
-
-  const { searchParams } = request.nextUrl
-
-  const queryParamsResult = getUserWatchlistQueryParamsSchema.safeParse({
-    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string */
-    page: searchParams.get('page') || 1, // yay magic numbers
-    limit: searchParams.get('limit') || 10,
-    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
-  })
-  if (!queryParamsResult.success) {
-    return NextResponse.json(transformZodValidationErrorToResponse(queryParamsResult.error), {
-      status: 400,
-    })
-  }
-
-  const queryParams = queryParamsResult.data
 
   let watchlistIdsQuery = supabase
     .from('watchlists_users')
