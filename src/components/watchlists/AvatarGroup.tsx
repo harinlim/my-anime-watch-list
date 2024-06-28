@@ -2,6 +2,7 @@ import { Tooltip, Box, Image } from '@mantine/core'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { forwardRef, type PropsWithChildren } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 import styles from './AvatarGroup.module.css'
 
@@ -57,7 +58,11 @@ export function Avatar({
         {user.avatar_url ? (
           <Image
             key={key}
-            className={clsx(styles.ring, 'inline-block bg-white dark:bg-zinc-700', className)}
+            className={twMerge(
+              styles.ring,
+              'inline-block size-8 bg-white dark:bg-zinc-700',
+              className
+            )}
             src={user.avatar_url}
             alt={a11yLabel}
           />
