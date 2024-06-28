@@ -39,6 +39,7 @@ export function UserAnimeTable({ initialData, username, limit, minWidth }: Props
   const isLoggedIn = !!useCurrentUser()
 
   // TODO: expand on error handling
+  // TODO: expand on sort/filter options
   const {
     data,
     isLoading,

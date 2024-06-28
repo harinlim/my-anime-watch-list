@@ -19,6 +19,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 const ANIME_PER_PAGE = 5
+const WATCHLISTS_PER_PAGE = 5
 
 /** Private profile page, accessible only to the user with cookies */
 export default async function SelfProfilePage() {
@@ -46,7 +47,7 @@ export default async function SelfProfilePage() {
   )
 
   return (
-    <div className="flex min-h-full w-full flex-col justify-center space-y-6 px-6 py-8 sm:px-8 lg:max-w-5xl">
+    <div className="m-auto flex min-h-full w-full flex-col justify-center space-y-6 px-6 py-8 sm:px-8 lg:max-w-5xl">
       <ProfileHeader user={user} />
 
       <section>
