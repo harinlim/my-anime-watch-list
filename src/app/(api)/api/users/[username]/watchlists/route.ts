@@ -3,7 +3,11 @@ import { NextResponse } from 'next/server'
 import { getUserByUsername, getUserFromSession } from '@/db/users'
 import { queryWatchlistsForUser, queryWatchlistOverviews } from '@/db/watchlists'
 import { createServerClient } from '@/lib/supabase/server'
+import { transformZodValidationErrorToResponse } from '@/lib/zod/validation'
 
+import { getUserWatchlistQueryParamsSchema } from './schemas'
+
+import type { GetUserWatchlistOverviewsResponse } from './types'
 import type { Watchlist, WatchlistOverview } from '@/types/watchlists'
 import type { NextRequest } from 'next/server'
 
@@ -56,6 +60,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json<Watchlist[]>(watchlistsResult.data)
   }
 
+  const { searchParams } = request.nextUrl
+
+  const queryParamsResult = getUserWatchlistQueryParamsSchema.safeParse({
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string */
+    page: searchParams.get('page') || 1, // yay magic numbers
+    limit: searchParams.get('limit') || 10,
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+  })
+  if (!queryParamsResult.success) {
+    return NextResponse.json(transformZodValidationErrorToResponse(queryParamsResult.error), {
+      status: 400,
+    })
+  }
+
+  const queryParams = queryParamsResult.data
+
   let watchlistIdsQuery = supabase
     .from('watchlists_users')
     .select('watchlist_id')
@@ -75,17 +95,34 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     ...new Set(watchlistIdsQueryResult.data.map(({ watchlist_id }) => watchlist_id)),
   ]
 
+  const currentOffset = (queryParams.page - 1) * queryParams.limit
+  const nextOffset = currentOffset + queryParams.limit
+
   // Note: RLS will handle authorization checks
   const overviewsResult = await queryWatchlistOverviews(supabase)
     .neq('watchlists_users.role', 'viewer') // Exclude other viewers in result
     .in('id', watchlistIds)
     .order('updated_at', { ascending: false })
     .returns<WatchlistOverview[]>()
+    .range(currentOffset, nextOffset - 1)
 
   if (overviewsResult.error) {
     console.error(overviewsResult)
     return NextResponse.json('Failed to fetch watchlists', { status: 500 })
   }
 
-  return NextResponse.json<WatchlistOverview[]>(overviewsResult.data)
+  const total = overviewsResult.count ?? overviewsResult.data.length
+
+  return NextResponse.json<GetUserWatchlistOverviewsResponse>({
+    data: overviewsResult.data,
+    ok: true,
+    status: 200,
+    meta: {
+      total,
+      limit: queryParams.limit,
+      self: queryParams.page,
+      prev: queryParams.page > 1 ? queryParams.page - 1 : undefined,
+      next: nextOffset < total ? queryParams.page + 1 : undefined,
+    },
+  })
 }
