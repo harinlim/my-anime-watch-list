@@ -1,7 +1,7 @@
 import { Tooltip, Box, Image } from '@mantine/core'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { forwardRef, type PropsWithChildren } from 'react'
+import { forwardRef, useId, type PropsWithChildren } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 import styles from './AvatarGroup.module.css'
@@ -102,11 +102,13 @@ export function AvatarGroup({
     watchlist_users.length > maxAvatars ? watchlist_users.slice(0, maxAvatars - 1) : watchlist_users
   const remainingUsers = watchlist_users.length - watchlistUsersOverview.length
 
+  const remainingUsersLabel = `And ${remainingUsers} more ${remainingUsers > 1 ? 'contributors' : 'contributor'}`
+
   const remainingUsersButtonProps = onClickMore
     ? ({ onClick: onClickMore, type: 'button' } as const)
     : undefined
 
-  const remainingUsersLabel = `And ${remainingUsers} more ${remainingUsers > 1 ? 'contributors' : 'contributor'}`
+  const tooltipId = `${useId()}.tooltip`
 
   return (
     <div className="flex -space-x-2">
@@ -119,10 +121,10 @@ export function AvatarGroup({
         />
       ))}
       {remainingUsers > 0 && (
-        <Tooltip label={remainingUsersLabel} position="top">
+        <Tooltip id={tooltipId} label={remainingUsersLabel} position="top">
           <Box
             component={onClickMore ? 'button' : 'span'}
-            aria-label={remainingUsersLabel}
+            aria-describedby={tooltipId}
             className={clsx(
               styles.ring,
               'inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-600'
