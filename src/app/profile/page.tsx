@@ -9,6 +9,10 @@ import { createServerClient } from '@/lib/supabase/server'
 
 import { ProfileHeader } from './components/ProfileHeader'
 import { AnimeTableSkeleton, UserAnimeTableContainer } from './components/UserAnimeTable'
+import {
+  UserWatchlistsTableSkeleton,
+  UserWatchlistsTableContainer,
+} from './components/UserWatchlistsTable'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -43,7 +47,10 @@ export default async function SelfProfilePage() {
           <CreateWatchlistButton />
         </div>
 
-        <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" />
+        <Suspense fallback={<UserWatchlistsTableSkeleton limit={WATCHLISTS_PER_PAGE} />}>
+          <UserWatchlistsTableContainer username={user.username} limit={WATCHLISTS_PER_PAGE} />
+        </Suspense>
+        {/* <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" /> */}
       </section>
       <section>
         <div className="flex items-center justify-start pb-5 pt-10">

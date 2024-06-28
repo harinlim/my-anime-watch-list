@@ -1,13 +1,21 @@
 import { Title } from '@mantine/core'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 
 import { ProfileHeader } from '@/app/profile/components/ProfileHeader'
 import { fetchWithType } from '@/lib/api'
 import { proxyRequestHeaders } from '@/lib/headers'
 import { withBaseURL } from '@/lib/url'
 
+import {
+  UserWatchlistsTableSkeleton,
+  UserWatchlistsTableContainer,
+} from '../components/UserWatchlistsTable'
+
 import type { GetUserWatchlistOverviewsResponse } from '@/api/users/[username]/watchlists/types'
 import type { PublicUser } from '@/types/users'
+
+const WATCHLISTS_PER_PAGE = 5
 
 async function fetchWatchlistOverviews(username: string, init?: Omit<RequestInit, 'method'>) {
   return fetchWithType<GetUserWatchlistOverviewsResponse>(
@@ -52,9 +60,11 @@ export default async function ExternalProfilePage({ params }: { params: { userna
     throw new Error('Failed to fetch watchlists')
   }
 
+  const user = userResponse.data
+
   return (
     <div className="m-auto flex min-h-full w-full flex-col justify-center space-y-6 px-6 py-8 sm:px-8 lg:max-w-5xl">
-      <ProfileHeader user={userResponse.data} />
+      <ProfileHeader user={user} />
 
       <section>
         <div className="flex items-center justify-between pb-5 pt-10">
@@ -63,7 +73,9 @@ export default async function ExternalProfilePage({ params }: { params: { userna
           </Title>
         </div>
 
-        <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" />
+        <Suspense fallback={<UserWatchlistsTableSkeleton limit={WATCHLISTS_PER_PAGE} />}>
+          <UserWatchlistsTableContainer username={user.username} limit={WATCHLISTS_PER_PAGE} />
+        </Suspense>
       </section>
     </div>
   )
