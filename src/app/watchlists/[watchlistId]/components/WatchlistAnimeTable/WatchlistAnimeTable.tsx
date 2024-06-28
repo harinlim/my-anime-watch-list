@@ -71,7 +71,14 @@ export function WatchlistAnimeTable({ initialData, watchlistId, limit, minWidth 
   const canEditAnime = currentUserRole === 'owner' || currentUserRole === 'editor'
 
   if ((initialData === null && isLoading) || isFetching) {
-    return <AnimeTableSkeleton limit={limit} activePage={activePage} totalPages={totalPages} />
+    return (
+      <AnimeTableSkeleton
+        limit={limit}
+        activePage={activePage}
+        totalPages={totalPages}
+        onPageChange={setActivePage}
+      />
+    )
   }
 
   const isEmpty = data?.data?.length === 0

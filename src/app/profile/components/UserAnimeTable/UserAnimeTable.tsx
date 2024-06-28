@@ -55,7 +55,14 @@ export function UserAnimeTable({ initialData, username, limit, minWidth }: Props
   const totalPages = useTotalPages(initialData, data)
 
   if ((initialData === null && isLoading) || isFetching) {
-    return <AnimeTableSkeleton limit={limit} activePage={activePage} totalPages={totalPages} />
+    return (
+      <AnimeTableSkeleton
+        limit={limit}
+        activePage={activePage}
+        totalPages={totalPages}
+        onPageChange={setActivePage}
+      />
+    )
   }
 
   const isEmpty = data?.data?.length === 0

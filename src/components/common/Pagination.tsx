@@ -1,3 +1,5 @@
+'use client'
+
 import { Pagination as MantinePagination } from '@mantine/core'
 import { memo } from 'react'
 

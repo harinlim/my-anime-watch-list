@@ -22,9 +22,17 @@ type Props = {
   minWidth?: number
   activePage?: number
   totalPages?: number
+  /** ONLY TO BE USED IN CLIENT COMPONENTS */
+  onPageChange?: (page: number) => void
 }
 
-export function AnimeTableSkeleton({ limit, minWidth, activePage = 1, totalPages = 1 }: Props) {
+export function AnimeTableSkeleton({
+  limit,
+  minWidth,
+  activePage = 1,
+  totalPages = 1,
+  onPageChange,
+}: Props) {
   const isLoggedIn = !!useCurrentUser()
 
   const rows = Array.from({ length: limit })?.map((_, i) => (
@@ -75,7 +83,7 @@ export function AnimeTableSkeleton({ limit, minWidth, activePage = 1, totalPages
         </Table>
       </TableScrollContainer>
       <Group className="mt-2 justify-end">
-        <Pagination disabled value={activePage} total={totalPages} />
+        <Pagination value={activePage} total={totalPages} onChange={onPageChange} />
       </Group>
     </>
   )
