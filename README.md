@@ -2,7 +2,7 @@
 
 Anime watchlist tracker based off [Kitsu.io](https://kitsu.io/explore/anime)
 
-![Homepage](public/homepage.jpg)
+![Homepage](public/homepage.png)
 
 ## Stack
 
