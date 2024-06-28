@@ -33,18 +33,23 @@ const fetchUsersAnime = async ({
     // @ts-expect-error -- we know what we're doing
     `/api/users/${username}/anime?${new URLSearchParams(searchParams).toString()}`,
     { method: 'GET', credentials: 'include', signal },
-    { prefix: 'Failed to fetch users' }
+    { prefix: 'Failed to fetch users anime' }
   )
 }
 
+// NOTE: Currently, this API endpoint is only enabled for the user's own profile page.
 export function useUsersAnime(
   initialData: GetUserAnimeResponse | null,
   params: UseUsersAnimeParams
 ) {
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
+
+  if (params.username !== user?.username) {
+    throw new Error("useUsersAnime is only enabled for the user's own anime")
+  }
 
   return useQuery({
-    queryKey: ['users', 'anime', userId, params.username, params.page, { ...params }],
+    queryKey: ['anime', user?.id, params.username, params.page, { ...params }],
     queryFn: async ({ signal }) => fetchUsersAnime({ ...params, signal }),
     initialData: params.page === 1 && initialData ? initialData : undefined,
     retry: false,
