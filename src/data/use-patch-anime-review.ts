@@ -8,7 +8,7 @@ import type { WatchStatus } from '@/types/enums'
 
 export function useUpdateAnimeStatus(animeId: string) {
   const queryClient = useQueryClient()
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation<unknown, HttpError, WatchStatus>({
     mutationFn: async (status: WatchStatus) =>
@@ -31,7 +31,11 @@ export function useUpdateAnimeStatus(animeId: string) {
     onError: (error, variables) => console.error(error.message, variables),
 
     // Naive way to invalidate all potential watchlists affected
-    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
+    onSuccess: async () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
+      ]),
   })
 }
 
