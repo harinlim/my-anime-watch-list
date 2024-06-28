@@ -58,7 +58,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     /* eslint-disable @typescript-eslint/prefer-nullish-coalescing -- account for empty string */
     status: searchParams.get('status') || null,
     rating: searchParams.get('rating') || null,
-    sort: searchParams.get('sort') || 'status',
+    sort: searchParams.get('sort') || 'updated_at',
     direction: searchParams.get('direction') || 'asc',
     page: searchParams.get('page') || 1, // yay magic numbers
     limit: searchParams.get('limit') || 10,
