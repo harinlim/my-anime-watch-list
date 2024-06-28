@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { WATCH_STATUS } from '@/types/enums'
 
+import { MAX_USER_ANIME_QUERY_LIMIT } from './constants'
+
 export const getAnimeByUserQueryParamsSchema = z.object({
   status: z
     .enum(WATCH_STATUS, {
@@ -17,4 +19,6 @@ export const getAnimeByUserQueryParamsSchema = z.object({
     .nullish(),
   sort: z.enum(['rating', 'status']),
   direction: z.enum(['asc', 'desc']),
+  page: z.coerce.number().int().positive(),
+  limit: z.coerce.number().int().nonnegative().max(MAX_USER_ANIME_QUERY_LIMIT),
 })

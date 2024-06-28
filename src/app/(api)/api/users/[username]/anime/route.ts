@@ -9,7 +9,7 @@ import { transformAnimeByUserAssociation } from '@/utils/user-anime'
 import { getAnimeByUserQueryParamsSchema } from './schemas'
 import { SORT_ANIME_COMPARATORS } from './utils'
 
-import type { AnimeByUser } from '@/types/anime'
+import type { GetUserAnimeResponse } from './types'
 import type { NextRequest } from 'next/server'
 
 type RouteParams = { params: { username: string } }
@@ -60,6 +60,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     rating: searchParams.get('rating') || null,
     sort: searchParams.get('sort') || 'status',
     direction: searchParams.get('direction') || 'asc',
+    page: searchParams.get('page') || 1, // yay magic numbers
+    limit: searchParams.get('limit') || 10,
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
   })
 
@@ -127,20 +129,43 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     ]),
   ]
 
+  const currentOffset = (queryParams.page - 1) * queryParams.limit
+  const nextOffset = currentOffset + queryParams.limit
+
   const userAnimeResult = await getAnimeByUserAssociation(supabase, {
     userId,
     associatedAnimeIds,
-  })
+  }).range(currentOffset, nextOffset - 1)
 
   if (userAnimeResult.error) {
     console.error(userAnimeResult)
-    return NextResponse.json('Failed to fetch anime', { status: userAnimeResult.status })
+    return NextResponse.json<GetUserAnimeResponse>(
+      {
+        ok: false,
+        data: null,
+        error: userAnimeResult.error,
+        status: userAnimeResult.status,
+        message: 'Failed to fetch user anime',
+      },
+      { status: userAnimeResult.status }
+    )
   }
 
-  return NextResponse.json<AnimeByUser[]>(
-    userAnimeResult.data
+  const total = userAnimeResult.count ?? userAnimeResult.data.length
+
+  return NextResponse.json<GetUserAnimeResponse>({
+    data: userAnimeResult.data
       .map(transformAnimeByUserAssociation)
       // TEMPORARY SOLUTION UNTIL WE ESTABLISH A VIEW FOR THE USER ANIMES
-      .toSorted(SORT_ANIME_COMPARATORS[queryParams.sort][queryParams.direction])
-  )
+      .toSorted(SORT_ANIME_COMPARATORS[queryParams.sort][queryParams.direction]),
+    ok: true,
+    status: 200,
+    meta: {
+      total,
+      limit: queryParams.limit,
+      self: queryParams.page,
+      prev: queryParams.page > 1 ? queryParams.page - 1 : undefined,
+      next: nextOffset < total ? queryParams.page + 1 : undefined,
+    },
+  })
 }

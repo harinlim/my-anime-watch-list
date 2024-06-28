@@ -30,7 +30,6 @@ This also includes a RESTful CRUD API for the following resources:
     - `overview: boolean` - Return watchlist overviews instead of base watchlists (i.e., includes some anime and collaborator information)
 - [x] `/api/users/:username/anime`
   - [x] `GET`: (_protected_) Get all anime related to user (rated, marked status, added to watchlist)
-    - [ ] TODO: Add pagination and filtering, but not necessary for now
 - [x] `/api/anime`
   - [x] `GET`: Search and return a collection of anime, given query parameters
 - [x] `/api/anime/:animeId`
