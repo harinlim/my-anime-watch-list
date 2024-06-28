@@ -70,7 +70,6 @@ export function useUpdateAnimeRating(animeId: string) {
       Promise.all([
         // Naive way to invalidate all potential watchlists affected
         queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
-        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, animeId] }),
         queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
       ]),
   })

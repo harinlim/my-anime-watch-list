@@ -14,6 +14,7 @@ import {
 import { IconChevronDown } from '@tabler/icons-react'
 import { useCallback, useState } from 'react'
 
+import type { PublicUser } from '@/types/users'
 import type { CollaboratorRole } from '@/types/watchlists'
 
 type Props<
@@ -48,8 +49,11 @@ type Props<
   isDisabled?: boolean
   initialRole: CollaboratorRole
 } & ( // TODO: fix inference on `onChange` option param
-  | { onChange: (option: Roles, id: string) => void; id: string }
-  | { onChange: (option: Roles) => void; id?: never }
+  | {
+      onChange: (option: Roles, user: Pick<PublicUser, 'id' | 'username'>) => void
+      user: Pick<PublicUser, 'id' | 'username'>
+    }
+  | { onChange: (option: Roles) => void; user?: never }
 )
 
 const SELECTABLE_ROLES = ['editor', 'viewer'] as const
@@ -87,7 +91,7 @@ export function CollaboratorRoleDropdown<
   canDelete = false,
   canEdit = false,
   initialRole,
-  id,
+  user,
 }: Props<Options, Dynamic, CanDelete, CanEdit, Roles>) {
   const [role, setRole] = useState<CollaboratorRole>(initialRole)
 
@@ -124,10 +128,10 @@ export function CollaboratorRoleDropdown<
         throw new Error(`Invalid option: ${option}`)
       }
 
-      if (id === undefined) {
+      if (user === undefined) {
         onChange(option)
       } else {
-        onChange(option, id)
+        onChange(option, user)
       }
 
       if (SELECTABLE_ROLES.includes(option)) {
@@ -136,7 +140,7 @@ export function CollaboratorRoleDropdown<
 
       combobox.closeDropdown()
     },
-    [onChange, isOptionValid, id, combobox]
+    [onChange, isOptionValid, user, combobox]
   )
 
   return (
@@ -163,7 +167,7 @@ export function CollaboratorRoleDropdown<
         <ComboboxOptions className="text-sm capitalize">
           {canEdit &&
             SELECTABLE_ROLES.map(selectableRole => (
-              <ComboboxOption key={`${id}-option-${selectableRole}`} value={selectableRole}>
+              <ComboboxOption key={`${user?.id}-option-${selectableRole}`} value={selectableRole}>
                 {selectableRole}
               </ComboboxOption>
             ))}

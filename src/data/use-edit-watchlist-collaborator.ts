@@ -17,6 +17,7 @@ export function useEditWatchlistCollaborator({ watchlistId }: { watchlistId: num
     }: {
       collaboratorId: string
       role: CollaboratorRole
+      username: string
     }) =>
       fetchWithError(
         `/api/watchlists/${watchlistId}/users/${collaboratorId}`,
@@ -38,5 +39,8 @@ export function useEditWatchlistCollaborator({ watchlistId }: { watchlistId: num
       queryClient.invalidateQueries({
         queryKey: ['collaborators', { watchlistId, userId }],
       }),
+
+    onSuccess: async (_, { username }) =>
+      queryClient.invalidateQueries({ queryKey: ['watchlists', userId, username] }),
   })
 }

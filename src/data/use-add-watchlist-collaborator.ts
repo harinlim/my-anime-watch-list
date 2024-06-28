@@ -36,5 +36,7 @@ export function useAddWatchlistCollaborator({ watchlistId }: { watchlistId: numb
         queryClient.invalidateQueries({ queryKey: ['collaborators', { watchlistId, userId }] }),
         queryClient.invalidateQueries({ queryKey: ['users', userId] }),
       ]),
+
+    onSuccess: async () => queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
   })
 }

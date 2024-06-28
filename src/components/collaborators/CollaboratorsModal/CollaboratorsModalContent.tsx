@@ -14,6 +14,8 @@ import { useCollaboratorsData, useCollaboratorsQuery } from '../CollaboratorsCon
 
 import { CollaboratorListItem } from './CollaboratorListItem'
 
+import type { PublicUser } from '@/types/users'
+
 type Props = {
   watchlistId: number
   isPublicWatchlist: boolean
@@ -47,10 +49,11 @@ export function CollaboratorsModalContent({ watchlistId, isPublicWatchlist, clas
   const deletedUserId = deleteVariables?.collaboratorId
 
   const handleEditCollaborator = useCallback(
-    (option: 'editor' | 'viewer' | 'remove', collaboratorId: string) => {
+    (option: 'editor' | 'viewer' | 'remove', u: Pick<PublicUser, 'id' | 'username'>) => {
+      const collaboratorId = u.id
       if (option === 'remove') {
         deleteCollaborator(
-          { collaboratorId },
+          { collaboratorId: u.id, username: u.username },
           {
             onSuccess: () => {
               // Redirect to the watchlists page if the current user is removed from a private watchlist
@@ -61,7 +64,7 @@ export function CollaboratorsModalContent({ watchlistId, isPublicWatchlist, clas
           }
         )
       } else {
-        updateCollaborator({ role: option, collaboratorId })
+        updateCollaborator({ role: option, collaboratorId, username: u.username })
       }
     },
     [deleteCollaborator, updateCollaborator, router, isPublicWatchlist, user]
