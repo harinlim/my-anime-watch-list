@@ -12,52 +12,28 @@ import {
   UserWatchlistsTableContainer,
 } from '../components/UserWatchlistsTable'
 
-import type { GetUserWatchlistOverviewsResponse } from '@/api/users/[username]/watchlists/types'
 import type { PublicUser } from '@/types/users'
 
 const WATCHLISTS_PER_PAGE = 5
-
-async function fetchWatchlistOverviews(username: string, init?: Omit<RequestInit, 'method'>) {
-  return fetchWithType<GetUserWatchlistOverviewsResponse>(
-    withBaseURL(`/api/users/${username}/watchlists?overview=true&editable=true`),
-    {
-      method: 'GET',
-      credentials: 'include',
-      ...init,
-    }
-  )
-}
-
-async function fetchUserByUsername(username: string, init?: Omit<RequestInit, 'method'>) {
-  return fetchWithType<PublicUser>(withBaseURL(`/api/users/${username}`), {
-    method: 'GET',
-    credentials: 'include',
-    ...init,
-  })
-}
 
 /** Public profile page */
 export default async function ExternalProfilePage({ params }: { params: { username: string } }) {
   const { username } = params
 
-  const headersInit = proxyRequestHeaders()
-
   // TODO: put these into independent components
-  const userResponse = await fetchUserByUsername(username, { headers: headersInit })
-
-  const watchlistsResponse = await fetchWatchlistOverviews(username, { headers: headersInit })
+  const userResponse = await fetchWithType<PublicUser>(withBaseURL(`/api/users/${username}`), {
+    method: 'GET',
+    credentials: 'include',
+    headers: proxyRequestHeaders(),
+  })
 
   // These only return 404 when the user is not found
-  if (userResponse.status === 404 || watchlistsResponse.status === 404) {
+  if (userResponse.status === 404) {
     return notFound()
   }
 
   if (!userResponse.ok) {
     throw new Error('Failed to fetch user')
-  }
-
-  if (!watchlistsResponse.ok) {
-    throw new Error('Failed to fetch watchlists')
   }
 
   const user = userResponse.data
