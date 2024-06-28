@@ -99,8 +99,8 @@ const WatchlistRow = memo(
           component={Link}
           href={`/watchlists/${watchlist.id}`}
           aria-label="Go to watchlist"
-          variant="default"
-          className="ml-4"
+          variant="subtle"
+          className="ml-4 text-gray-700 hover:bg-indigo-100 hover:text-indigo-600 dark:text-gray-400 hover:dark:bg-indigo-900/40 hover:dark:text-indigo-200"
           disabled={isLoading}
           onClick={toggle}
         >
