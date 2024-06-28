@@ -37,7 +37,7 @@ export function useUpdateAnimeStatus(animeId: string) {
 
 export function useUpdateAnimeRating(animeId: string) {
   const queryClient = useQueryClient()
-  const userId = useCurrentUser()?.id
+  const user = useCurrentUser()
 
   return useMutation<unknown, HttpError, number>({
     mutationFn: async (rating: number) =>
@@ -65,8 +65,9 @@ export function useUpdateAnimeRating(animeId: string) {
     onSuccess: async () =>
       Promise.all([
         // Naive way to invalidate all potential watchlists affected
-        queryClient.invalidateQueries({ queryKey: ['watchlists', userId] }),
-        queryClient.invalidateQueries({ queryKey: ['anime', userId, animeId] }),
+        queryClient.invalidateQueries({ queryKey: ['watchlists', user?.id] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, animeId] }),
+        queryClient.invalidateQueries({ queryKey: ['anime', user?.id, user?.username] }),
       ]),
   })
 }
