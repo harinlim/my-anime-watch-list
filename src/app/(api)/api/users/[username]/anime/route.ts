@@ -59,7 +59,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     status: searchParams.get('status') || null,
     rating: searchParams.get('rating') || null,
     sort: searchParams.get('sort') || 'updated_at',
-    direction: searchParams.get('direction') || 'asc',
+    direction: searchParams.get('direction') || 'desc',
     page: searchParams.get('page') || 1, // yay magic numbers
     limit: searchParams.get('limit') || 10,
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
