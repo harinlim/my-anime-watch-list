@@ -37,9 +37,9 @@ export default async function SelfProfilePage() {
   }
 
   return (
-    <div className="m-auto flex min-h-full w-full flex-col justify-center space-y-6 px-6 py-8 sm:px-8 lg:max-w-5xl">
+    <div className="m-auto flex min-h-full w-full flex-col justify-center space-y-6 px-6 pb-32 pt-16 sm:px-8 lg:max-w-5xl">
       <ProfileHeader user={user} />
-      <section>
+      <section id="watchlists">
         <div className="flex items-center justify-between pb-5 pt-10">
           <Title order={2} className="text-3xl sm:text-4xl">
             Watchlists
@@ -50,9 +50,8 @@ export default async function SelfProfilePage() {
         <Suspense fallback={<UserWatchlistsTableSkeleton limit={WATCHLISTS_PER_PAGE} />}>
           <UserWatchlistsTableContainer username={user.username} limit={WATCHLISTS_PER_PAGE} />
         </Suspense>
-        {/* <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" /> */}
       </section>
-      <section>
+      <section id="anime">
         <div className="flex items-center justify-start pb-5 pt-10">
           <Title order={2} className="text-3xl sm:text-4xl">
             Anime
@@ -61,11 +60,7 @@ export default async function SelfProfilePage() {
         <Suspense fallback={<AnimeTableSkeleton limit={ANIME_PER_PAGE} />}>
           <UserAnimeTableContainer username={user.username} limit={ANIME_PER_PAGE} />
         </Suspense>
-        {/* <div className="flex h-96 flex-col justify-center gap-5 bg-black md:w-full" /> */}
       </section>
-      {/* <pre className="text-wrap text-left">{JSON.stringify(watchlists, null, 2)}</pre> */}
-      {/* <WatchlistCard />
-        <ArticlesCardsGrid /> */}
     </div>
   )
 }

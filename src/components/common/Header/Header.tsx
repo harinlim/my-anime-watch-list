@@ -26,7 +26,12 @@ export function Header({ user }: Props) {
       <Flex className="h-14 items-center justify-between">
         <Link className="flex flex-nowrap items-center gap-2" href="/">
           <IconArmchair2 />
-          <Text inherit variant="gradient" component="span" gradient={{ from: 'blue', to: 'red' }}>
+          <Text
+            inherit
+            variant="gradient"
+            component="span"
+            gradient={{ from: 'indigo', to: 'red' }}
+          >
             <Title order={3}>MAWL</Title>
           </Text>
         </Link>

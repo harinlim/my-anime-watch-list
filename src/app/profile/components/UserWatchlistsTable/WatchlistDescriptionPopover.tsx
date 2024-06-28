@@ -26,7 +26,6 @@ export const WatchlistDescriptionPopover = memo(
     return (
       <HoverCard
         position="bottom"
-        floatingStrategy="fixed"
         shadow="md"
         withArrow
         keepMounted

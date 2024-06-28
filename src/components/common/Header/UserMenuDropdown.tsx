@@ -17,7 +17,7 @@ export function UserMenuDropdown() {
 
       <MenuItem
         component={Link}
-        href="/profile"
+        href="/profile#watchlists"
         leftSection={
           <IconBooks
             style={{ width: rem(16), height: rem(16) }}
@@ -31,7 +31,7 @@ export function UserMenuDropdown() {
 
       <MenuItem
         component={Link}
-        href="/profile"
+        href="/profile#anime"
         leftSection={
           <IconHeart
             style={{ width: rem(16), height: rem(16) }}
