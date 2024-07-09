@@ -73,11 +73,15 @@ This leverages Postgres features extensively, including using JSON validation, r
 
 ## Contributing
 
-1. Make sure to install and enable the correct `pnpm` version. Also make sure to use nvm to use the correct node version.
+1. Make sure to install and enable the correct [pnpm](https://pnpm.io) version. Also make sure to use [nvm](https://github.com/nvm-sh/nvm) to use the correct Node.js version.
 
 ```sh
-nvm use
+# Install the node version assigned in .nvmrc
+nvm install
+# Enables corepack to set the pnpm version
 corepack enable
+# Install the pnpm version set by the `packageManager` field in `package.json`
+corepack install
 ```
 
 2. Install the packages with `pnpm`:
