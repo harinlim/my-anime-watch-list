@@ -130,3 +130,8 @@ dist
 .pnp.*
 
 .DS_Store
+
+# Playwright test runner generated files
+/test-results/
+/playwright-report/
+/playwright/.cache/

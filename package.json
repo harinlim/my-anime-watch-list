@@ -22,7 +22,10 @@
     "lint:stylelint": "stylelint '**/*.css' --cache",
     "prettier:check": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test:ci": "CI=true pnpm test:e2e",
+    "test:healthcheck": "CI=true playwright test healthcheck"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
@@ -44,6 +47,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.2.5",
+    "@playwright/test": "^1.45.3",
     "@tanstack/eslint-plugin-query": "^5.51.12",
     "@types/cookie": "^0.6.0",
     "@types/eslint": "^8.56.10",
@@ -63,6 +67,7 @@
     "eslint-plugin-jest-extended": "^2.4.0",
     "eslint-plugin-jest-formatting": "^3.1.0",
     "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-playwright": "^1.6.2",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-compiler": "0.0.0-experimental-51a85ea-20240601",
     "eslint-plugin-react-hooks": "^4.6.2",
