@@ -29,6 +29,10 @@ module.exports = {
     'import/no-empty-named-blocks': 'error',
     'import/prefer-default-export': 'off',
     'import/no-default-export': 'warn',
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['tests/**', '**.config.*', '**/*.test.js', '**/*.spec.js'] },
+    ],
 
     'import/order': [
       'warn',
@@ -116,6 +120,7 @@ module.exports = {
         // Require default exports for config files (requirement)
         'import/prefer-default-export': 'error',
         'import/no-default-export': 'off',
+        '@typescript-eslint/prefer-nullish-coalescing': 'off',
       },
     },
     {
@@ -124,6 +129,7 @@ module.exports = {
       rules: {
         // Require default exports for config files (requirement)
         '@typescript-eslint/no-var-requires': 'off',
+        '@typescript-eslint/prefer-nullish-coalescing': 'off',
       },
     },
     {
@@ -155,6 +161,20 @@ module.exports = {
         // It's has issues with methods from `@testing-library`, so until it's resolved, we'll keep this off for now
         '@typescript-eslint/unbound-method': 'off',
         'jest/unbound-method': 'off',
+      },
+    },
+    {
+      /* --- Testing files (Playwright) --- */
+      files: 'tests/**',
+      plugins: ['playwright'],
+      extends: 'plugin:playwright/recommended',
+      rules: {
+        'playwright/prefer-comparison-matcher': 'error',
+        'playwright/prefer-lowercase-title': 'error',
+        'playwright/prefer-to-be': 'error',
+        'playwright/prefer-to-contain': 'error',
+        'playwright/prefer-to-have-count': 'error',
+        'playwright/prefer-to-have-length': 'error',
       },
     },
     {
