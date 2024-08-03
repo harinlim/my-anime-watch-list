@@ -125,6 +125,7 @@ export function AvatarGroup({
           <Box
             component={onClickMore ? 'button' : 'span'}
             aria-describedby={tooltipId}
+            aria-label={remainingUsersLabel} // Not sure if this is ok
             className={clsx(
               styles.ring,
               'inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-600'
