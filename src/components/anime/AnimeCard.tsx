@@ -23,7 +23,7 @@ export function AnimeCard({ title, poster, rating }: Props) {
           <Text className={styles.category} size="xs">
             Rating: {rating}
           </Text>
-          <Title order={3} className={styles.title}>
+          <Title order={2} className={styles.title}>
             {title}
           </Title>
         </div>
