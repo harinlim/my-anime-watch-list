@@ -41,14 +41,14 @@ dependencies:
     specifier: ^0.8.2
     version: 0.8.2
   '@mantine/core':
-    specifier: ~7.11.2
-    version: 7.11.2(@mantine/hooks@7.11.2)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
+    specifier: ~7.12.0
+    version: 7.12.0(@mantine/hooks@7.12.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1)
   '@mantine/form':
-    specifier: ^7.11.2
-    version: 7.11.2(react@18.3.1)
+    specifier: ^7.12.0
+    version: 7.12.0(react@18.3.1)
   '@mantine/hooks':
-    specifier: ~7.11.2
-    version: 7.11.2(react@18.3.1)
+    specifier: ~7.12.0
+    version: 7.12.0(react@18.3.1)
   '@supabase/ssr':
     specifier: ^0.3.0
     version: 0.3.0(@supabase/supabase-js@2.43.5)
@@ -59,8 +59,8 @@ dependencies:
     specifier: ^3.11.0
     version: 3.11.0(react@18.3.1)
   '@tanstack/react-query':
-    specifier: ^5.51.15
-    version: 5.51.15(react@18.3.1)
+    specifier: ^5.51.21
+    version: 5.51.21(react@18.3.1)
   clsx:
     specifier: ^2.1.1
     version: 2.1.1
@@ -175,38 +175,38 @@ devDependencies:
     specifier: ^1.0.39
     version: 1.0.39
   postcss:
-    specifier: ^8.4.40
-    version: 8.4.40
+    specifier: ^8.4.41
+    version: 8.4.41
   postcss-load-config:
     specifier: ^6.0.1
-    version: 6.0.1(postcss@8.4.40)
+    version: 6.0.1(postcss@8.4.41)
   postcss-preset-mantine:
     specifier: ^1.17.0
-    version: 1.17.0(postcss@8.4.40)
+    version: 1.17.0(postcss@8.4.41)
   postcss-simple-vars:
     specifier: ^7.0.1
-    version: 7.0.1(postcss@8.4.40)
+    version: 7.0.1(postcss@8.4.41)
   prettier:
     specifier: ^3.3.3
     version: 3.3.3
   prettier-plugin-css-order:
     specifier: ^2.1.2
-    version: 2.1.2(postcss@8.4.40)(prettier@3.3.3)
+    version: 2.1.2(postcss@8.4.41)(prettier@3.3.3)
   prettier-plugin-tailwindcss:
     specifier: ^0.6.5
     version: 0.6.5(prettier-plugin-css-order@2.1.2)(prettier@3.3.3)
   stylelint:
-    specifier: ^16.8.0
-    version: 16.8.0(typescript@5.5.4)
+    specifier: ^16.8.1
+    version: 16.8.1(typescript@5.5.4)
   stylelint-config-standard-scss:
     specifier: ^13.1.0
-    version: 13.1.0(postcss@8.4.40)(stylelint@16.8.0)
+    version: 13.1.0(postcss@8.4.41)(stylelint@16.8.1)
   supabase:
-    specifier: ^1.187.3
-    version: 1.187.3
+    specifier: ^1.187.10
+    version: 1.187.10
   tailwindcss:
-    specifier: ^3.4.7
-    version: 3.4.7
+    specifier: ^3.4.8
+    version: 3.4.8
   typescript:
     specifier: ~5.5.4
     version: 5.5.4
@@ -1015,15 +1015,15 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@mantine/core@7.11.2(@mantine/hooks@7.11.2)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1):
-    resolution: {integrity: sha512-T64RjdgY8UPAv249miW1lQyPPot1JbCcKKsAZMNQHgcttcxLhrFpKVvglc4/48hdSoxI4LYJPNvqp7zciZmucQ==}
+  /@mantine/core@7.12.0(@mantine/hooks@7.12.0)(@types/react@18.3.3)(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-FxsaIaEnqxV71MBGGsvXXad2q9KYTaIQFVP4TSAZI6xLChklXF/qJTqvabweaoW9BaVQT75b/BnUoJFzPfyAfw==}
     peerDependencies:
-      '@mantine/hooks': 7.11.2
+      '@mantine/hooks': 7.12.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
       '@floating-ui/react': 0.26.19(react-dom@18.3.1)(react@18.3.1)
-      '@mantine/hooks': 7.11.2(react@18.3.1)
+      '@mantine/hooks': 7.12.0(react@18.3.1)
       clsx: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -1035,8 +1035,8 @@ packages:
       - '@types/react'
     dev: false
 
-  /@mantine/form@7.11.2(react@18.3.1):
-    resolution: {integrity: sha512-NRY4HDgcArDEP+wUaHITnoVh0Ce3rM3Blo9fLNj2VYO8k7AfuSWp+fQdqrjDI0k9wGU3YEj4/dbwOjKbtXEhxw==}
+  /@mantine/form@7.12.0(react@18.3.1):
+    resolution: {integrity: sha512-npNHxjis/tOun12EYPYP9cQwJbtFHcGZF1m2yNCcNFVMdkBtTiqH23DdGByXmJRkypYQssSMdQTm3F1zfGsjdQ==}
     peerDependencies:
       react: ^18.2.0
     dependencies:
@@ -1045,8 +1045,8 @@ packages:
       react: 18.3.1
     dev: false
 
-  /@mantine/hooks@7.11.2(react@18.3.1):
-    resolution: {integrity: sha512-jhyVe/sbDEG2U8rr2lMecUPgQxcfr5hh9HazqGfkS7ZRIMDO7uJ947yAcTMGGkp5Lxtt5TBFt1Cb6tiB2/1agg==}
+  /@mantine/hooks@7.12.0(react@18.3.1):
+    resolution: {integrity: sha512-UKMSpQZMdmecZX1PKPoknfUOE9MfDPiZR1myU4wUUKpaZibvvmhYuy8mcOOmYWegapRS3ErKIAc2cNnJ1Dk4RQ==}
     peerDependencies:
       react: ^18.2.0
     dependencies:
@@ -1437,16 +1437,16 @@ packages:
       - typescript
     dev: true
 
-  /@tanstack/query-core@5.51.15:
-    resolution: {integrity: sha512-xyobHDJ0yhPE3+UkSQ2/4X1fLSg7ICJI5J1JyU9yf7F3deQfEwSImCDrB1WSRrauJkMtXW7YIEcC0oA6ZZWt5A==}
+  /@tanstack/query-core@5.51.21:
+    resolution: {integrity: sha512-POQxm42IUp6n89kKWF4IZi18v3fxQWFRolvBA6phNVmA8psdfB1MvDnGacCJdS+EOX12w/CyHM62z//rHmYmvw==}
     dev: false
 
-  /@tanstack/react-query@5.51.15(react@18.3.1):
-    resolution: {integrity: sha512-UgFg23SrdIYrmfTSxAUn9g+J64VQy11pb9/EefoY/u2+zWuNMeqEOnvpJhf52XQy0yztQoyM9p6x8PFyTNaxXg==}
+  /@tanstack/react-query@5.51.21(react@18.3.1):
+    resolution: {integrity: sha512-Q/V81x3sAYgCsxjwOkfLXfrmoG+FmDhLeHH5okC/Bp8Aaw2c33lbEo/mMcMnkxUPVtB2FLpzHT0tq3c+OlZEbw==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.51.15
+      '@tanstack/query-core': 5.51.21
       react: 18.3.1
     dev: false
 
@@ -2385,13 +2385,13 @@ packages:
       which: 2.0.2
     dev: true
 
-  /css-declaration-sorter@7.2.0(postcss@8.4.40):
+  /css-declaration-sorter@7.2.0(postcss@8.4.41):
     resolution: {integrity: sha512-h70rUM+3PNFuaBDTLe8wF/cdWu+dOZmb7pJt8Z2sedYbAcQVQV/tEchueg3GWxwqS0cxtbxmaHEdkNACqcvsow==}
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
       postcss: ^8.0.9
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
   /css-functions-list@3.2.2:
@@ -4714,38 +4714,38 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /postcss-import@15.1.0(postcss@8.4.40):
+  /postcss-import@15.1.0(postcss@8.4.41):
     resolution: {integrity: sha512-hpr+J05B2FVYUAXHeK1YyI267J/dDDhMU6B6civm8hSY1jYJnBXxzKDKDswzJmtLHryrjhnDjqqp/49t8FALew==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       postcss: ^8.0.0
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
       postcss-value-parser: 4.2.0
       read-cache: 1.0.0
       resolve: 1.22.8
     dev: true
 
-  /postcss-js@4.0.1(postcss@8.4.40):
+  /postcss-js@4.0.1(postcss@8.4.41):
     resolution: {integrity: sha512-dDLF8pEO191hJMtlHFPRa8xsizHaM82MLfNkUHdUtVEV3tgTp5oj+8qbEqYM57SLfc74KSbw//4SeJma2LRVIw==}
     engines: {node: ^12 || ^14 || >= 16}
     peerDependencies:
       postcss: ^8.4.21
     dependencies:
       camelcase-css: 2.0.1
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
-  /postcss-less@6.0.0(postcss@8.4.40):
+  /postcss-less@6.0.0(postcss@8.4.41):
     resolution: {integrity: sha512-FPX16mQLyEjLzEuuJtxA8X3ejDLNGGEG503d2YGZR5Ask1SpDN8KmZUMpzCvyalWRywAn1n1VOA5dcqfCLo5rg==}
     engines: {node: '>=12'}
     peerDependencies:
       postcss: ^8.3.5
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
-  /postcss-load-config@4.0.2(postcss@8.4.40):
+  /postcss-load-config@4.0.2(postcss@8.4.41):
     resolution: {integrity: sha512-bSVhyJGL00wMVoPUzAVAnbEoWyqRxkjv64tUl427SKnPrENtq6hJwUojroMz2VB+Q1edmi4IfrAPpami5VVgMQ==}
     engines: {node: '>= 14'}
     peerDependencies:
@@ -4758,11 +4758,11 @@ packages:
         optional: true
     dependencies:
       lilconfig: 3.1.2
-      postcss: 8.4.40
+      postcss: 8.4.41
       yaml: 2.5.0
     dev: true
 
-  /postcss-load-config@6.0.1(postcss@8.4.40):
+  /postcss-load-config@6.0.1(postcss@8.4.41):
     resolution: {integrity: sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==}
     engines: {node: '>= 18'}
     peerDependencies:
@@ -4781,66 +4781,66 @@ packages:
         optional: true
     dependencies:
       lilconfig: 3.1.2
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
   /postcss-media-query-parser@0.2.3:
     resolution: {integrity: sha512-3sOlxmbKcSHMjlUXQZKQ06jOswE7oVkXPxmZdoB1r5l0q6gTFTQSHxNxOrCccElbW7dxNytifNEo8qidX2Vsig==}
     dev: true
 
-  /postcss-mixins@9.0.4(postcss@8.4.40):
+  /postcss-mixins@9.0.4(postcss@8.4.41):
     resolution: {integrity: sha512-XVq5jwQJDRu5M1XGkdpgASqLk37OqkH4JCFDXl/Dn7janOJjCTEKL+36cnRVy7bMtoBzALfO7bV7nTIsFnUWLA==}
     engines: {node: '>=14.0'}
     peerDependencies:
       postcss: ^8.2.14
     dependencies:
       fast-glob: 3.3.2
-      postcss: 8.4.40
-      postcss-js: 4.0.1(postcss@8.4.40)
-      postcss-simple-vars: 7.0.1(postcss@8.4.40)
-      sugarss: 4.0.1(postcss@8.4.40)
+      postcss: 8.4.41
+      postcss-js: 4.0.1(postcss@8.4.41)
+      postcss-simple-vars: 7.0.1(postcss@8.4.41)
+      sugarss: 4.0.1(postcss@8.4.41)
     dev: true
 
-  /postcss-nested@6.2.0(postcss@8.4.40):
+  /postcss-nested@6.2.0(postcss@8.4.41):
     resolution: {integrity: sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==}
     engines: {node: '>=12.0'}
     peerDependencies:
       postcss: ^8.2.14
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
       postcss-selector-parser: 6.1.1
     dev: true
 
-  /postcss-preset-mantine@1.17.0(postcss@8.4.40):
+  /postcss-preset-mantine@1.17.0(postcss@8.4.41):
     resolution: {integrity: sha512-ji1PMDBUf2Vsx/HE5faMSs1+ff6qE6YRulTr4Ja+6HD3gop8rSMTCYdpN7KrdsEg079kfBKkO/PaKhG9uR0zwQ==}
     peerDependencies:
       postcss: '>=8.0.0'
     dependencies:
-      postcss: 8.4.40
-      postcss-mixins: 9.0.4(postcss@8.4.40)
-      postcss-nested: 6.2.0(postcss@8.4.40)
+      postcss: 8.4.41
+      postcss-mixins: 9.0.4(postcss@8.4.41)
+      postcss-nested: 6.2.0(postcss@8.4.41)
     dev: true
 
   /postcss-resolve-nested-selector@0.1.4:
     resolution: {integrity: sha512-R6vHqZWgVnTAPq0C+xjyHfEZqfIYboCBVSy24MjxEDm+tIh1BU4O6o7DP7AA7kHzf136d+Qc5duI4tlpHjixDw==}
     dev: true
 
-  /postcss-safe-parser@7.0.0(postcss@8.4.40):
+  /postcss-safe-parser@7.0.0(postcss@8.4.41):
     resolution: {integrity: sha512-ovehqRNVCpuFzbXoTb4qLtyzK3xn3t/CUBxOs8LsnQjQrShaB4lKiHoVqY8ANaC0hBMHq5QVWk77rwGklFUDrg==}
     engines: {node: '>=18.0'}
     peerDependencies:
       postcss: ^8.4.31
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
-  /postcss-scss@4.0.9(postcss@8.4.40):
+  /postcss-scss@4.0.9(postcss@8.4.41):
     resolution: {integrity: sha512-AjKOeiwAitL/MXxQW2DliT28EKukvvbEWx3LBmJIRN8KfBGZbRTxNYW0kSqi1COiTZ57nZ9NW06S6ux//N1c9A==}
     engines: {node: '>=12.0'}
     peerDependencies:
       postcss: ^8.4.29
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
   /postcss-selector-parser@6.1.1:
@@ -4851,13 +4851,13 @@ packages:
       util-deprecate: 1.0.2
     dev: true
 
-  /postcss-simple-vars@7.0.1(postcss@8.4.40):
+  /postcss-simple-vars@7.0.1(postcss@8.4.41):
     resolution: {integrity: sha512-5GLLXaS8qmzHMOjVxqkk1TZPf1jMqesiI7qLhnlyERalG0sMbHIbJqrcnrpmZdKCLglHnRHoEBB61RtGTsj++A==}
     engines: {node: '>=14.0'}
     peerDependencies:
       postcss: ^8.2.1
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
   /postcss-value-parser@4.2.0:
@@ -4873,8 +4873,8 @@ packages:
       source-map-js: 1.2.0
     dev: false
 
-  /postcss@8.4.40:
-    resolution: {integrity: sha512-YF2kKIUzAofPMpfH6hOi2cGnv/HrUlfucspc7pDyvv7kGdqXrfj8SCl/t8owkEgKEuu8ZcRjSOxFxVLqwChZ2Q==}
+  /postcss@8.4.41:
+    resolution: {integrity: sha512-TesUflQ0WKZqAvg52PWL6kHgLKP6xB6heTOdoYM0Wt2UHyxNa4K25EZZMgKns3BH1RLVbZCREPpLY0rhnNoHVQ==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
       nanoid: 3.3.7
@@ -4887,15 +4887,15 @@ packages:
     engines: {node: '>= 0.8.0'}
     dev: true
 
-  /prettier-plugin-css-order@2.1.2(postcss@8.4.40)(prettier@3.3.3):
+  /prettier-plugin-css-order@2.1.2(postcss@8.4.41)(prettier@3.3.3):
     resolution: {integrity: sha512-vomxPjHI6pOMYcBuouSJHxxQClJXaUpU9rsV9IAO2wrSTZILRRlrxAAR8t9UF6wtczLkLfNRFUwM+ZbGXOONUA==}
     engines: {node: '>=16'}
     peerDependencies:
       prettier: 3.x
     dependencies:
-      css-declaration-sorter: 7.2.0(postcss@8.4.40)
-      postcss-less: 6.0.0(postcss@8.4.40)
-      postcss-scss: 4.0.9(postcss@8.4.40)
+      css-declaration-sorter: 7.2.0(postcss@8.4.41)
+      postcss-less: 6.0.0(postcss@8.4.41)
+      postcss-scss: 4.0.9(postcss@8.4.41)
       prettier: 3.3.3
     transitivePeerDependencies:
       - postcss
@@ -4954,7 +4954,7 @@ packages:
         optional: true
     dependencies:
       prettier: 3.3.3
-      prettier-plugin-css-order: 2.1.2(postcss@8.4.40)(prettier@3.3.3)
+      prettier-plugin-css-order: 2.1.2(postcss@8.4.41)(prettier@3.3.3)
     dev: true
 
   /prettier@3.3.3:
@@ -5461,7 +5461,7 @@ packages:
       react: 18.3.1
     dev: false
 
-  /stylelint-config-recommended-scss@14.0.0(postcss@8.4.40)(stylelint@16.8.0):
+  /stylelint-config-recommended-scss@14.0.0(postcss@8.4.41)(stylelint@16.8.1):
     resolution: {integrity: sha512-HDvpoOAQ1RpF+sPbDOT2Q2/YrBDEJDnUymmVmZ7mMCeNiFSdhRdyGEimBkz06wsN+HaFwUh249gDR+I9JR7Onw==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
@@ -5471,23 +5471,23 @@ packages:
       postcss:
         optional: true
     dependencies:
-      postcss: 8.4.40
-      postcss-scss: 4.0.9(postcss@8.4.40)
-      stylelint: 16.8.0(typescript@5.5.4)
-      stylelint-config-recommended: 14.0.0(stylelint@16.8.0)
-      stylelint-scss: 6.3.0(stylelint@16.8.0)
+      postcss: 8.4.41
+      postcss-scss: 4.0.9(postcss@8.4.41)
+      stylelint: 16.8.1(typescript@5.5.4)
+      stylelint-config-recommended: 14.0.0(stylelint@16.8.1)
+      stylelint-scss: 6.3.0(stylelint@16.8.1)
     dev: true
 
-  /stylelint-config-recommended@14.0.0(stylelint@16.8.0):
+  /stylelint-config-recommended@14.0.0(stylelint@16.8.1):
     resolution: {integrity: sha512-jSkx290CglS8StmrLp2TxAppIajzIBZKYm3IxT89Kg6fGlxbPiTiyH9PS5YUuVAFwaJLl1ikiXX0QWjI0jmgZQ==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       stylelint: ^16.0.0
     dependencies:
-      stylelint: 16.8.0(typescript@5.5.4)
+      stylelint: 16.8.1(typescript@5.5.4)
     dev: true
 
-  /stylelint-config-standard-scss@13.1.0(postcss@8.4.40)(stylelint@16.8.0):
+  /stylelint-config-standard-scss@13.1.0(postcss@8.4.41)(stylelint@16.8.1):
     resolution: {integrity: sha512-Eo5w7/XvwGHWkeGLtdm2FZLOMYoZl1omP2/jgFCXyl2x5yNz7/8vv4Tj6slHvMSSUNTaGoam/GAZ0ZhukvalfA==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
@@ -5497,23 +5497,23 @@ packages:
       postcss:
         optional: true
     dependencies:
-      postcss: 8.4.40
-      stylelint: 16.8.0(typescript@5.5.4)
-      stylelint-config-recommended-scss: 14.0.0(postcss@8.4.40)(stylelint@16.8.0)
-      stylelint-config-standard: 36.0.0(stylelint@16.8.0)
+      postcss: 8.4.41
+      stylelint: 16.8.1(typescript@5.5.4)
+      stylelint-config-recommended-scss: 14.0.0(postcss@8.4.41)(stylelint@16.8.1)
+      stylelint-config-standard: 36.0.0(stylelint@16.8.1)
     dev: true
 
-  /stylelint-config-standard@36.0.0(stylelint@16.8.0):
+  /stylelint-config-standard@36.0.0(stylelint@16.8.1):
     resolution: {integrity: sha512-3Kjyq4d62bYFp/Aq8PMKDwlgUyPU4nacXsjDLWJdNPRUgpuxALu1KnlAHIj36cdtxViVhXexZij65yM0uNIHug==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       stylelint: ^16.1.0
     dependencies:
-      stylelint: 16.8.0(typescript@5.5.4)
-      stylelint-config-recommended: 14.0.0(stylelint@16.8.0)
+      stylelint: 16.8.1(typescript@5.5.4)
+      stylelint-config-recommended: 14.0.0(stylelint@16.8.1)
     dev: true
 
-  /stylelint-scss@6.3.0(stylelint@16.8.0):
+  /stylelint-scss@6.3.0(stylelint@16.8.1):
     resolution: {integrity: sha512-8OSpiuf1xC7f8kllJsBOFAOYp/mR/C1FXMVeOFjtJPw+AFvEmC93FaklHt7MlOqU4poxuQ1TkYMyfI0V+1SxjA==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
@@ -5524,11 +5524,11 @@ packages:
       postcss-resolve-nested-selector: 0.1.4
       postcss-selector-parser: 6.1.1
       postcss-value-parser: 4.2.0
-      stylelint: 16.8.0(typescript@5.5.4)
+      stylelint: 16.8.1(typescript@5.5.4)
     dev: true
 
-  /stylelint@16.8.0(typescript@5.5.4):
-    resolution: {integrity: sha512-Jjr40w3PXDiJVW6c9swLM0a1e0DgDm/XkFozc4XgAcREFas+/nchzmDmeVxazbzXgpDrwm+cW6W6iGtZqYUh+g==}
+  /stylelint@16.8.1(typescript@5.5.4):
+    resolution: {integrity: sha512-O8aDyfdODSDNz/B3gW2HQ+8kv8pfhSu7ZR7xskQ93+vI6FhKKGUJMQ03Ydu+w3OvXXE0/u4hWU4hCPNOyld+OA==}
     engines: {node: '>=18.12.0'}
     hasBin: true
     dependencies:
@@ -5559,9 +5559,9 @@ packages:
       micromatch: 4.0.7
       normalize-path: 3.0.0
       picocolors: 1.0.1
-      postcss: 8.4.40
+      postcss: 8.4.41
       postcss-resolve-nested-selector: 0.1.4
-      postcss-safe-parser: 7.0.0(postcss@8.4.40)
+      postcss-safe-parser: 7.0.0(postcss@8.4.41)
       postcss-selector-parser: 6.1.1
       postcss-value-parser: 4.2.0
       resolve-from: 5.0.0
@@ -5590,17 +5590,17 @@ packages:
       ts-interface-checker: 0.1.13
     dev: true
 
-  /sugarss@4.0.1(postcss@8.4.40):
+  /sugarss@4.0.1(postcss@8.4.41):
     resolution: {integrity: sha512-WCjS5NfuVJjkQzK10s8WOBY+hhDxxNt/N6ZaGwxFZ+wN3/lKKFSaaKUNecULcTTvE4urLcKaZFQD8vO0mOZujw==}
     engines: {node: '>=12.0'}
     peerDependencies:
       postcss: ^8.3.3
     dependencies:
-      postcss: 8.4.40
+      postcss: 8.4.41
     dev: true
 
-  /supabase@1.187.3:
-    resolution: {integrity: sha512-44yzHpxMrd88cUKWw3GVPPIUx6oCqgfqmN4Mlxp7a7GeNNZSTe433vmKBcj+ue3E7K08XcIyEX6G1TjhVyto+g==}
+  /supabase@1.187.10:
+    resolution: {integrity: sha512-7Nc50xN0k/G5fX3bpa+ZaulBoK/i5jwdjXhiNzyZhUf8qEWQnSsT1LTidCvpzuGt+8Gi6G3aMAh/5GlRdBLIoQ==}
     engines: {npm: '>=8'}
     hasBin: true
     requiresBuild: true
@@ -5608,7 +5608,7 @@ packages:
       bin-links: 4.0.4
       https-proxy-agent: 7.0.5
       node-fetch: 3.3.2
-      tar: 7.4.0
+      tar: 7.4.3
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5673,8 +5673,8 @@ packages:
     resolution: {integrity: sha512-49AwoOQNKdqKPd9CViyH5wJoSKsCDjUlzL8DxuGp3P1FsGY36NJDAa18jLZcaHAUUuTj+JB8IAo8zWgBNvBF7A==}
     dev: false
 
-  /tailwindcss@3.4.7:
-    resolution: {integrity: sha512-rxWZbe87YJb4OcSopb7up2Ba4U82BoiSGUdoDr3Ydrg9ckxFS/YWsvhN323GMcddgU65QRy7JndC7ahhInhvlQ==}
+  /tailwindcss@3.4.8:
+    resolution: {integrity: sha512-GkP17r9GQkxgZ9FKHJQEnjJuKBcbFhMFzKu5slmN6NjlCuFnYJMQ8N4AZ6VrUyiRXlDtPKHkesuQ/MS913Nvdg==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
@@ -5692,11 +5692,11 @@ packages:
       normalize-path: 3.0.0
       object-hash: 3.0.0
       picocolors: 1.0.1
-      postcss: 8.4.40
-      postcss-import: 15.1.0(postcss@8.4.40)
-      postcss-js: 4.0.1(postcss@8.4.40)
-      postcss-load-config: 4.0.2(postcss@8.4.40)
-      postcss-nested: 6.2.0(postcss@8.4.40)
+      postcss: 8.4.41
+      postcss-import: 15.1.0(postcss@8.4.41)
+      postcss-js: 4.0.1(postcss@8.4.41)
+      postcss-load-config: 4.0.2(postcss@8.4.41)
+      postcss-nested: 6.2.0(postcss@8.4.41)
       postcss-selector-parser: 6.1.1
       resolve: 1.22.8
       sucrase: 3.35.0
@@ -5709,8 +5709,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /tar@7.4.0:
-    resolution: {integrity: sha512-XQs0S8fuAkQWuqhDeCdMlJXDX80D7EOVLDPVFkna9yQfzS+PHKgfxcei0jf6/+QAWcjqrnC8uM3fSAnrQl+XYg==}
+  /tar@7.4.3:
+    resolution: {integrity: sha512-5S7Va8hKfV7W5U6g3aYxXmlPoZVAwUMy9AOKyF2fVuZa2UD3qZjg578OrLRt8PcNN1PleVaL/5/yYATNL0ICUw==}
     engines: {node: '>=18'}
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
