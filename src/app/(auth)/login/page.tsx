@@ -14,7 +14,7 @@ export default function Login() {
           >
             Welcome back!
           </Title>
-          <Text c="dimmed" size="sm" ta="center" mt={5}>
+          <Text size="sm" ta="center" mt={5}>
             Don&apos;t have an account yet?{' '}
             <Anchor size="sm" component={Link} href="/signup">
               Create account
