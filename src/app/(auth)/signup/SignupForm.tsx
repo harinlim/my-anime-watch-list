@@ -135,7 +135,7 @@ export function SignupForm() {
       </Button>
 
       <Box ta="right" pr="sm">
-        <Anchor component={Link} href="/login" c="dimmed" size="xs">
+        <Anchor component={Link} href="/login" size="xs">
           Already have an account? Login
         </Anchor>
       </Box>
