@@ -21,9 +21,7 @@ export default async function SignupSuccessPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-150px)] flex-col items-center justify-center space-y-6 px-10">
-      <Title order={1} className="text-center">
-        {welcomeText}
-      </Title>
+      <Title className="text-center">{welcomeText}</Title>
       <Text className="text-center">
         You&apos;ve successfully created an account! Now you&apos;re ready to make your first
         watchlist.
