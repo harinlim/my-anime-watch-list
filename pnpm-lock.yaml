@@ -56,11 +56,11 @@ dependencies:
     specifier: ~2.43.5
     version: 2.43.5(patch_hash=lng36h2hqlvkg2nlbmiyyn2rku)
   '@tabler/icons-react':
-    specifier: ^3.11.0
-    version: 3.11.0(react@18.3.1)
+    specifier: ^3.12.0
+    version: 3.12.0(react@18.3.1)
   '@tanstack/react-query':
-    specifier: ^5.51.21
-    version: 5.51.21(react@18.3.1)
+    specifier: ^5.51.23
+    version: 5.51.23(react@18.3.1)
   clsx:
     specifier: ^2.1.1
     version: 2.1.1
@@ -193,8 +193,8 @@ devDependencies:
     specifier: ^2.1.2
     version: 2.1.2(postcss@8.4.41)(prettier@3.3.3)
   prettier-plugin-tailwindcss:
-    specifier: ^0.6.5
-    version: 0.6.5(prettier-plugin-css-order@2.1.2)(prettier@3.3.3)
+    specifier: ^0.6.6
+    version: 0.6.6(prettier-plugin-css-order@2.1.2)(prettier@3.3.3)
   stylelint:
     specifier: ^16.8.1
     version: 16.8.1(typescript@5.5.4)
@@ -205,8 +205,8 @@ devDependencies:
     specifier: ^1.187.10
     version: 1.187.10
   tailwindcss:
-    specifier: ^3.4.8
-    version: 3.4.8
+    specifier: ^3.4.9
+    version: 3.4.9
   typescript:
     specifier: ~5.5.4
     version: 5.5.4
@@ -1412,17 +1412,17 @@ packages:
       tslib: 2.6.3
     dev: false
 
-  /@tabler/icons-react@3.11.0(react@18.3.1):
-    resolution: {integrity: sha512-xHNBi9mns1slvqos+7LkP3ube4CjWrANMbxMaorzwzO9J/+y1sAEG/sN8CV8FmtpYW/9/gDR+OWCjjLLg0RmAw==}
+  /@tabler/icons-react@3.12.0(react@18.3.1):
+    resolution: {integrity: sha512-RnJl3HrCqInuC8JJEUxWuYP4OFNYnY2EUtBqZFSpYatPKY3AnvJBIrShJLHf3fiLPpo6xEYAIoB7Qow93JX0fQ==}
     peerDependencies:
       react: '>= 16'
     dependencies:
-      '@tabler/icons': 3.11.0
+      '@tabler/icons': 3.12.0
       react: 18.3.1
     dev: false
 
-  /@tabler/icons@3.11.0:
-    resolution: {integrity: sha512-/vZinJNvCYhdAB+RUsyCpanSPuOEKHHIZi4Uu0Bw7ilewHnQhCWUPrT704uHCRli2ROl7spADPmWzAqOganA5A==}
+  /@tabler/icons@3.12.0:
+    resolution: {integrity: sha512-Im37ar/mQkqLb6XUXsU7nOc4/66VB9/3KLuZ+6tUsJKHHNLaDUkYfCTNG3pnGDI03laByxVf5+umSNK2yPTx8A==}
     dev: false
 
   /@tanstack/eslint-plugin-query@5.51.15(eslint@8.57.0)(typescript@5.5.4):
@@ -1441,8 +1441,8 @@ packages:
     resolution: {integrity: sha512-POQxm42IUp6n89kKWF4IZi18v3fxQWFRolvBA6phNVmA8psdfB1MvDnGacCJdS+EOX12w/CyHM62z//rHmYmvw==}
     dev: false
 
-  /@tanstack/react-query@5.51.21(react@18.3.1):
-    resolution: {integrity: sha512-Q/V81x3sAYgCsxjwOkfLXfrmoG+FmDhLeHH5okC/Bp8Aaw2c33lbEo/mMcMnkxUPVtB2FLpzHT0tq3c+OlZEbw==}
+  /@tanstack/react-query@5.51.23(react@18.3.1):
+    resolution: {integrity: sha512-CfJCfX45nnVIZjQBRYYtvVMIsGgWLKLYC4xcUiYEey671n1alvTZoCBaU9B85O8mF/tx9LPyrI04A6Bs2THv4A==}
     peerDependencies:
       react: ^18.0.0
     dependencies:
@@ -4901,8 +4901,8 @@ packages:
       - postcss
     dev: true
 
-  /prettier-plugin-tailwindcss@0.6.5(prettier-plugin-css-order@2.1.2)(prettier@3.3.3):
-    resolution: {integrity: sha512-axfeOArc/RiGHjOIy9HytehlC0ZLeMaqY09mm8YCkMzznKiDkwFzOpBvtuhuv3xG5qB73+Mj7OCe2j/L1ryfuQ==}
+  /prettier-plugin-tailwindcss@0.6.6(prettier-plugin-css-order@2.1.2)(prettier@3.3.3):
+    resolution: {integrity: sha512-OPva5S7WAsPLEsOuOWXATi13QrCKACCiIonFgIR6V4lYv4QLp++UXVhZSzRbZxXGimkQtQT86CC6fQqTOybGng==}
     engines: {node: '>=14.21.3'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
@@ -4916,6 +4916,7 @@ packages:
       prettier-plugin-import-sort: '*'
       prettier-plugin-jsdoc: '*'
       prettier-plugin-marko: '*'
+      prettier-plugin-multiline-arrays: '*'
       prettier-plugin-organize-attributes: '*'
       prettier-plugin-organize-imports: '*'
       prettier-plugin-sort-imports: '*'
@@ -4941,6 +4942,8 @@ packages:
       prettier-plugin-jsdoc:
         optional: true
       prettier-plugin-marko:
+        optional: true
+      prettier-plugin-multiline-arrays:
         optional: true
       prettier-plugin-organize-attributes:
         optional: true
@@ -5673,8 +5676,8 @@ packages:
     resolution: {integrity: sha512-49AwoOQNKdqKPd9CViyH5wJoSKsCDjUlzL8DxuGp3P1FsGY36NJDAa18jLZcaHAUUuTj+JB8IAo8zWgBNvBF7A==}
     dev: false
 
-  /tailwindcss@3.4.8:
-    resolution: {integrity: sha512-GkP17r9GQkxgZ9FKHJQEnjJuKBcbFhMFzKu5slmN6NjlCuFnYJMQ8N4AZ6VrUyiRXlDtPKHkesuQ/MS913Nvdg==}
+  /tailwindcss@3.4.9:
+    resolution: {integrity: sha512-1SEOvRr6sSdV5IDf9iC+NU4dhwdqzF4zKKq3sAbasUWHEM6lsMhX+eNN5gkPx1BvLFEnZQEUFbXnGj8Qlp83Pg==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:
