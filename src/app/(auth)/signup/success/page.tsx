@@ -21,9 +21,7 @@ export default async function SignupSuccessPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-150px)] flex-col items-center justify-center space-y-6 px-10">
-      <Title order={1} className="text-center">
-        {welcomeText}
-      </Title>
+      <Title className="text-center">{welcomeText}</Title>
       <Text className="text-center">
         You&apos;ve successfully created an account! Now you&apos;re ready to make your first
         watchlist.
@@ -32,10 +30,8 @@ export default async function SignupSuccessPage() {
       <Button
         component={Link}
         href="/profile"
-        variant="filled"
-        size="lg"
-        radius="md"
-        rightSection={<IconArrowRight size={14} />}
+        rightSection={<IconArrowRight className="size-3.5" />}
+        className="h-12 rounded-md border border-blue-600 bg-transparent text-blue-600 dark:border-blue-400 dark:text-blue-400"
       >
         Go to your profile
       </Button>
