@@ -32,10 +32,8 @@ export default async function SignupSuccessPage() {
       <Button
         component={Link}
         href="/profile"
-        variant="filled"
-        size="lg"
-        radius="md"
-        rightSection={<IconArrowRight size={14} />}
+        rightSection={<IconArrowRight className="size-3.5" />}
+        className="h-12 rounded-md border border-blue-600 bg-transparent text-blue-600 dark:border-blue-400 dark:text-blue-400"
       >
         Go to your profile
       </Button>

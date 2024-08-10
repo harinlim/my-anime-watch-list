@@ -11,7 +11,7 @@ export default function Login() {
             Create an account
           </Title>
 
-          <Paper withBorder shadow="md" p={30} mt={20} radius="md">
+          <Paper className="mt-7 rounded-md border border-neutral-200 p-7 shadow-md dark:border-neutral-700">
             <SignupForm />
           </Paper>
         </Container>

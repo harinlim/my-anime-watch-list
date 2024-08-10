@@ -63,12 +63,12 @@ export function LoginForm() {
         <Alert
           variant="light"
           color="red"
-          mb="lg"
           title={error}
           withCloseButton
           closeButtonLabel="Dismiss error"
           onClose={() => setError('')}
           icon={<IconAlertCircle />}
+          className="bg-color mb-5"
         />
       )}
       <TextInput
@@ -80,11 +80,11 @@ export function LoginForm() {
       <PasswordInput
         label="Password"
         placeholder="Your password"
-        mt="md"
         key={form.key('password')}
         {...form.getInputProps('password')}
+        className="mt-4"
       />
-      <Group justify="space-between" mt="lg">
+      <Group className="mt-5 justify-between">
         <Checkbox
           label="Remember me"
           key={form.key('remember')}
@@ -95,17 +95,8 @@ export function LoginForm() {
       Forgot password?
     </Anchor> */}
       </Group>
-      <Button
-        type="submit"
-        fullWidth
-        mt="lg"
-        size="md"
-        disabled={isSubmitting}
-        className="bg-blue-600"
-      >
-        <Text size="sm" fw={500}>
-          Sign in
-        </Text>
+      <Button type="submit" disabled={isSubmitting} className="mt-5 h-11 w-full bg-blue-600">
+        <Text className="text-sm font-medium">Sign in</Text>
       </Button>
     </form>
   )
