@@ -13,7 +13,12 @@ export default function Login() {
           </Title>
           <Text className="mt-1.5 text-center text-sm">
             Don&apos;t have an account yet?{' '}
-            <Anchor size="sm" component={Link} href="/signup">
+            <Anchor
+              size="sm"
+              component={Link}
+              href="/signup"
+              className="text-blue-600 underline dark:text-blue-400"
+            >
               Create account
             </Anchor>
           </Text>

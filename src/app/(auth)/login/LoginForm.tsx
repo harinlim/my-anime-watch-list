@@ -95,7 +95,14 @@ export function LoginForm() {
       Forgot password?
     </Anchor> */}
       </Group>
-      <Button type="submit" fullWidth mt="lg" size="md" disabled={isSubmitting}>
+      <Button
+        type="submit"
+        fullWidth
+        mt="lg"
+        size="md"
+        disabled={isSubmitting}
+        className="bg-blue-600"
+      >
         <Text size="sm" fw={500}>
           Sign in
         </Text>
