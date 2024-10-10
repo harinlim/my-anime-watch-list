@@ -36,14 +36,14 @@
     "clsx": "^2.1.1",
     "cookie": "^0.6.0",
     "kitsu-core": "^10.1.5",
-    "next": "~14.2.10",
+    "next": "~14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.4.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^14.2.5",
+    "@next/eslint-plugin-next": "^14.2.15",
     "@tanstack/eslint-plugin-query": "^5.51.15",
     "@types/cookie": "^0.6.0",
     "@types/eslint": "^8.56.10",
